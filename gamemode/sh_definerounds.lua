@@ -6,6 +6,11 @@ ROUND_OVER = 6
 ROUND:AddState( ROUND_WAITING,
 	function()
 		print("Round State: WAITING")
+		PrintTable( player.GetAll() )
+		for k,ply in ipairs(player.GetAllPlaying()) do
+			ply:Spawn()
+			print("Spawning...",ply:Nick())
+		end
 	end,
 	function()
 	--thinking
