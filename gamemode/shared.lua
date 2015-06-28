@@ -1,4 +1,8 @@
 
+DR = {}
+
+include("config.lua")
+
 GM.Name 	= "Deathrun"
 GM.Author 	= "Arizard"
 GM.Email 	= ""
@@ -9,4 +13,5 @@ function GM:Initialize()
 	self.BaseClass.Initialize( self )
 	
 end
+
 
