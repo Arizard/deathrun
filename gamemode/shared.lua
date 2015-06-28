@@ -1,7 +1,7 @@
 
 DR = {}
 
-include("config.lua")
+--include("config.lua")
 
 GM.Name 	= "Deathrun"
 GM.Author 	= "Arizard"
