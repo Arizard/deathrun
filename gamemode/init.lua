@@ -41,6 +41,9 @@ function GM:PlayerSpawn( ply, spec )
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	else
 		ply:StopSpectate()
+
+		ply:SetupHands()
+
 		GAMEMODE:PlayerLoadout( ply )
 	end
 end
@@ -52,6 +55,12 @@ function GM:PlayerLoadout( ply )
 
 	ply:SetModel("models/player/group01/male_07.mdl")
 	ply:Give("weapon_crowbar")
+
+	local teamcol = team.GetColor( ply:Team() )
+	print(teamcol)
+	local playercol = Vector( teamcol.r/255, teamcol.g/255, teamcol.b/255 )
+
+	ply:SetPlayerColor( playercol )
 	
 end
 
