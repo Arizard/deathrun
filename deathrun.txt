@@ -1,0 +1,21 @@
+"Gamemode"
+{
+	"base"		"base"
+	"title"		"Deathrun"
+	"maps"		"^deathrun"
+	"menusystem"	"1"
+	"workshopid"	""
+	
+	"settings"
+	{
+		1
+		{
+			"name"		"deathrun"
+			"version"	"2.0"
+			"help"		"Arizard's Deathrun"
+			"type"		"numeric"
+			"default"	"1"
+		}
+	}
+	
+}
