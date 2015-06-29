@@ -4,14 +4,20 @@ AddCSLuaFile( "hexcolor.lua" )
 include( "hexcolor.lua" )
 
 --derma
-AddCSLuaFile( "arizard_derma.lua" )
+AddCSLuaFile( "cl_derma.lua" )
 
 
 -- base
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
+AddCSLuaFile( "config.lua" )
+
+include("config.lua")
 
 include( "shared.lua" )
+
+-- scoreboard
+AddCSLuaFile("cl_scoreboard.lua")
 
 
 -- Round System
@@ -34,10 +40,12 @@ function GM:PlayerInitialSpawn( ply )
 end
 
 function GM:PlayerSpawn( ply, spec )
+	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
+
 	if ply.FirstSpawn == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 		ply.FirstSpawn = false
-	elseif ply.JustDied then
+	elseif ply.JustDied == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	else
 		ply:StopSpectate()
@@ -57,36 +65,40 @@ function GM:PlayerLoadout( ply )
 	ply:Give("weapon_crowbar")
 
 	local teamcol = team.GetColor( ply:Team() )
-	print(teamcol)
+	--print(teamcol)
 	local playercol = Vector( teamcol.r/255, teamcol.g/255, teamcol.b/255 )
 
 	ply:SetPlayerColor( playercol )
 	
 end
 
-function GM:PostPlayerDeath( ply )
+function GM:PlayerDeath( ply )
 	timer.Simple(5, function()
-		ply.JustDied = true
-		ply:SetTeam( TEAM_SPECTATOR )
-		ply:Spawn() -- spawn then so we can put them in spectator while keeping their team
-		ply:BeginSpectate()
-	
-		local pool = {}
-		for k,ply in ipairs(player.GetAll()) do
-			if ply:Alive() and not ply:GetSpectate() then
-				table.insert(pool, ply)
-			end
-		end
+		if not ply:Alive() then
 
+			ply.JustDied = true
+			--ply:SetTeam( TEAM_SPECTATOR )
+			--ply:Spawn() -- spawn then so we can put them in spectator while keeping their team
+			ply:BeginSpectate()
 		
-		if #pool > 0 then
-			local randplay = table.Random(pool)
-			ply:SpectateEntity( randplay )
-			ply:SetObserverMode( OBS_MODE_IN_EYE )
-			ply:SetPos( randplay:GetPos() )
-		end
+			local pool = {}
+			for k,ply in ipairs(player.GetAll()) do
+				if ply:Alive() and not ply:GetSpectate() then
+					table.insert(pool, ply)
+				end
+			end
 
-		ply.JustDied = false
+			
+			if #pool > 0 then
+				local randplay = table.Random(pool)
+				ply:SpectateEntity( randplay )
+				ply:SetObserverMode( OBS_MODE_IN_EYE )
+				ply:SetPos( randplay:GetPos() )
+			end
+
+			ply.JustDied = false
+
+		end
 	end)
 end
 
@@ -97,5 +109,15 @@ end
 function GM:CanPlayerSuicide( ply )
 	if not ply:GetSpectate() then
 		return true
+	end
+end
+
+-- damage hooks
+function GM:EntityTakeDamage( target, dmginfo )
+	local attacker = dmginfo:GetAttacker()
+	if target:IsPlayer() and attacker:IsPlayer() then
+		if target:Team() == attacker:Team() then
+			dmginfo:SetDamage(0)
+		end
 	end
 end

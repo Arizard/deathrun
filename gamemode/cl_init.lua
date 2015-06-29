@@ -1,8 +1,12 @@
 include( "hexcolor.lua" )
 
-include( "arizard_derma.lua" )
+include( "cl_derma.lua" )
+
+include("config.lua")
 
 include( "shared.lua" )
+
+include( "cl_scoreboard.lua" )
 
 include( "roundsystem/sh_round.lua" )
 include( "roundsystem/cl_round.lua" )

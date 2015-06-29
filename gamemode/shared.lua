@@ -1,8 +1,3 @@
-
-DR = {}
-
-include("config.lua")
-
 GM.Name 	= "Deathrun"
 GM.Author 	= "Arizard"
 GM.Email 	= ""
@@ -23,6 +18,8 @@ function GM:CreateTeams()
 
 	team.SetSpawnPoint( TEAM_DEATH, "info_player_terrorist" )
 	team.SetSpawnPoint( TEAM_RUNNER, "info_player_counterterrorist" )
+
+	team.SetColor( TEAM_SPECTATOR, DR.Colors.Silver )
 end
 
 function player.GetAllPlaying()
@@ -36,3 +33,18 @@ function player.GetAllPlaying()
 	end
 	return pool
 end
+
+hook.Add("SetupMove", "DeathrunDisableSpectatorSpacebar", function( ply, mv, cmd )
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		mv:SetButtons( bit.band( mv:GetButtons(), bit.bnot( IN_JUMP ) ) )
+	end
+
+	if ply:Alive() then
+		if ROUND:GetCurrent() == ROUND_PREP then
+			--mv:SetButtons( bit.band( mv:GetButtons(), bit.bnot( IN_JUMP ) ) )
+			mv:SetSideSpeed( 0 )
+			mv:SetUpSpeed( 0 )
+			mv:SetForwardSpeed( 0 )
+		end
+	end
+end)

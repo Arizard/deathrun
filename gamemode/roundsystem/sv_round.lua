@@ -1,4 +1,3 @@
-include("../shared.lua")
 include("sh_round.lua")
 
 -- create network strings for round state changes
@@ -27,7 +26,7 @@ end
 
 --commands
 concommand.Add("round_switch", function(ply, cmd, args)
-	if ply:IsSuperAdmin() then
+	if not IsValid( ply ) then
 		local r = tonumber(args[1])
 		ROUND:RoundSwitch( r )	
 	end

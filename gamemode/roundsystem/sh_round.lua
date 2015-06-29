@@ -1,4 +1,3 @@
-include("../shared.lua")
 
 ROUND = {}
 
