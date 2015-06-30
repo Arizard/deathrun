@@ -8,9 +8,11 @@ AddCSLuaFile( "cl_derma.lua" )
 
 
 -- base
+AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "config.lua" )
+
 
 include("config.lua")
 
@@ -32,6 +34,8 @@ include( "sh_definerounds.lua" )
 --player
 include( "sv_player.lua" )
 
+util.AddNetworkString("DeathrunChatMessage")
+util.AddNetworkString("DeathrunSyncMutelist")
 
 function GM:PlayerInitialSpawn( ply )
 
@@ -121,3 +125,40 @@ function GM:EntityTakeDamage( target, dmginfo )
 		end
 	end
 end
+
+-- player muting
+function GM:PlayerCanHearPlayersVoice( listener, talker )
+
+	listener.mutelist = listener.mutelist or {}
+
+	if table.HasValue( listener.mutelist, talker:SteamID() ) then
+		return false -- dont transmit voices which are on the mutelist
+	else
+		return true
+	end
+
+end
+
+concommand.Add("deathrun_toggle_mute", function(ply, cmd, args)
+	local id = args[1]
+	if not id then return end
+
+	ply.mutelist = ply.mutelist or {}
+
+	if table.HasValue( ply.mutelist, id ) then
+		for k,v in ipairs(ply.mutelist) do
+			if v == id then 
+				table.remove( ply.mutelist, k )
+				ply:DeathrunChatPrint( "Player was unmuted." ) 
+			end
+		end
+	else
+		table.insert( ply.mutelist, id )
+		ply:DeathrunChatPrint( "Player was muted." )
+	end
+
+	net.Start("DeathrunSyncMutelist")
+	net.WriteTable( ply.mutelist )
+	net.Send( ply )
+
+end)

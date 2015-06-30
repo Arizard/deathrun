@@ -150,3 +150,9 @@ concommand.Add("deathrun_toggle_spectate", function(ply)
 		ply:SetShouldStaySpectating( false )
 	end
 end)
+
+function PLAYER:DeathrunChatPrint( msg )
+	net.Start("DeathrunChatMessage")
+	net.WriteString( msg )
+	net.Send( self )
+end

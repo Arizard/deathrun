@@ -1,4 +1,4 @@
-local fontstandard = "Roboto"
+local fontstandard = "Verdana"
 
 -- modified version of my derma thingzzzz
 
@@ -64,6 +64,10 @@ local function deathrunDrawBlur(panel, amount)
 
 		surface.DrawTexturedRect(x*-1,y*-1,w,h)
 	end
+end
+
+function DR:DrawPanelBlur( panel, amt )
+	deathrunDrawBlur( panel, amt )
 end
 
 

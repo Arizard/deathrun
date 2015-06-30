@@ -9,6 +9,38 @@ if SERVER then
 	DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 end
 
+-- for the round timer
+-- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
+-- timer going every 0.2s updating ROUND_TIMER so we have a precision of 1/5th of a second ?????
+-- network each time the timer is set, but calculate the timer on server and client individually
+
+ROUND_TIMER = ROUND_TIMER or 0
+
+function ROUND:GetTimer() 
+	return ROUND_TIMER or 0
+end
+
+timer.Create("DeathrunRoundTimerCalculate", 0.2, 0, function()
+	ROUND_TIMER = ROUND_TIMER - 0.2
+	if ROUND_TIMER < 0 then ROUND_TIMER = 0 end
+
+	--print( ROUND_TIMER )
+end)
+
+if SERVER then
+	util.AddNetworkString("DeathrunSyncRoundTimer")
+	function ROUND:SetTimer( s )
+		ROUND_TIMER = s
+		net.Start("DeathrunSyncRoundTimer")
+		net.WriteInt( s, 16 )
+		net.Broadcast()
+	end
+else
+	net.Receive("DeathrunSyncRoundTimer", function( len, ply )
+		ROUND_TIMER = net.ReadInt( 16 )
+	end)
+end
+
 
 ROUND:AddState( ROUND_WAITING,
 	function()
@@ -50,6 +82,8 @@ ROUND:AddState( ROUND_PREP,
 			timer.Simple( PrepDuration:GetInt(), function()
 				ROUND:RoundSwitch( ROUND_ACTIVE )
 			end)
+
+			ROUND:SetTimer( PrepDuration:GetInt() )
 
 			for k,ply in ipairs(player.GetAll()) do
 				if not ply:ShouldStaySpectating() then -- for some reason we need to do this otherwise people spawn as spec when they shouldnt!
@@ -137,6 +171,9 @@ ROUND:AddState( ROUND_PREP,
 ROUND:AddState( ROUND_ACTIVE,
 	function()
 		print("Round State: ACTIVE")
+		if SERVER then
+			ROUND:SetTimer( RoundDuration:GetInt() )
+		end
 	end,
 	function()
 		if SERVER then
