@@ -28,10 +28,10 @@ SWEP.Weight				= 25
 
 
 SWEP.Primary.Sound			= Sound( "Weapon_FAMAS.Single" )
-SWEP.Primary.Recoil 		= 0.4
+SWEP.Primary.Recoil 		= 0.75
 SWEP.Primary.Damage 		= 17
 SWEP.Primary.NumShots 		= 1
-SWEP.Primary.Cone 		= 0.015
+SWEP.Primary.Cone 		= 0.001
 SWEP.Primary.ClipSize 		= 25
 SWEP.Primary.Delay 		= 0.075
 SWEP.Primary.DefaultClip 	= 25

@@ -48,7 +48,7 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
-
+SWEP.KickBack = 0
 
 /*---------------------------------------------------------
 ---------------------------------------------------------*/
@@ -74,11 +74,36 @@ function SWEP:Reload()
 	self:SetIronsights( false )
 end
 
+function SWEP:CalculateFalloff( drunkhigh, dt ) -- stole the code from my drug addon lol
+	drunkhigh = (drunkhigh > 0) and (drunkhigh + 1) or drunkhigh -1
 
-/*---------------------------------------------------------
-   Think does nothing
----------------------------------------------------------*/
-function SWEP:Think()	
+	local halflife = 0.5 * math.sqrt(self.Primary.Recoil/1.5) -- is half-life of recoil in seconds
+	local rate =  ( math.log(1/2) / (halflife) ) 
+	local initial = math.abs(drunkhigh)
+	local sign = ((drunkhigh < 0) and -1) or 1
+	local final = 0
+
+	final = (initial * math.exp( rate * dt )) - 1
+
+	if final < 0 then final = 0 else final = final * sign end
+
+	return final 
+
+end
+
+SWEP.LastThink = CurTime()
+function SWEP:Think()
+
+	local dt = CurTime() - self.LastThink
+	self.LastThink = CurTime()
+
+	if SERVER then
+		self.KickBack = self:CalculateFalloff( self.KickBack, dt )
+		if self.KickBack < 0 then self.KickBack = 0 end	-- do this serverside
+	end
+
+	local k = 1
+	
 end
 
 
@@ -112,9 +137,16 @@ function SWEP:PrimaryAttack()
 	if ( (game.SinglePlayer() && SERVER) || CLIENT ) then
 		self.Weapon:SetNetworkedFloat( "LastShootTime", CurTime() )
 	end
+
+	-- simulate recoil????
+	self.KickBack = self.KickBack + 1
 	
 end
 
+function SWEP:GetRecoilShiftAmount()
+	local shiftamt = self.KickBack > 1 and (0.1*math.pow( math.log(self.KickBack), 5 ))*(self.Primary.Recoil/1.5) or 0
+	return shiftamt
+end
 /*---------------------------------------------------------
    Name: SWEP:CSShootBullet( )
 ---------------------------------------------------------*/
@@ -131,28 +163,22 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Tracer	= 4									// Show a tracer on every x bullets 
 	bullet.Force	= 5									// Amount of force to give to phys objects
 	bullet.Damage	= dmg
+
+	local shootAng = bullet.Dir:Angle()
+	local right = shootAng:Right()
+	local up = shootAng:Up()
+	local shiftamt = self:GetRecoilShiftAmount()
+	shootAng:RotateAroundAxis( right, shiftamt )
+	shootAng:RotateAroundAxis( up, math.random(-shiftamt/4, shiftamt/6))
+	bullet.Dir = shootAng:Forward()
 	
 	local owner = self.Owner
 	local slf = self
 
-	bullet.Callback = function(a, b, c)
-		if SERVER and b.HitPos then
-			local tracedata = {}
-			tracedata.start = b.StartPos
-			tracedata.endpos = b.HitPos + (b.Normal * 2)
-			tracedata.filter = a
-			tracedata.mask = MASK_PLAYERSOLID
-			local trace = util.TraceLine(tracedata)
-			
-			if IsValid( trace.Entity ) then
-				if trace.Entity:GetClass() == "func_button" then
-					trace.Entity:TakeDamage( dmg, a, c:GetInflictor() )
-					trace.Entity:TakeDamage( dmg, a, c:GetInflictor() )
-				elseif trace.Entity:GetClass() == "func_physbox_multiplayer" then
-					trace.Entity:TakeDamage( dmg, a, c:GetInflictor() )
-				end
-			end
-		end
+	bullet.Callback = function(ply, tr, dmginfo)
+		--if SERVER and tr.HitPos then
+			print(tr.Entity:GetClass())
+		--end
 	end
 
 	self.Owner:FireBullets( bullet )
@@ -165,9 +191,9 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	// CUSTOM RECOIL !
 	if ( (game.SinglePlayer() && SERVER) || ( !game.SinglePlayer() && CLIENT && IsFirstTimePredicted() ) ) then
 	
-		local eyeang = self.Owner:EyeAngles()
-		eyeang.pitch = eyeang.pitch - recoil
-		self.Owner:SetEyeAngles( eyeang )
+		--local eyeang = self.Owner:EyeAngles()
+		--eyeang.pitch = eyeang.pitch - recoil
+		--self.Owner:SetEyeAngles( eyeang )
 	
 	end
 
@@ -215,6 +241,7 @@ function SWEP:GetViewModelPosition( pos, ang )
 	
 	end
 	
+
 	local fIronTime = self.fIronTime or 0
 
 	if ( !bIron && fIronTime < CurTime() - IRONSIGHT_TIME ) then 
@@ -253,10 +280,33 @@ function SWEP:GetViewModelPosition( pos, ang )
 	pos = pos + Offset.y * Forward * Mul
 	pos = pos + Offset.z * Up * Mul
 
+
+
 	return pos, ang
 	
 end
 
+
+if CLIENT then
+	SWEP.LastCalcView = CurTime()
+	
+	function SWEP:CalcView( ply, pos, ang, fov )
+		local dt = CurTime() - self.LastCalcView
+		self.LastCalcView = CurTime()
+
+		self.KickBack = self:CalculateFalloff( self.KickBack, dt )
+		if self.KickBack < 0 then self.KickBack = 0 end	 -- do this clientside so it's smoother
+
+		--if self.KickBack > 0 then print(self.KickBack) end
+
+
+		local right = ang:Right();
+		local shiftamt = self:GetRecoilShiftAmount()
+		ang:RotateAroundAxis(right, shiftamt/3)
+
+		return pos, ang, fov
+	end
+end
 
 /*---------------------------------------------------------
 	SetIronsights
@@ -292,63 +342,65 @@ end]]
 	
 ---------------------------------------------------------*/
 
-local CCrosshair = CreateClientConVar( "sl_crosshair", "1", true, false )
-local CGap = CreateClientConVar( "sl_cross_gap", "1", true, false )
-local CThick = CreateClientConVar( "sl_cross_thick", "0", true, false )
-local CLength = CreateClientConVar( "sl_cross_length", "1", true, false )
-local CColorR = CreateClientConVar( "sl_cross_color_r", "0", true, false )
-local CColorG = CreateClientConVar( "sl_cross_color_g", "255", true, false )
-local CColorB = CreateClientConVar( "sl_cross_color_b", "0", true, false )
-local CColorA = CreateClientConVar( "sl_cross_opacity", "255", true, false )
+-- local CCrosshair = CreateClientConVar( "sl_crosshair", "1", true, false )
+-- local CGap = CreateClientConVar( "sl_cross_gap", "1", true, false )
+-- local CThick = CreateClientConVar( "sl_cross_thick", "0", true, false )
+-- local CLength = CreateClientConVar( "sl_cross_length", "1", true, false )
+-- local CColorR = CreateClientConVar( "sl_cross_color_r", "0", true, false )
+-- local CColorG = CreateClientConVar( "sl_cross_color_g", "255", true, false )
+-- local CColorB = CreateClientConVar( "sl_cross_color_b", "0", true, false )
+-- local CColorA = CreateClientConVar( "sl_cross_opacity", "255", true, false )
 
-function SWEP:DrawHUD()
-	// No crosshair when ironsights is on
-	if ( self.Weapon:GetNetworkedBool( "Ironsights" ) ) then return end
-	if ( !CCrosshair:GetBool() ) then return end
+-- function SWEP:DrawHUD()
+-- 	if true then return end
+
+-- 	// No crosshair when ironsights is on
+-- 	if ( self.Weapon:GetNetworkedBool( "Ironsights" ) ) then return end
+-- 	if ( !CCrosshair:GetBool() ) then return end
 	
-	local x, y
+-- 	local x, y
 
-	// If we're drawing the local player, draw the crosshair where they're aiming,
-	// instead of in the center of the screen.
-	if ( self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer() ) then
+-- 	// If we're drawing the local player, draw the crosshair where they're aiming,
+-- 	// instead of in the center of the screen.
+-- 	if ( self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer() ) then
 
-		local tr = util.GetPlayerTrace( self.Owner )
-		tr.mask = bit.bor( CONTENTS_SOLID,CONTENTS_MOVEABLE,CONTENTS_MONSTER,CONTENTS_WINDOW,CONTENTS_DEBRIS,CONTENTS_GRATE,CONTENTS_AUX )
-		local trace = util.TraceLine( tr )
+-- 		local tr = util.GetPlayerTrace( self.Owner )
+-- 		tr.mask = bit.bor( CONTENTS_SOLID,CONTENTS_MOVEABLE,CONTENTS_MONSTER,CONTENTS_WINDOW,CONTENTS_DEBRIS,CONTENTS_GRATE,CONTENTS_AUX )
+-- 		local trace = util.TraceLine( tr )
 		
-		local coords = trace.HitPos:ToScreen()
-		x, y = coords.x, coords.y
+-- 		local coords = trace.HitPos:ToScreen()
+-- 		x, y = coords.x, coords.y
 
-	else
-		x, y = ScrW() / 2.0, ScrH() / 2.0
-	end
+-- 	else
+-- 		x, y = ScrW() / 2.0, ScrH() / 2.0
+-- 	end
 	
-	local scale = 10 * self.Primary.Cone
+-- 	local scale = 10 * self.Primary.Cone
 	
-	// Scale the size of the crosshair according to how long ago we fired our weapon
-	local LastShootTime = self.Weapon:GetNetworkedFloat( "LastShootTime", 0 )
-	scale = scale * (2 - math.Clamp( (CurTime() - LastShootTime) * 5, 0.0, 1.0 ))
+-- 	// Scale the size of the crosshair according to how long ago we fired our weapon
+-- 	local LastShootTime = self.Weapon:GetNetworkedFloat( "LastShootTime", 0 )
+-- 	scale = scale * (2 - math.Clamp( (CurTime() - LastShootTime) * 5, 0.0, 1.0 ))
 
-	surface.SetDrawColor( CColorR:GetInt(), CColorG:GetInt(), CColorB:GetInt(), CColorA:GetInt() )
+-- 	surface.SetDrawColor( CColorR:GetInt(), CColorG:GetInt(), CColorB:GetInt(), CColorA:GetInt() )
 	
-	// Draw an awesome crosshair
-	local gap = 40 * (scale * CGap:GetInt())
-	local length = gap + 20 * (scale * CLength:GetInt())
-	local thick = CThick:GetInt()
-	if thick > 0 then
-		for i = -thick, thick do
-			surface.DrawLine( x - length, y + i, x - gap, y + i )
-			surface.DrawLine( x + length, y + i, x + gap, y + i )
-			surface.DrawLine( x + i, y - length, x + i, y - gap )
-			surface.DrawLine( x + i, y + length, x + i, y + gap )
-		end
-	else
-		surface.DrawLine( x - length, y, x - gap, y )
-		surface.DrawLine( x + length, y, x + gap, y )
-		surface.DrawLine( x, y - length, x, y - gap )
-		surface.DrawLine( x, y + length, x, y + gap )
-	end
-end
+-- 	// Draw an awesome crosshair
+-- 	local gap = 40 * (scale * CGap:GetInt())
+-- 	local length = gap + 20 * (scale * CLength:GetInt())
+-- 	local thick = CThick:GetInt()
+-- 	if thick > 0 then
+-- 		for i = -thick, thick do
+-- 			surface.DrawLine( x - length, y + i, x - gap, y + i )
+-- 			surface.DrawLine( x + length, y + i, x + gap, y + i )
+-- 			surface.DrawLine( x + i, y - length, x + i, y - gap )
+-- 			surface.DrawLine( x + i, y + length, x + i, y + gap )
+-- 		end
+-- 	else
+-- 		surface.DrawLine( x - length, y, x - gap, y )
+-- 		surface.DrawLine( x + length, y, x + gap, y )
+-- 		surface.DrawLine( x, y - length, x, y - gap )
+-- 		surface.DrawLine( x, y + length, x, y + gap )
+-- 	end
+-- end
 
 /*---------------------------------------------------------
 	onRestore

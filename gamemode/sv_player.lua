@@ -156,3 +156,11 @@ function PLAYER:DeathrunChatPrint( msg )
 	net.WriteString( msg )
 	net.Send( self )
 end
+
+function DR:ChatBroadcast( msg )
+	--for k,v in ipairs(player.GetAll()) do
+		net.Start("DeathrunChatMessage")
+		net.WriteString( msg )
+		net.Broadcast()
+	--end
+end

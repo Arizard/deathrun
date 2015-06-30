@@ -25,7 +25,7 @@ SWEP.IronSightsAng = Vector ( 46.9034, 9.0593, -90.2522 )
 
 SWEP.Category				= "Counter-Strike"
 SWEP.Base					= "weapon_cs_base"
-SWEP.HoldType			= "melee"
+SWEP.HoldType			= "knife"
 
 SWEP.Spawnable				= true
 SWEP.AdminSpawnable			= true
@@ -39,7 +39,7 @@ SWEP.AutoSwitchFrom			= false
 SWEP.CrossHairIronsight		= true --does crosshairs when ironsights are on
 
 SWEP.Primary.ClipSize		= -1
-SWEP.Primary.Damage			= 10
+SWEP.Primary.Damage			= 20
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "none"

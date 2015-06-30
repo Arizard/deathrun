@@ -25,10 +25,10 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_MP5Navy.Single" )
-SWEP.Primary.Recoil			= 0.2
+SWEP.Primary.Recoil			= 0.68
 SWEP.Primary.Damage			= 20
 SWEP.Primary.NumShots		= 1
-SWEP.Primary.Cone			= 0.01
+SWEP.Primary.Cone			= 0.009
 SWEP.Primary.ClipSize		= 32
 SWEP.Primary.Delay			= 0.08
 SWEP.Primary.DefaultClip	= 32

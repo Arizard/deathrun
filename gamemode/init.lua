@@ -45,7 +45,7 @@ end
 
 function GM:PlayerSpawn( ply, spec )
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
-
+	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 		ply.FirstSpawn = false
@@ -66,7 +66,7 @@ function GM:PlayerLoadout( ply )
 	ply:StripAmmo()
 
 	ply:SetModel("models/player/group01/male_07.mdl")
-	ply:Give("weapon_crowbar")
+	ply:Give("weapon_knife")
 
 	local teamcol = team.GetColor( ply:Team() )
 	--print(teamcol)
@@ -121,6 +121,7 @@ function GM:EntityTakeDamage( target, dmginfo )
 	local attacker = dmginfo:GetAttacker()
 	if target:IsPlayer() and attacker:IsPlayer() then
 		if target:Team() == attacker:Team() then
+			print("Attacked teammate")
 			dmginfo:SetDamage(0)
 		end
 	end
@@ -161,4 +162,8 @@ concommand.Add("deathrun_toggle_mute", function(ply, cmd, args)
 	net.WriteTable( ply.mutelist )
 	net.Send( ply )
 
+end)
+
+concommand.Add("strip", function(ply)
+	ply:StripWeapons()
 end)

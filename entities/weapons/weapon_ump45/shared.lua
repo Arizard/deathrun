@@ -25,10 +25,10 @@ SWEP.ViewModel 			= "models/weapons/v_smg_ump45.mdl"
 SWEP.WorldModel 			= "models/weapons/w_smg_ump45.mdl"
 
 SWEP.Primary.Sound 		= Sound("Weapon_UMP45.Single")
-SWEP.Primary.Recoil 		= 0.5
+SWEP.Primary.Recoil 		= 0.7
 SWEP.Primary.Damage 		= 22
 SWEP.Primary.NumShots 		= 1
-SWEP.Primary.Cone 		= 0.019
+SWEP.Primary.Cone 		= 0.01
 SWEP.Primary.ClipSize 		= 25
 SWEP.Primary.Delay 		= 0.09
 SWEP.Primary.DefaultClip 	= 25

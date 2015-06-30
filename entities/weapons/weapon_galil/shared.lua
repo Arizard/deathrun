@@ -26,10 +26,10 @@ SWEP.ViewModel 			= "models/weapons/v_rif_galil.mdl"
 SWEP.WorldModel 			= "models/weapons/w_rif_galil.mdl"
 
 SWEP.Primary.Sound 		= Sound("Weapon_Galil.Single")
-SWEP.Primary.Recoil 		= 0.65
+SWEP.Primary.Recoil 		= 0.75
 SWEP.Primary.Damage 		= 25
 SWEP.Primary.NumShots 		= 1
-SWEP.Primary.Cone 		= 0.017
+SWEP.Primary.Cone 		= 0.003
 SWEP.Primary.ClipSize 		= 35
 SWEP.Primary.Delay 		= 0.09
 SWEP.Primary.DefaultClip 	= 35

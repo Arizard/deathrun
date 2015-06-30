@@ -3,6 +3,11 @@ ROUND_PREP = 4
 ROUND_ACTIVE = 5
 ROUND_OVER = 6
 
+-- win constants
+WIN_STALEMATE = 1
+WIN_RUNNER = TEAM_RUNNER
+WIN_DEATH = TEAM_DEATH
+
 if SERVER then
 	RoundDuration = CreateConVar("deathrun_round_duration", 60*5, FCVAR_REPLICATED, "How many seconds each round should last, not including preptime.")
 	PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "How many seconds preptime should go for.")
@@ -57,7 +62,7 @@ ROUND:AddState( ROUND_WAITING,
 
 		
 			timer.Create("DeathrunWaitingStateCheck", 5, 0, function()
-				print("Waiting for players...", #player.GetAllPlaying() )
+				--print("Waiting for players...", #player.GetAllPlaying() )
 				if #player.GetAllPlaying() >= 2 then
 					ROUND:RoundSwitch( ROUND_PREP )
 					timer.Destroy( "DeathrunWaitingStateCheck" )
@@ -140,7 +145,9 @@ ROUND:AddState( ROUND_PREP,
 				death:Spawn()
 
 				local spawns = team.GetSpawnPoints( TEAM_DEATH )
-				death:SetPos( table.Random(spawns):GetPos() )
+				if #spawns > 0 then
+					death:SetPos( table.Random(spawns):GetPos() )
+				end
 			end
 
 			--now, spawn all runners
@@ -152,7 +159,9 @@ ROUND:AddState( ROUND_PREP,
 				runner:Spawn()
 
 				local spawns = team.GetSpawnPoints( TEAM_RUNNER )
-				runner:SetPos( table.Random(spawns):GetPos() )
+				if #spawns > 0 then
+					runner:SetPos( table.Random(spawns):GetPos() )
+				end
 			end
 
 			for k,ply in ipairs(player.GetAll()) do
@@ -180,6 +189,31 @@ ROUND:AddState( ROUND_ACTIVE,
 			if #player.GetAllPlaying() < 2 then
 				ROUND:RoundSwitch( ROUND_WAITING )
 			end
+			local deaths = team.GetPlayers( TEAM_DEATH )
+			local runners = team.GetPlayers( TEAM_RUNNER )
+
+			for k,v in ipairs(deaths) do
+				if not v:Alive() then
+					table.remove(deaths, k)
+				end
+			end
+
+			for k,v in ipairs(runners) do
+				if not v:Alive() then
+					table.remove(runners, k)
+				end
+			end
+
+			--PrintTable( runners )
+
+			if #deaths == 0 and #runners == 0 then
+				ROUND:FinishRound( WIN_STALEMATE )
+			elseif #deaths == 0 then
+				ROUND:FinishRound( WIN_RUNNER )
+			elseif #runners == 0 then
+				ROUND:FinishRound( WIN_DEATH )
+			end
+
 		end
 	end,
 	function()
@@ -201,6 +235,7 @@ ROUND:AddState( ROUND_OVER,
 if SERVER then
 	function ROUND:FinishRound( winteam )
 		ROUND:RoundSwitch( ROUND_OVER )
+		DR:ChatBroadcast("Round over! "..tostring( winteam ))
 	end
 
 	--initial round

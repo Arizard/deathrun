@@ -49,7 +49,7 @@ function DR:CreateScoreboard()
 		surface.SetDrawColor( DR.Colors.Clouds or HexColor("#303030") )
 		surface.DrawRect(0,0,w,h)
 
-		draw.SimpleText(GetHostName(), "deathrun_derma_Large", w/2, h/2, HexColor("#505050"), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.DarkBlue, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	dlist:Add( header )
@@ -147,7 +147,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 			draw.SimpleText("✖", "deathrun_derma_Medium", 2,-1,DR.Colors.Alizarin )
 		end
 
-		if table.HasValue( LocalPlayer().mutelist, av.ply:SteamID() ) then
+		if table.HasValue( LocalPlayer().mutelist or {}, av.ply:SteamID() ) then
 			surface.SetMaterial( muteicon )
 			surface.SetDrawColor(Color(255,255,255,100))
 			surface.DrawRect(0,0,w,h)

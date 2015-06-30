@@ -1,3 +1,3 @@
 #Arizard's Deathrun
 
-This is a little project I'm working on every now and then because I'm sick of the current deathrun gamemode being used. This gamemode will feature button claiming, map starts+ends, analytics, default weapons and more custom features which should be standard for deathrun. Also the interface will be slightly nicer.
+Yet another Deathrun gamemode for Garrysmod. I plan to include features such as map start/end zones (with hooks for customization), button claiming, easy scoreboard customization, appealing HUD and a focus on graphical interfaces for admins and players. The gamemode will also include formatted gamemode chat messages and an easy way to add chat commands. Also features css weapons by default.

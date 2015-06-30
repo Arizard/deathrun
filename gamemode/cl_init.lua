@@ -35,3 +35,4 @@ LocalPlayer().mutelist = LocalPlayer().mutelist or {}
 net.Receive("DeathrunSyncMutelist", function(len, ply)
 	LocalPlayer().mutelist = net.ReadTable()
 end)
+
