@@ -33,6 +33,8 @@ SWEP.AdminSpawnable			= true
 SWEP.ViewModel = "models/weapons/v_knife_t.mdl"
 SWEP.WorldModel = "models/weapons/w_knife_t.mdl" 
 
+SWEP.UseHands = true
+
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false

@@ -73,6 +73,10 @@ function GM:PlayerLoadout( ply )
 	local playercol = Vector( teamcol.r/255, teamcol.g/255, teamcol.b/255 )
 
 	ply:SetPlayerColor( playercol )
+
+	-- run speeds
+	ply:SetRunSpeed( 250 )
+	ply:SetWalkSpeed( 250 )
 	
 end
 

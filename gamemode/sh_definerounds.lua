@@ -189,6 +189,7 @@ ROUND:AddState( ROUND_ACTIVE,
 		if SERVER then
 			if #player.GetAllPlaying() < 2 then
 				ROUND:RoundSwitch( ROUND_WAITING )
+				return
 			end
 			local deaths = {}
 			local runners = {}
