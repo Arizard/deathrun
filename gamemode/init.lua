@@ -78,6 +78,7 @@ end
 
 function GM:PlayerDeath( ply )
 	timer.Simple(5, function()
+		if not IsValid( ply ) then return end -- incase they die and disconnect, prevents console errors.
 		if not ply:Alive() then
 
 			ply.JustDied = true
