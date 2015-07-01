@@ -74,11 +74,11 @@ function SWEP:Reload()
 	self:SetIronsights( false )
 end
 
-function SWEP:CalculateFalloff( drunkhigh, dt ) -- stole the code from my drug addon lol
+function SWEP:CalculateFalloff( drunkhigh, dt ) -- stole the code from my drug addon lol - arizard
 	drunkhigh = (drunkhigh > 0) and (drunkhigh + 1) or drunkhigh -1
 
 	local halflife = 0.5 * math.sqrt(self.Primary.Recoil/1.5) -- is half-life of recoil in seconds
-	local rate =  ( math.log(1/2) / (halflife) ) 
+	local rate =  ( math.log(1/2)*1000 / (halflife) )/1000 
 	local initial = math.abs(drunkhigh)
 	local sign = ((drunkhigh < 0) and -1) or 1
 	local final = 0
@@ -91,19 +91,21 @@ function SWEP:CalculateFalloff( drunkhigh, dt ) -- stole the code from my drug a
 
 end
 
-SWEP.LastThink = CurTime()
-function SWEP:Think()
+if SERVER then
+	SWEP.LastThink = RealTime()
+	function SWEP:Think()
 
-	local dt = CurTime() - self.LastThink
-	self.LastThink = CurTime()
+		local dt = RealTime() - self.LastThink
+		self.LastThink = RealTime()
 
-	if SERVER then
 		self.KickBack = self:CalculateFalloff( self.KickBack, dt )
-		if self.KickBack < 0 then self.KickBack = 0 end	-- do this serverside
+		
+		--if self.KickBack < 0 then self.KickBack = 0 end	-- do this serverside
+		
 	end
-
-	local k = 1
-	
+else
+	function SWEP:Think() -- clientside think
+	end
 end
 
 
@@ -122,6 +124,8 @@ function SWEP:PrimaryAttack()
 	
 	// Shoot the bullet
 	self:CSShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self.Primary.Cone )
+	-- simulate recoil????
+	self.KickBack = self.KickBack + 1
 	
 	// Remove 1 bullet from our clip
 	self:TakePrimaryAmmo( 1 )
@@ -137,14 +141,32 @@ function SWEP:PrimaryAttack()
 	if ( (game.SinglePlayer() && SERVER) || CLIENT ) then
 		self.Weapon:SetNetworkedFloat( "LastShootTime", CurTime() )
 	end
-
-	-- simulate recoil????
-	self.KickBack = self.KickBack + 1
 	
 end
 
+function QuadLerp( frac, p1, p2 )
+
+    local y = (p1-p2) * (frac -1)^2 + p2
+    return y
+
+end
+
+function InverseLerp( pos, p1, p2 )
+
+	local range = 0
+	range = p2-p1
+
+	if range == 0 then return 1 end
+
+	return ((pos - p1)/range)
+
+end
+
 function SWEP:GetRecoilShiftAmount()
-	local shiftamt = self.KickBack > 1 and (0.1*math.pow( math.log(self.KickBack), 5 ))*(self.Primary.Recoil/1.5) or 0
+	local maxshift = self.Primary.ClipSize
+	local minshift = 0
+
+	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
 	return shiftamt
 end
 /*---------------------------------------------------------
@@ -159,6 +181,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Num 		= numbul
 	bullet.Src 		= self.Owner:GetShootPos()			// Source
 	bullet.Dir 		= self.Owner:GetAimVector()			// Dir of bullet
+
 	bullet.Spread 	= Vector( cone, cone, 0 )			// Aim Cone
 	bullet.Tracer	= 4									// Show a tracer on every x bullets 
 	bullet.Force	= 5									// Amount of force to give to phys objects
@@ -169,7 +192,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	local up = shootAng:Up()
 	local shiftamt = self:GetRecoilShiftAmount()
 	shootAng:RotateAroundAxis( right, shiftamt )
-	shootAng:RotateAroundAxis( up, math.random(-shiftamt/4, shiftamt/6))
+	shootAng:RotateAroundAxis( up, math.random(-shiftamt*100/4, shiftamt*100/8)/100 )
 	bullet.Dir = shootAng:Forward()
 	
 	local owner = self.Owner
@@ -177,7 +200,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	bullet.Callback = function(ply, tr, dmginfo)
 		--if SERVER and tr.HitPos then
-			print(tr.Entity:GetClass())
+			--print(tr.Entity:GetClass())
 		--end
 	end
 
@@ -208,9 +231,9 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	
 	draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
 	
-	// try to fool them into thinking they're playing a Tony Hawks game
-	draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-14, 14), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
-	draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-9, 9), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
+	// try to fool them into thinking they're playing a Tony Hawks game -- NOT!
+	--draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-14, 14), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
+	--draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-9, 9), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
 	
 end
 
@@ -241,6 +264,12 @@ function SWEP:GetViewModelPosition( pos, ang )
 	
 	end
 	
+
+	local right = ang:Right();
+	local forward = ang:Forward()
+	local shiftamt = self:GetRecoilShiftAmount()
+	ang:RotateAroundAxis(right, shiftamt)
+	pos = pos + forward*(-shiftamt/self.Primary.ClipSize)*4
 
 	local fIronTime = self.fIronTime or 0
 
@@ -288,21 +317,19 @@ end
 
 
 if CLIENT then
-	SWEP.LastCalcView = CurTime()
+	SWEP.LastCalcView = RealTime()
 	
 	function SWEP:CalcView( ply, pos, ang, fov )
-		local dt = CurTime() - self.LastCalcView
-		self.LastCalcView = CurTime()
-
-		self.KickBack = self:CalculateFalloff( self.KickBack, dt )
-		if self.KickBack < 0 then self.KickBack = 0 end	 -- do this clientside so it's smoother
-
-		--if self.KickBack > 0 then print(self.KickBack) end
-
+		local dt = RealTime() - self.LastCalcView
+		--print(dt, engine.TickInterval())
+		if dt > engine.TickInterval() then
+			self.KickBack = self:CalculateFalloff( self.KickBack, engine.TickInterval() )
+			self.LastCalcView = RealTime()
+		end
 
 		local right = ang:Right();
 		local shiftamt = self:GetRecoilShiftAmount()
-		ang:RotateAroundAxis(right, shiftamt/3)
+		ang:RotateAroundAxis(right, shiftamt/2)
 
 		return pos, ang, fov
 	end

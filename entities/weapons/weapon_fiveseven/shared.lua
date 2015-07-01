@@ -25,7 +25,7 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_FiveSeven.Single" )
-SWEP.Primary.Recoil			= 2.2
+SWEP.Primary.Recoil			= 1
 SWEP.Primary.Damage			= 18
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.005

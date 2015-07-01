@@ -11,6 +11,7 @@ WIN_DEATH = TEAM_DEATH
 if SERVER then
 	RoundDuration = CreateConVar("deathrun_round_duration", 60*5, FCVAR_REPLICATED, "How many seconds each round should last, not including preptime.")
 	PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "How many seconds preptime should go for.")
+	FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
 	DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 end
 
@@ -189,18 +190,16 @@ ROUND:AddState( ROUND_ACTIVE,
 			if #player.GetAllPlaying() < 2 then
 				ROUND:RoundSwitch( ROUND_WAITING )
 			end
-			local deaths = team.GetPlayers( TEAM_DEATH )
-			local runners = team.GetPlayers( TEAM_RUNNER )
+			local deaths = {}
+			local runners = {}
 
-			for k,v in ipairs(deaths) do
-				if not v:Alive() then
-					table.remove(deaths, k)
-				end
-			end
-
-			for k,v in ipairs(runners) do
-				if not v:Alive() then
-					table.remove(runners, k)
+			for k,v in ipairs(player.GetAllPlaying()) do
+				if v:Alive() then
+					if v:Team() == TEAM_RUNNER then
+						table.insert(runners, v)
+					elseif v:Team() == TEAM_DEATH then
+						table.insert( deaths, v )
+					end
 				end
 			end
 
@@ -223,6 +222,12 @@ ROUND:AddState( ROUND_ACTIVE,
 ROUND:AddState( ROUND_OVER,
 	function()
 		print("Round State: OVER")
+		if SERVER then
+			ROUND:SetTimer(FinishDuration:GetInt())
+			timer.Simple(FinishDuration:GetInt(), function()
+				ROUND:RoundSwitch( ROUND_PREP )
+			end)
+		end
 	end,
 	function()
 	--thinking
@@ -235,7 +240,7 @@ ROUND:AddState( ROUND_OVER,
 if SERVER then
 	function ROUND:FinishRound( winteam )
 		ROUND:RoundSwitch( ROUND_OVER )
-		DR:ChatBroadcast("Round over! "..tostring( winteam ))
+		DR:ChatBroadcast("Round over! "..( winteam == WIN_RUNNER and team.GetName( TEAM_RUNNER ).." win!" or winteam == WIN_DEATH and team.GetName( TEAM_DEATH ).." win!" or "Stalemate! Unbelievable!" ) )
 	end
 
 	--initial round

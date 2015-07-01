@@ -23,7 +23,7 @@ concommand.Add("dr_test_menu", function()
 end)
 
 function DR:ChatMessage( msg )
-	chat.AddText(DR.Colors.Clouds, "[", DR.Colors.Alizarin, "DEATHRUN", DR.Colors.Clouds, "] ",msg)
+	chat.AddText(DR.Colors.Clouds, "[", DR.Colors.DarkBlue, "DEATHRUN", DR.Colors.Clouds, "] ",msg)
 end
 
 net.Receive("DeathrunChatMessage", function(len, ply)
