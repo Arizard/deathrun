@@ -31,3 +31,9 @@ concommand.Add("round_switch", function(ply, cmd, args)
 		ROUND:RoundSwitch( r )	
 	end
 end)
+
+hook.Add("PlayerInitialSpawn", "RoundSyncCurrent", function(ply)
+	net.Start("ROUND_STATE")
+	net.WriteInt( ROUND:GetCurrent(), 16 )
+	net.Broadcast()
+end)

@@ -46,14 +46,14 @@ function DR:CreateScoreboard()
 	header:SetSize( dlist:GetWide(), 44 )
 
 	function header:Paint(w,h)
-		surface.SetDrawColor( DR.Colors.Clouds or HexColor("#303030") )
+		surface.SetDrawColor( DR.Colors.Turq or HexColor("#303030") )
 		surface.DrawRect(0,0,w,h)
 
-		draw.SimpleText(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.DarkBlue, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	dlist:Add( header )
-	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to interact with scoreboard."}, dlist:GetWide(), 32, HexColor( "#f39c12" ) ) )
+	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to interact with scoreboard."}, dlist:GetWide(), 32, DR.Colors.Turq ) )
 
 	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_DEATH)).." players on Death Team"}, dlist:GetWide(), 32, team.GetColor( TEAM_DEATH ) ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_DEATH )) do

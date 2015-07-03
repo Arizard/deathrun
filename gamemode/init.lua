@@ -21,6 +21,8 @@ include( "shared.lua" )
 -- scoreboard
 AddCSLuaFile("cl_scoreboard.lua")
 
+-- commands
+include("sv_commands.lua")
 
 -- Round System
 AddCSLuaFile( "roundsystem/sh_round.lua" )
@@ -30,6 +32,13 @@ AddCSLuaFile( "sh_definerounds.lua" )
 include( "roundsystem/sh_round.lua" )
 include( "roundsystem/sv_round.lua" )
 include( "sh_definerounds.lua" )
+
+-- map votes
+AddCSLuaFile( "mapvote/sh_mapvote.lua" )
+AddCSLuaFile( "mapvote/cl_mapvote.lua" )
+
+include( "mapvote/sh_mapvote.lua" )
+include( "mapvote/sv_mapvote.lua" )
 
 --player
 include( "sv_player.lua" )
@@ -47,7 +56,13 @@ function GM:PlayerSpawn( ply, spec )
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
-		GAMEMODE:PlayerSpawnAsSpectator( ply )
+		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
+			GAMEMODE:PlayerSpawnAsSpectator( ply )
+		else
+			ply:SetTeam( TEAM_RUNNER )
+		end
+		ply:SetupHands()
+		GAMEMODE:PlayerLoadout( ply )
 		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
@@ -57,6 +72,13 @@ function GM:PlayerSpawn( ply, spec )
 		ply:SetupHands()
 
 		GAMEMODE:PlayerLoadout( ply )
+	end
+
+	if ply:Team() ~= TEAM_RUNNER and ply:Team() ~= TEAM_DEATH and ply:Team() ~= TEAM_SPECTATOR then ply:SetTeam( TEAM_RUNNER ) end
+
+	local spawns = team.GetSpawnPoints( ply:Team() )
+	if #spawns > 0 then
+		ply:SetPos( table.Random(spawns):GetPos() )
 	end
 end
 
@@ -74,9 +96,10 @@ function GM:PlayerLoadout( ply )
 
 	ply:SetPlayerColor( playercol )
 
-	-- run speeds
+	-- run speeds and jump powah
 	ply:SetRunSpeed( 250 )
 	ply:SetWalkSpeed( 250 )
+	ply:SetJumpPower( 200 )
 	
 end
 
@@ -124,6 +147,13 @@ end
 -- damage hooks
 function GM:EntityTakeDamage( target, dmginfo )
 	local attacker = dmginfo:GetAttacker()
+
+	if target:IsPlayer() then
+		if ROUND:GetCurrent() == ROUND_WAITING or ROUND:GetCurrent() == ROUND_PREP then
+			target:DeathrunChatPrint("You took "..tostring(dmginfo:GetDamage()).." damage.")
+			dmginfo:SetDamage(0)
+		end
+	end
 	if target:IsPlayer() and attacker:IsPlayer() then
 		if target:Team() == attacker:Team() then
 			print("Attacked teammate")

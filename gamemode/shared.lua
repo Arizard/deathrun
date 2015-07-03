@@ -66,3 +66,72 @@ function InverseLerp( pos, p1, p2 )
 	return ((pos - p1)/range)
 
 end
+
+-- I uh... borrowed this from Gravious. I need it but I don't know why.
+
+local lp, ft, ct, cap = LocalPlayer, FrameTime, CurTime
+local mc, mr, bn, ba, bo = math.Clamp, math.Round, bit.bnot, bit.band, bit.bor
+function GM:Move( ply, data )
+	if not IsValid( ply ) then return end
+	if lp and ply != lp() then return end
+	
+	if ply:IsOnGround() or not ply:Alive() then return end
+	
+	local aim = data:GetMoveAngles()
+	local forward, right = aim:Forward(), aim:Right()
+	local fmove = data:GetForwardSpeed()
+	local smove = data:GetSideSpeed()
+	
+	if data:KeyDown( IN_MOVERIGHT ) then smove = smove + 500 end
+	if data:KeyDown( IN_MOVELEFT ) then smove = smove - 500 end
+	
+	forward.z, right.z = 0,0
+	forward:Normalize()
+	right:Normalize()
+
+	local wishvel = forward * fmove + right * smove
+	wishvel.z = 0
+
+	local wishspeed = wishvel:Length()
+	if wishspeed > data:GetMaxSpeed() then
+		wishvel = wishvel * (data:GetMaxSpeed() / wishspeed)
+		wishspeed = data:GetMaxSpeed()
+	end
+
+	local wishspd = wishspeed
+	wishspd = mc( wishspd, 0, 30 )
+
+	local wishdir = wishvel:GetNormal()
+	local current = data:GetVelocity():Dot( wishdir )
+
+	local addspeed = wishspd - current
+	if addspeed <= 0 then return end
+
+	local accelspeed = 50 * ft() * wishspeed
+	if accelspeed > addspeed then
+		accelspeed = addspeed
+	end
+	
+	local vel = data:GetVelocity()
+	vel = vel + (wishdir * accelspeed)
+	
+	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap then
+		local diff = vel:Length2D() - ply.SpeedCap
+		vel:Sub( Vector( vel.x > 0 and diff or -diff, vel.y > 0 and diff or -diff, 0 ) )
+	end
+	
+	data:SetVelocity( vel )
+	return false
+end
+
+local function AutoHop( ply, data )
+	if lp and ply != lp() then return end
+	
+	local ButtonData = data:GetButtons()
+	if ba( ButtonData, IN_JUMP ) > 0 then
+		if ply:WaterLevel() < 2 and ply:GetMoveType() != MOVETYPE_LADDER and not ply:IsOnGround() then
+			data:SetButtons( ba( ButtonData, bn( IN_JUMP ) ) )
+		end
+	end
+end
+hook.Add( "SetupMove", "AutoHop", AutoHop )

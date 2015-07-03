@@ -1,0 +1,1 @@
+include("sh_mapvote.lua")

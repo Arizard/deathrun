@@ -15,7 +15,7 @@ function GM:HUDShouldDraw( el )
 	end
 end
 
-local fontstandard = "Verdana"
+local fontstandard = "Franklin Gothic"
 
 
 surface.CreateFont("deathrun_hud_Large", {
@@ -51,6 +51,11 @@ local HudX = CreateClientConVar("deathrun_hud_x", 8, true, false)
 local HudY = CreateClientConVar("deathrun_hud_y", 2, true, false)
 local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
 
+local RoundNames = {}
+RoundNames[ROUND_WAITING] = "Waiting for players"
+RoundNames[ROUND_PREP] = "Preparing"
+RoundNames[ROUND_ACTIVE] = "Time Left"
+RoundNames[ROUND_OVER] = "Round Over"
 
 function GM:HUDPaint()
 	
@@ -112,7 +117,7 @@ function DR:DrawPlayerHUD( x, y )
 	surface.SetDrawColor( DR.Colors.Clouds ) -- Time Left
 	surface.DrawRect(dx,dy,228,16)
 
-	draw.SimpleText( "TIME LEFT", "deathrun_hud_Small", dx+4,  dy + 16/2, tcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+	draw.SimpleText( string.upper( RoundNames[ ROUND:GetCurrent() ]  or "TIME LEFT" ), "deathrun_hud_Small", dx+4,  dy + 16/2, tcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	draw.SimpleText( string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "deathrun_hud_Small", dx + 228-4,  dy + 16/2, tcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
 	dy = dy + 16 + 4

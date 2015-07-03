@@ -47,8 +47,12 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
+SWEP.Secondary.Delay = 0
 
 SWEP.KickBack = 0
+
+SWEP.Scope = false
+SWEP.ScopedFOV = 25
 
 /*---------------------------------------------------------
 ---------------------------------------------------------*/
@@ -65,12 +69,19 @@ function SWEP:Initialize()
 	
 end
 
+function SWEP:Holster()
+	if self then
+		self:SetIronsights( false, true )
+	end
+	return true
+end
 
 /*---------------------------------------------------------
 	Reload does nothing
 ---------------------------------------------------------*/
 function SWEP:Reload()
 	self.Weapon:DefaultReload( ACT_VM_RELOAD );
+	
 	self:SetIronsights( false )
 end
 
@@ -112,7 +123,13 @@ end
 /*---------------------------------------------------------
 	PrimaryAttack
 ---------------------------------------------------------*/
+function SWEP:PrimaryAttack2() end
+
+SWEP.LastPrimaryShotTime = 0
 function SWEP:PrimaryAttack()
+
+	if CurTime() < self.LastPrimaryShotTime + self.Primary.Delay then return end
+	self.LastPrimaryShotTime = CurTime()
 
 	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay )
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
@@ -141,6 +158,8 @@ function SWEP:PrimaryAttack()
 	if ( (game.SinglePlayer() && SERVER) || CLIENT ) then
 		self.Weapon:SetNetworkedFloat( "LastShootTime", CurTime() )
 	end
+
+	self:PrimaryAttack2()
 	
 end
 
@@ -317,6 +336,27 @@ end
 
 
 if CLIENT then
+	local scopedirt = surface.GetTextureID( "sprites/scope_arc.vtf" )
+	local scoperadius = ScrH()/2 - 50
+
+	function SWEP:DrawHUD()
+
+		if self:GetIronsights() and self.Scope then
+			surface.SetDrawColor(0,0,0)
+			surface.DrawRect(0,0,ScrW(), ScrH()/2-scoperadius + 5)
+			surface.DrawRect(0,0,ScrW()/2-scoperadius + 5, ScrH())
+			surface.DrawRect(ScrW()/2 + scoperadius - 5,0,ScrW()/2-scoperadius + 5, ScrH())
+			surface.DrawRect(0,ScrH()/2 + scoperadius - 5, ScrW(), ScrH()/2 - scoperadius)
+
+			surface.SetTexture( scopedirt )
+			surface.DrawTexturedRectUV((ScrW()/2) - scoperadius, (ScrH()/2) - scoperadius, scoperadius, scoperadius, 1,1,0,0)
+			surface.DrawTexturedRectUV((ScrW()/2), (ScrH()/2) - scoperadius, scoperadius, scoperadius, 0,1,1,0)
+			surface.DrawTexturedRectUV((ScrW()/2) - scoperadius, (ScrH()/2) , scoperadius, scoperadius, 1,0,0,1)
+			surface.DrawTexturedRectUV((ScrW()/2) , (ScrH()/2) , scoperadius, scoperadius, 0,0,1,1)
+		end
+	end
+
+
 	SWEP.LastCalcView = RealTime()
 	
 	function SWEP:CalcView( ply, pos, ang, fov )
@@ -331,36 +371,65 @@ if CLIENT then
 		local shiftamt = self:GetRecoilShiftAmount()
 		ang:RotateAroundAxis(right, shiftamt/2)
 
+		if self:GetIronsights() then
+			if self.Scope == true then
+				fov = self.ScopedFOV
+			end
+		end
+
 		return pos, ang, fov
+	end
+
+	function SWEP:CalcViewModelView( ply, opos, oang, pos, ang )
+		if self:GetIronsights() == true then
+			pos = pos + ang:Forward()*-100
+		end
+		return pos, ang
+	end
+
+	function SWEP:AdjustMouseSensitivity()
+		if self:GetIronsights() then
+			if self.Scope == true then
+				return self.ScopedFOV/70
+			end
+		end
 	end
 end
 
 /*---------------------------------------------------------
 	SetIronsights
 ---------------------------------------------------------*/
-function SWEP:SetIronsights( b )
+function SWEP:SetIronsights( b, mute )
 
-	self.Weapon:SetNetworkedBool( "Ironsights", b )
+	self.Weapon:SetNWBool( "Ironsights", b )
+
+	if self.Scope and not mute then
+		self.Weapon:EmitSound( "weapons/zoom.wav" )
+	end
+
+end
+
+function SWEP:GetIronsights( )
+
+	return self.Weapon:GetNWBool( "Ironsights", false )
 
 end
 
 
-SWEP.NextSecondaryAttack = 0
+SWEP.LastSecondaryShotTime = 0
 /*---------------------------------------------------------
 	SecondaryAttack
 ---------------------------------------------------------*/
---[[function SWEP:SecondaryAttack()
+function SWEP:SecondaryAttack2()
+end
+function SWEP:SecondaryAttack()
 
-	if ( !self.IronSightsPos ) then return end
-	if ( self.NextSecondaryAttack > CurTime() ) then return end
+	if CurTime() < self.LastSecondaryShotTime + self.Secondary.Delay then return end
+	self.LastSecondaryShotTime = CurTime()
 	
-	bIronsights = !self.Weapon:GetNetworkedBool( "Ironsights", false )
-	
-	self:SetIronsights( bIronsights )
-	
-	self.NextSecondaryAttack = CurTime() + 0.3
-	
-end]]
+	self:SecondaryAttack2()
+
+end
 
 /*---------------------------------------------------------
 	DrawHUD

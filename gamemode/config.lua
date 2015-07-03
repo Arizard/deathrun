@@ -14,3 +14,5 @@ DR.Colors = {
 	DarkBlue = HexColor("#1B325F"),
 	LightBlue = HexColor("#9CC4E4")
 }
+
+DR.AirAccelerate = 1000

@@ -10,7 +10,7 @@ if ( CLIENT ) then
 	
 end
 
-SWEP.HoldType			= "smg"
+SWEP.HoldType			= "ar2"
 SWEP.Base				= "weapon_cs_base"
 SWEP.Category			= "Counter-Strike"
 

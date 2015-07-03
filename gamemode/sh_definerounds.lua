@@ -144,11 +144,6 @@ ROUND:AddState( ROUND_PREP,
 
 				death:SetTeam( TEAM_DEATH )
 				death:Spawn()
-
-				local spawns = team.GetSpawnPoints( TEAM_DEATH )
-				if #spawns > 0 then
-					death:SetPos( table.Random(spawns):GetPos() )
-				end
 			end
 
 			--now, spawn all runners
@@ -158,11 +153,6 @@ ROUND:AddState( ROUND_PREP,
 
 				runner:SetTeam( TEAM_RUNNER )
 				runner:Spawn()
-
-				local spawns = team.GetSpawnPoints( TEAM_RUNNER )
-				if #spawns > 0 then
-					runner:SetPos( table.Random(spawns):GetPos() )
-				end
 			end
 
 			for k,ply in ipairs(player.GetAll()) do
