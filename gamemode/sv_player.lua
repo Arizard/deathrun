@@ -87,6 +87,8 @@ function PLAYER:ChangeSpectate()
 
 	end
 
+
+	self:SpecModify( 0 )
 	
 end
 
@@ -113,6 +115,8 @@ function PLAYER:SpecModify( n )
 	if #pool > 0 then
 		if pool[self.SpecEntIdx] then
 			self:SpectateEntity( pool[self.SpecEntIdx] )
+			self:SetupHands( pool[self.SpecEntIdx] )
+
 		end
 	end
 
@@ -155,6 +159,8 @@ function PLAYER:DeathrunChatPrint( msg )
 	net.Start("DeathrunChatMessage")
 	net.WriteString( msg )
 	net.Send( self )
+
+	MsgC(DR.Colors.Turq, "Server to "..self:Nick()..": "..msg)
 end
 
 function DR:ChatBroadcast( msg )
@@ -162,5 +168,6 @@ function DR:ChatBroadcast( msg )
 		net.Start("DeathrunChatMessage")
 		net.WriteString( msg )
 		net.Broadcast()
+		MsgC(DR.Colors.Turq, "Server Broadcast: "..msg)
 	--end
 end

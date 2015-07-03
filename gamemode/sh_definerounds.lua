@@ -47,6 +47,7 @@ else
 	end)
 end
 
+local DeathTeamStreaks = {}
 
 ROUND:AddState( ROUND_WAITING,
 	function()
@@ -59,6 +60,8 @@ ROUND:AddState( ROUND_WAITING,
 
 				ply:SetTeam( TEAM_RUNNER )
 				ply:Spawn()
+
+
 			end
 
 		
@@ -95,7 +98,10 @@ ROUND:AddState( ROUND_PREP,
 				if not ply:ShouldStaySpectating() then -- for some reason we need to do this otherwise people spawn as spec when they shouldnt!
 					ply:SetTeam( TEAM_RUNNER )
 				end
+				DeathTeamStreaks[ply:SteamID()] = DeathTeamStreaks[ply:SteamID()] or 0
 			end
+
+			PrintTable(DeathTeamStreaks)
 
 			-- let's pick deaths at random, but ignore if they have been death the 2 previous rounds
 			local deaths = {}
@@ -108,11 +114,10 @@ ROUND:AddState( ROUND_PREP,
 			for k,v in ipairs(pool) do -- here we remove all the players who were ever death twice in a row
 				v:KillSilent()
 
-				v.DeathTeamStreak = v.DeathTeamStreak or 0
-
-				if v.DeathTeamStreak > 1 then
+				if DeathTeamStreaks[v:SteamID()] > 1 then
 					table.remove( pool, k )
 					table.insert( runners, v )
+					DeathTeamStreaks[v:SteamID()] = 0
 				end
 			end
 
@@ -144,6 +149,8 @@ ROUND:AddState( ROUND_PREP,
 
 				death:SetTeam( TEAM_DEATH )
 				death:Spawn()
+
+				DeathTeamStreaks[death:SteamID()] = DeathTeamStreaks[death:SteamID()] + 1
 			end
 
 			--now, spawn all runners
@@ -153,6 +160,7 @@ ROUND:AddState( ROUND_PREP,
 
 				runner:SetTeam( TEAM_RUNNER )
 				runner:Spawn()
+				DeathTeamStreaks[runner:SteamID()] = 0
 			end
 
 			for k,ply in ipairs(player.GetAll()) do

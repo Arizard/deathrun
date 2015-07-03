@@ -8,10 +8,10 @@ if ( CLIENT ) then
 
 	SWEP.DrawAmmo			= true
 	SWEP.DrawCrosshair		= false
-	SWEP.ViewModelFOV		= 82
-	SWEP.ViewModelFlip		= true
+	SWEP.ViewModelFOV		= 55
+	SWEP.ViewModelFlip = false
 	SWEP.CSMuzzleFlashes	= true
-	
+	SWEP.UseHands = true
 	surface.CreateFont("CSKillIcons", { font="csd", weight="500", size=ScreenScale(30),antialiasing=true,additive=true })
 	surface.CreateFont("CSSelectIcons", { font="csd", weight="500", size=ScreenScale(60),antialiasing=true,additive=true })
 
@@ -54,6 +54,8 @@ SWEP.KickBack = 0
 SWEP.Scope = false
 SWEP.ScopedFOV = 25
 
+SWEP.Reloading = false
+
 /*---------------------------------------------------------
 ---------------------------------------------------------*/
 function SWEP:Initialize()
@@ -69,6 +71,8 @@ function SWEP:Initialize()
 	
 end
 
+
+
 function SWEP:Holster()
 	if self then
 		self:SetIronsights( false, true )
@@ -80,9 +84,14 @@ end
 	Reload does nothing
 ---------------------------------------------------------*/
 function SWEP:Reload()
+	
+	if (self:Clip1() == self.Primary.ClipSize) or self.Reloading == true then return end
+
 	self.Weapon:DefaultReload( ACT_VM_RELOAD );
 	
-	self:SetIronsights( false )
+	self:SetIronsights( false, true )
+
+	self.Reloading = true
 end
 
 function SWEP:CalculateFalloff( drunkhigh, dt ) -- stole the code from my drug addon lol - arizard
@@ -112,10 +121,11 @@ if SERVER then
 		self.KickBack = self:CalculateFalloff( self.KickBack, dt )
 		
 		--if self.KickBack < 0 then self.KickBack = 0 end	-- do this serverside
-		
+		self.Reloading = false
 	end
 else
 	function SWEP:Think() -- clientside think
+		self.Reloading = false
 	end
 end
 
@@ -128,7 +138,14 @@ function SWEP:PrimaryAttack2() end
 SWEP.LastPrimaryShotTime = 0
 function SWEP:PrimaryAttack()
 
+	timer.Simple( self.Primary.Delay*0.9, function() 
+		if self.Weapon and not self.Reloading then
+			self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
+		end
+	end )
+
 	if CurTime() < self.LastPrimaryShotTime + self.Primary.Delay then return end
+
 	self.LastPrimaryShotTime = CurTime()
 
 	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay )
@@ -287,10 +304,14 @@ function SWEP:GetViewModelPosition( pos, ang )
 	local right = ang:Right();
 	local forward = ang:Forward()
 	local shiftamt = self:GetRecoilShiftAmount()
-	ang:RotateAroundAxis(right, shiftamt)
-	pos = pos + forward*(-shiftamt/self.Primary.ClipSize)*4
+	ang:RotateAroundAxis(right, shiftamt/1.7)
+	pos = pos + forward*math.Clamp( (-shiftamt/self.Primary.ClipSize)*4, 0, 16 )
 
 	local fIronTime = self.fIronTime or 0
+
+	if self:GetIronsights() == true then
+		pos = pos + ang:Forward()*-100
+	end
 
 	if ( !bIron && fIronTime < CurTime() - IRONSIGHT_TIME ) then 
 		return pos, ang 
@@ -380,12 +401,10 @@ if CLIENT then
 		return pos, ang, fov
 	end
 
-	function SWEP:CalcViewModelView( ply, opos, oang, pos, ang )
-		if self:GetIronsights() == true then
-			pos = pos + ang:Forward()*-100
-		end
-		return pos, ang
-	end
+	-- function SWEP:CalcViewModelView( ply, opos, oang, pos, ang )
+		
+	-- 	return pos, ang
+	-- end
 
 	function SWEP:AdjustMouseSensitivity()
 		if self:GetIronsights() then

@@ -17,7 +17,9 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_rif_ak47.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_rif_ak47.mdl"
+
+SWEP.ViewModelFOV = 50
 SWEP.WorldModel			= "models/weapons/w_rif_ak47.mdl"
 
 SWEP.Weight				= 5

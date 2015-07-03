@@ -50,6 +50,12 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply.FirstSpawn = true
 
+	DR:ChatBroadcast(ply:Nick().." has joined the server.")
+
+end
+
+function GM:PlayerDisconnected( ply )
+	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end
 
 function GM:PlayerSpawn( ply, spec )
@@ -57,6 +63,7 @@ function GM:PlayerSpawn( ply, spec )
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
+			--ply:KillSilent()
 			GAMEMODE:PlayerSpawnAsSpectator( ply )
 		else
 			ply:SetTeam( TEAM_RUNNER )
@@ -66,20 +73,24 @@ function GM:PlayerSpawn( ply, spec )
 		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
+	elseif ply:ShouldStaySpectating() then
+		--ply:KillSilent()
+		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	else
 		ply:StopSpectate()
 
-		ply:SetupHands()
+		ply:SetupHands( ply )
 
 		GAMEMODE:PlayerLoadout( ply )
 	end
 
 	if ply:Team() ~= TEAM_RUNNER and ply:Team() ~= TEAM_DEATH and ply:Team() ~= TEAM_SPECTATOR then ply:SetTeam( TEAM_RUNNER ) end
 
-	local spawns = team.GetSpawnPoints( ply:Team() )
+	local spawns = team.GetSpawnPoints( ply:Team() ) or {}
 	if #spawns > 0 then
 		ply:SetPos( table.Random(spawns):GetPos() )
 	end
+
 end
 
 function GM:PlayerLoadout( ply )

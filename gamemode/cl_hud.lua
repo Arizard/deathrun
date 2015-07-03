@@ -83,7 +83,38 @@ function GM:HUDPaint()
 		{ ScrW() - 228 - 8, ScrH() - 108 - 8 },
 	}
 
+	DR:DrawTargetID()
 	DR:DrawPlayerHUD( hud_positions[ HudPos:GetInt() +1 ][1] or 8, hud_positions[ HudPos:GetInt() +1 ][2] or 8 )
+
+end
+
+DR.TargetIDAlpha = 0
+DR.TargetIDName = ""
+DR.TargetIDColor = Color(255,255,255)
+
+function DR:DrawTargetID()
+
+	local tr = LocalPlayer():GetEyeTrace()
+
+	if tr.Hit then
+		if tr.Entity then
+			if tr.Entity:IsPlayer() then
+				
+
+				DR.TargetIDAlpha = 255
+				DR.TargetIDName = tr.Entity:Nick().." - "..tostring(tr.Entity:Health()).."%"
+				DR.TargetIDColor = team.GetColor( tr.Entity:Team() )
+
+			end
+		end
+	end
+
+	local x , y = ScrW()/2, ScrH()/2 + 16
+	DR.TargetIDColor.a = math.sqrt(DR.TargetIDAlpha)*255 / math.sqrt(255)
+	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x+1, y+1, Color(0,0,0,DR.TargetIDColor.a*0.9) ,TEXT_ALIGN_CENTER)
+	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x, y, DR.TargetIDColor ,TEXT_ALIGN_CENTER)
+	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x, y, Color(255,255,255,DR.TargetIDColor.a*0.2) ,TEXT_ALIGN_CENTER)
+	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - 0.5, 0, 255 )
 
 end
 

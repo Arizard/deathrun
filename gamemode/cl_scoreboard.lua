@@ -1,8 +1,12 @@
 local columns = {"Name", "Title", "Rank", "Ping"}
 local columnFunctions = {
 	function( ply ) return ply:Nick() end,
-	function( ply ) return "custom_title" end,
-	function( ply ) return ply:GetUserGroup() end,
+	function( ply ) 
+		return ply:SteamID() == "STEAM_0:0:29351088" and "Worst GR Member 2k15" or "" 
+	end,
+	function( ply ) 
+		return string.upper(ply:GetUserGroup())
+	end,
 	function( ply ) return ply:Ping() end,
 }
 local columnColorFunctions = {
@@ -127,9 +131,11 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		surface.SetDrawColor(self.bgcol)
 		surface.DrawRect(0,0,w,h)
 
-		if not self.ply:Alive() then
-			surface.SetDrawColor(Color(255,255,255,70))
-			surface.DrawRect(0,0,w,h)
+		if IsValid( self.ply ) then
+			if not self.ply:Alive() then
+				surface.SetDrawColor(Color(255,255,255,70))
+				surface.DrawRect(0,0,w,h)
+			end
 		end
 	end
 
@@ -140,19 +146,22 @@ function DR:NewScoreboardPlayer( ply, w, h )
 	av.ply = ply
 
 	function av:PaintOver(w,h)
-		if not self.ply:Alive() then
-			surface.SetDrawColor(Color(255,255,255,100))
-			surface.DrawRect(0,0,w,h)
+		if IsValid( self.ply ) then
+			if not self.ply:Alive() then
+				surface.SetDrawColor(Color(255,255,255,100))
+				surface.DrawRect(0,0,w,h)
 
-			draw.SimpleText("✖", "deathrun_derma_Medium", 2,-1,DR.Colors.Alizarin )
+				draw.SimpleText("✖", "deathrun_derma_Medium", 2,-1,DR.Colors.Alizarin )
+			end
 		end
-
-		if table.HasValue( LocalPlayer().mutelist or {}, av.ply:SteamID() ) then
-			surface.SetMaterial( muteicon )
-			surface.SetDrawColor(Color(255,255,255,100))
-			surface.DrawRect(0,0,w,h)
-			surface.SetDrawColor(Color(255,255,255,255))
-			surface.DrawTexturedRect(h/2-8,w/2-8,16,16)
+		if self.ply:IsValid() then
+			if table.HasValue( LocalPlayer().mutelist or {}, self.ply:SteamID() ) then
+				surface.SetMaterial( muteicon )
+				surface.SetDrawColor(Color(255,255,255,100))
+				surface.DrawRect(0,0,w,h)
+				surface.SetDrawColor(Color(255,255,255,255))
+				surface.DrawTexturedRect(h/2-8,w/2-8,16,16)
+			end
 		end
 	end
 

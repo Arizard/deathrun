@@ -15,6 +15,8 @@ elseif CLIENT then
 	SWEP.SlotPos			= 1
 	SWEP.IconLetter			= "j"
 
+	SWEP.ViewModelFOV = 57
+
 	SWEP.NameOfSWEP			= "weapon_knife" --always make this the name of the folder the SWEP is in.
 	killicon.AddFont( SWEP.NameOfSWEP, "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 	
@@ -30,7 +32,7 @@ SWEP.HoldType			= "knife"
 SWEP.Spawnable				= true
 SWEP.AdminSpawnable			= true
 
-SWEP.ViewModel = "models/weapons/v_knife_t.mdl"
+SWEP.ViewModel = "models/weapons/cstrike/c_knife_t.mdl"
 SWEP.WorldModel = "models/weapons/w_knife_t.mdl" 
 
 SWEP.UseHands = true
@@ -40,8 +42,9 @@ SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false
 SWEP.CrossHairIronsight		= true --does crosshairs when ironsights are on
 
+SWEP.Primary.Delay = 0.6
 SWEP.Primary.ClipSize		= -1
-SWEP.Primary.Damage			= 20
+SWEP.Primary.Damage			= 30
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "none"
@@ -63,27 +66,48 @@ SWEP.ShootafterTakeout = 0
 SWEP.IdleTimer = CurTime()
 
 function SWEP:SecondaryAttack()
-
+	if true then return end
 	if ( self.ShootafterTakeout > CurTime() ) then return end		
 	self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
 	self.Weapon:SetNextSecondaryFire( CurTime() + 0.5 )
 
 	self.Weapon:EmitSound(self.MissSound,100,math.random(90,120))
-	self.Weapon:SendWeaponAnim(ACT_VM_HITCENTER)
+	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK_2)
 
 	self.Owner:SetAnimation( PLAYER_ATTACK1 ) --3rd Person Animation
 end
-
+SWEP.LastPrimaryShot = CurTime()
 function SWEP:PrimaryAttack()
+
+	--if CurTime() < self.LastPrimaryShot + self.Primary.Delay then return end
+	self.LastPrimaryShot = CurTime()
+
 
 	if ( self.ShootafterTakeout > CurTime() ) then return end		
 	self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
 	self.Weapon:SetNextSecondaryFire( CurTime() + 0.5 )
+	local ang = self.Owner:EyeAngles()
+	local spos = self.Owner:EyePos()
+	local tracedata = {
+            start = spos, 
+            endpos = spos + ang:Forward()*1000,
+            mins = Vector(-7,-5,-7),
+            maxs = Vector(7,5,7),
+            filter = self.Owner,
+            mask = MASK_SHOT_HULL
+         }
+ 	local tr = util.TraceHull( tracedata )
+ 	local dir = ((tr.HitPos or Vector(0,0,0)) - self.Owner:EyePos())
+ 	dir:Normalize()
+ 	dir = dir:Angle()
+ 	dir:Normalize()
+ 	
+ 	print((tr.HitPos - tracedata.start):GetNormalized():Dot(( tracedata.endpos - tracedata.start ):GetNormalized()))
 
-	local trace = util.GetPlayerTrace(self.Owner)
- 	local tr = util.TraceLine(trace)
 
 	if (self.Owner:GetPos() - tr.HitPos):Length() < 75 then
+
+
 		if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or tr.Entity.MatType == "MAT_GLASS" then
 		
 			if self.hit == 1 then
@@ -104,35 +128,45 @@ function SWEP:PrimaryAttack()
 			end
 			
 			self.Owner:SetAnimation( PLAYER_ATTACK1 );
-			self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER );
+			self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK );
+
+			local ed = EffectData()
+			ed:SetOrigin(tr.Entity:GetPos()+Vector(0,0,50) )
+			if SERVER then
+				util.Effect("bloodspray", ed)
+			end
+
+			if tr.Entity and SERVER then
+				tr.Entity:TakeDamage(self.Primary.Damage, self.Owner, self.Weapon)
+			end
 			
-			bullet = {}
-			bullet.Num    = 1
-			bullet.Src    = self.Owner:GetShootPos()
-			bullet.Dir    = self.Owner:GetAimVector()
-			bullet.Spread = Vector(0, 0, 0)
-			bullet.Tracer = 0
-			bullet.Force  = 5
-			bullet.Damage = 10
-			self.Owner:FireBullets(bullet)
 		else
+			
 			util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
 			self.Weapon:EmitSound(self.WallSound,100,math.random(95,110))
-			self.Weapon:SendWeaponAnim(ACT_VM_HITCENTER)
+			
 		end
 	
 	
 	else
 		self.Weapon:EmitSound(self.MissSound,100,math.random(90,120))
-		self.Weapon:SendWeaponAnim(ACT_VM_HITCENTER)
+		
 		
 	end
 	
 	self.Owner:SetAnimation( PLAYER_ATTACK1 ) --3rd Person Animation
+	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 end
 
 function SWEP:Reload()
 	return false
+end
+
+function SWEP:CalcViewModelView( ply, opos, oang, pos, ang, fov )
+
+	pos = pos + ang:Up()*-2
+
+	return pos, ang
 end
 
 function SWEP:Deploy()

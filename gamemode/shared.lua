@@ -9,8 +9,8 @@ function GM:Initialize()
 	
 end
 
-TEAM_RUNNER = 2
-TEAM_DEATH = 3
+TEAM_RUNNER = 3
+TEAM_DEATH = 2
 
 function GM:CreateTeams()
 	team.SetUp(TEAM_RUNNER, "Runners", DR.Colors.RunnerTeam, false)

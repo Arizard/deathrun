@@ -17,7 +17,8 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_snip_awp.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_snip_awp.mdl"
+
 SWEP.WorldModel			= "models/weapons/w_snip_awp.mdl"
 
 SWEP.Weight				= 5
@@ -45,11 +46,7 @@ SWEP.Scope = true
 SWEP.ScopedFOV = 20
 
 function SWEP:PrimaryAttack2() -- secondary primary attack so we don't override the default base one
-	timer.Simple( self.Primary.Delay*0.9, function() 
-			if self.Weapon then
-				self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
-			end
-		end )
+
 	if self:GetIronsights() then
 		timer.Simple(self.Primary.Delay/1.5, function()
 			if IsValid(self) then
