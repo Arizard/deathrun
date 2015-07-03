@@ -8,6 +8,9 @@ include( "shared.lua" )
 
 include( "cl_scoreboard.lua" )
 
+include( "mapvote/sh_mapvote.lua" )
+include( "mapvote/cl_mapvote.lua" )
+
 include( "roundsystem/sh_round.lua" )
 include( "roundsystem/cl_round.lua" )
 include( "sh_definerounds.lua" )

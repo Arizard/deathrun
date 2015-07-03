@@ -37,7 +37,7 @@ COLORS.NeutralHigh = HexColor("#ecf0f1")
 COLORS.NeutralMed = HexColor("#bdc3c7")
 COLORS.NeutralLow = HexColor("#95a5a6")
 COLORS.NeutralDark = HexColor("#7f8c8d")
-COLORS.Turq = HexColor("#e67e22")
+COLORS.Turq = DR.Colors.Turq
 COLORS.TurqDark = HexColor("#d35400")
 
 function deathrunShadowText( text, font, x, y, col, ax, ay , d)
@@ -78,8 +78,8 @@ function MAIN:OnClose() end-- stub
 function MAIN:Init()  
 	
 	self.bgalpha = 25
-	self.bgcolor = HexColor("#bdc3c7", 50)
-	self.fgcolor = COLORS.NeutralHigh
+	self.bgcolor = HexColor("#ffffff", 100)
+	self.fgcolor = DR.Colors.Turq
 	self.title = "deathrun Window"
    
 	self.cb = vgui.Create("DButton", self)      
@@ -119,7 +119,7 @@ end
 function MAIN:Paint(w,h)
 	local inner = {x = 0,y = 28, w = self:GetWide(), h = self:GetTall() - 28 - 8}
 
-	surface.SetDrawColor(255,255,255, 0)
+	surface.SetDrawColor(COLORS.NeutralHigh)
 	deathrunDrawBlur(self, 4)
 
 	local bgcol = self:GetSecondaryColor()
@@ -136,7 +136,7 @@ function MAIN:Paint(w,h)
 	surface.DrawRect(0,h-8,w,4)
 
 	--title
-	deathrunShadowText( self.title ,"deathrun_derma_Small",w/2,4, HexColor("#e74c3c") , TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 0)
+	deathrunShadowText( self.title ,"deathrun_derma_Small",w/2,4, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 0)
 end
 
 function MAIN:SetPrimaryColor( col )

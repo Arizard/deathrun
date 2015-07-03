@@ -1,10 +1,28 @@
 include("sh_mapvote.lua")
 util.AddNetworkString("MapvoteUpdateMapList")
+util.AddNetworkString("MapvoteSendAllMaps")
 util.AddNetworkString("MapvoteSetActive")
+util.AddNetworkString("MapvoteSyncNominations")
 
 MV.MapList = {}
 MV.Players = {} -- store each player's vote - {Player, Map}
+MV.PlayerNominations = {}
 MV.Nominations = {}
+
+MV.Active = false
+MV.TimeLeft = MV.VotingTime
+
+--commands
+concommand.Add("mapvote_list_maps", function(ply)
+
+	net.Start("MapvoteSendAllMaps")
+	net.WriteTable({
+		maps = MV:GetGoodMaps(),
+		action = "openlist"
+	})
+	net.Send( ply )
+
+end)
 
 function MV:SyncMapList()
 	net.Start( "MapvoteUpdateMapList" )
@@ -12,8 +30,7 @@ function MV:SyncMapList()
 	net.Broadcast()
 end
 
-function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
-
+function MV:GetGoodMaps()
 	-- get a list of maps
 	local mapfiles = file.Find("maps/*.bsp", "GAME", "nameasc")
 
@@ -37,7 +54,19 @@ function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
 		end
 	end
 
-	mapfiles = table.Copy( goodmaps )
+	return goodmaps
+end
+
+function MV:UpdateMapVote()
+
+	net.Start("MapvoteUpdateMapList")
+	net.WriteTable( MV.MapList )
+	net.Broadcast()
+end
+
+function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
+
+	mapfiles = MV:GetGoodMaps()
 
 	-- populate the maplist
 	MV.MapList = {}
@@ -75,20 +104,113 @@ function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
 		numMaps = numMaps + 1 
 	end
 
-	--print("Total Loops:",totalloops, "NumMaps", numMaps)
-
 	PrintTable( MV.MapList )
-
-	-- for i = 1, MV.MaxMaps - #MV.MapList do -- fill the remaining slots
-	-- 	if mapfiles[i] then
-	-- 		MV.MapList[ mapfiles[i] ] = 0
-	-- 	end
-	-- end
-
-	
 
 	net.Start("MapvoteSetActive")
 	net.WriteBit( true )
 	net.WriteTable( MV.MapList )
+	net.WriteFloat( MV.VotingTime )
 	net.Broadcast()
+
+	MV.Active = true
+	MV.TimeLeft = MV.VotingTime
 end
+
+function MV:StopMapVote()
+	net.Start("MapvoteSetActive")
+	net.WriteBit( false )
+	net.WriteTable( {} )
+	net.WriteFloat( 9999 )
+	net.Broadcast()
+
+	MV.Active = false
+	MV.TimeLeft = 9999
+end
+
+function MV:FinishMapVote()
+	MV.Active = false
+	-- find winning map
+	-- change to it
+
+end
+
+timer.Create("MapvoteCountdownTimer", 0.2, 0, function()
+	if MV.Active == true then
+		MV.TimeLeft = MV.TimeLeft - 0.2
+		if MV.TimeLeft < 0 then
+			MV:FinishMapVote()
+		end
+	end
+end)
+
+concommand.Add("mapvote_begin_mapvote", function(ply, cmd, args)
+
+	local cont = false
+	if IsValid( ply ) then
+		if ply:IsAdmin() then
+			cont = true
+		end
+	else
+		cont = true
+	end
+
+	MV:BeginMapVote()
+
+end)
+
+concommand.Add("mapvote_vote", function(ply, cmd, args)
+	if args[1] and IsValid( ply ) then
+		vot = args[1]
+		MV.Players[ ply:SteamID() ] = vot
+
+		for k,v in pairs( MV.MapList ) do
+			MV.MapList[k] = 0
+		end
+		for k,v in pairs( MV.Players ) do
+			MV.MapList[v] = (MV.MapList[v] or 0) + 1
+		end
+
+		MV:UpdateMapVote()
+	else
+		if IsValid(ply) then
+			ply:DeathrunChatPrint("Please specify a map.")
+		end
+	end
+end)
+
+concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
+
+	if args[1] then
+		nom = args[1]
+		MV.PlayerNominations[ ply:SteamID() ] = nom
+
+		MV.Nominations = {}
+		for k,v in pairs( MV.PlayerNominations ) do
+			if not table.HasValue( MV.Nominations ) then
+				table.insert( MV.Nominations, v )
+			end
+		end
+
+		DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
+
+		net.Start("MapvoteSyncNominations")
+		net.WriteTable( MV.Nominations )
+		net.Broadcast()
+	end
+
+end)
+
+concommand.Add("mapvote_update_mapvote", function(ply, cmd, args)
+
+	local cont = false
+	if IsValid( ply ) then
+		if ply:IsAdmin() then
+			cont = true
+		end
+	else
+		cont = true
+	end
+
+	MV:UpdateMapVote()
+
+end)
