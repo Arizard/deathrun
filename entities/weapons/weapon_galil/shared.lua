@@ -22,11 +22,11 @@ SWEP.Weight				= 5
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.ViewModel 			= "models/weapons/v_rif_galil.mdl"
+SWEP.ViewModel 			= "models/weapons/cstrike/c_rif_galil.mdl"
 SWEP.WorldModel 			= "models/weapons/w_rif_galil.mdl"
 
 SWEP.Primary.Sound 		= Sound("Weapon_Galil.Single")
-SWEP.Primary.Recoil 		= 0.75
+SWEP.Primary.Recoil 		= 1.25
 SWEP.Primary.Damage 		= 25
 SWEP.Primary.NumShots 		= 1
 SWEP.Primary.Cone 		= 0.003

@@ -6,7 +6,7 @@
 </td>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 <td>
- <b>NOT READY FOR DEPLOYMENT</b><br/>Don't install this on your server yet! It's still a work in progress!
+ <b>SOMEWHAT READY</b><br/>It definitely works, but main features will be missing.
 </td>
 </tr>
 </table>
@@ -48,7 +48,7 @@ values:
 	8 bottom right
 </pre>
 ###Crosshair
-You can customise your crosshair using a bunch of convars, similar to the ones used in CS:GO.
+You can customise your crosshair using a bunch of convars, similar to the ones used in CS:GO. Type !crosshair to open the crosshair creator.
 
 <pre>
 Convars:
@@ -62,7 +62,7 @@ Convars:
 </pre>
 ![](http://i.imgur.com/WXhPeLV.png)
 ![](http://i.imgur.com/95pKGCK.png)
-![](http://i.imgur.com/FzkmxK3.png)
+![](http://i.imgur.com/SPBUqLq.png)
 
 ###Scoreboard
 From the scoreboard you can view the full list of players currently on the server, their living status (alive/dead), and you can (currently) copy their steam ID and mute the player by right-clicking to free the cursor, and then left-clicking on the player. Muted players show up with a muted icon on their avatar. Dead players will have a red X on their avatar and their scoreboard row will be washed out. The header changes to your server's Hostname. Supports scrolling for large player counts.

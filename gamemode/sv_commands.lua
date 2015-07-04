@@ -133,3 +133,7 @@ DR:AddChatCommandAlias("respawn", "r")
 DR:AddChatCommand("cleanup", function(ply)
 	ply:ConCommand("deathrun_cleanup")
 end)
+
+DR:AddChatCommand("crosshair", function(ply)
+	ply:ConCommand("deathrun_open_crosshair_creator")
+end)

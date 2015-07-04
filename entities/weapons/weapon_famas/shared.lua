@@ -21,14 +21,14 @@ SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
 SWEP.ViewModelFlip      = false
-SWEP.ViewModel			= "models/weapons/v_rif_famas.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_rif_famas.mdl"
 SWEP.WorldModel			= "models/weapons/w_rif_famas.mdl"
 
 SWEP.Weight				= 25
 
 
 SWEP.Primary.Sound			= Sound( "Weapon_FAMAS.Single" )
-SWEP.Primary.Recoil 		= 0.75
+SWEP.Primary.Recoil 		= 0.9
 SWEP.Primary.Damage 		= 17
 SWEP.Primary.NumShots 		= 1
 SWEP.Primary.Cone 		= 0.001

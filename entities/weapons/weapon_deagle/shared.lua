@@ -18,7 +18,7 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_pist_deagle.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_pist_deagle.mdl"
 SWEP.WorldModel			= "models/weapons/w_pist_deagle.mdl"
 
 SWEP.Weight				= 5

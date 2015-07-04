@@ -160,7 +160,7 @@ function PLAYER:DeathrunChatPrint( msg )
 	net.WriteString( msg )
 	net.Send( self )
 
-	MsgC(DR.Colors.Turq, "Server to "..self:Nick()..": "..msg)
+	MsgC(DR.Colors.Turq, "Server to "..self:Nick()..": "..msg.."\n")
 end
 
 function DR:ChatBroadcast( msg )
@@ -168,6 +168,6 @@ function DR:ChatBroadcast( msg )
 		net.Start("DeathrunChatMessage")
 		net.WriteString( msg )
 		net.Broadcast()
-		MsgC(DR.Colors.Turq, "Server Broadcast: "..msg)
+		MsgC(DR.Colors.Turq, "Server Broadcast: "..msg.."\n")
 	--end
 end

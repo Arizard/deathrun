@@ -1,4 +1,4 @@
-local fontstandard = "Verdana"
+local fontstandard = "Franklin Gothic"
 
 -- modified version of my derma thingzzzz
 
@@ -78,7 +78,7 @@ function MAIN:OnClose() end-- stub
 function MAIN:Init()  
 	
 	self.bgalpha = 25
-	self.bgcolor = HexColor("#ffffff", 100)
+	self.bgcolor = HexColor("#ecf0f1", 50)
 	self.fgcolor = DR.Colors.Turq
 	self.title = "deathrun Window"
    

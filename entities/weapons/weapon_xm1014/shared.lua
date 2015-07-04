@@ -17,7 +17,7 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_shot_xm1014.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_shot_xm1014.mdl"
 SWEP.WorldModel			= "models/weapons/w_shot_xm1014.mdl"
 
 SWEP.Weight				= 5
@@ -25,7 +25,7 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_xm1014.Single" )
-SWEP.Primary.Recoil			= 5
+SWEP.Primary.Recoil			= 7
 SWEP.Primary.Damage			= 8
 SWEP.Primary.NumShots		= 8
 SWEP.Primary.Cone			= 0.1

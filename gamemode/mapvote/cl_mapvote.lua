@@ -149,10 +149,10 @@ MV.VotingMapList = {}
 function MV:OpenVotingPanel()
 
 	local frame = vgui.Create("deathrun_window")
-	frame:SetSize(256*1.618 + 4, (MV.MaxMaps*24) + (MV.MaxMaps-1)*4 + 44) -- GOLDEN RATIO FIBONACCI SPIRAL OMG
-	frame:CenterHorizontal()
+	frame:SetSize(230*1.618 + 4, (MV.MaxMaps*24) + (MV.MaxMaps-1)*4 + 44) -- GOLDEN RATIO FIBONACCI SPIRAL OMG
+	frame:SetPos(4,0)
 	frame:CenterVertical()
-	frame:MakePopup()
+	--frame:MakePopup()
 	frame:SetTitle("Mapvote")
 
 	MV.VotingPanelDerma = frame
@@ -176,6 +176,8 @@ function MV:OpenVotingPanel()
 	MV:RefreshVotingPanel()
 end
 
+MV.VotingMapsNoVotes = {}
+
 function MV:RefreshVotingPanel()
 	if MV.VotingPanelDermaList then
 		local dlist = MV.VotingPanelDermaList
@@ -192,9 +194,12 @@ function MV:RefreshVotingPanel()
 		end
 
 		--if win == "" then win = table.Random( MV.VotingMapList )
-
+		MV.VotingMapsNoVotes = {}
+		local num = 0
 		for k,v in pairs(MV.VotingMapList) do
-			dlist:Add(MV:NewDermaRow({k or 0,v or 0}, dlist:GetWide(), 24, k == win and DR.Colors.Turq or DR.Colors.Clouds, k == win and DR.Colors.Clouds or DR.Colors.Turq))
+			num = num + 1
+			table.insert(MV.VotingMapsNoVotes, k)
+			dlist:Add(MV:NewDermaRow({ tostring(num)..". ", k or 0,v or 0}, dlist:GetWide(), 24, k == win and DR.Colors.Turq or DR.Colors.Clouds, k == win and DR.Colors.Clouds or DR.Colors.Turq))
 		end
 	end
 end
@@ -202,7 +207,6 @@ end
 net.Receive("MapvoteUpdateMapList", function()
 	MV.VotingMapList = net.ReadTable()
 	MV:RefreshVotingPanel()
-	print("Updatate the memes")
 end)
 
 net.Receive("MapvoteSetActive", function()
@@ -220,10 +224,41 @@ timer.Create("MapvoteCountdownTimer", 0.2, 0, function()
 		MV.TimeLeft = MV.TimeLeft - 0.2
 		if IsValid(MV.VotingPanelDerma) then
 			
-			MV.VotingPanelDerma:SetTitle( "Mapvote - "..string.ToMinutesSeconds(MV.TimeLeft) )
+			MV.VotingPanelDerma:SetTitle( "Mapvote - "..string.ToMinutesSeconds(MV.TimeLeft > 0 and MV.TimeLeft or 0) )
+
+			if MV.TimeLeft <= 0 then
+				timer.Simple(4, function()
+					if IsValid(MV.VotingPanelDerma) then
+						MV.VotingPanelDerma:Close()
+					end
+				end)
+			end
 		end
 		if MV.TimeLeft < 0 then
 			MV.TimeLeft = 0
+		end
+	end
+end)
+
+local keynums = {
+	KEY_1,
+	KEY_2,
+	KEY_3,
+	KEY_4,
+	KEY_5,
+	KEY_6,
+	KEY_7,
+	KEY_8,
+	KEY_9,
+}
+
+hook.Add("SetupMove","MapvoteReceiveKeys", function( )
+	if (not vgui.CursorVisible()) and MV.Active then
+		for i = 1, #keynums do
+			local mapname = MV.VotingMapsNoVotes[i]
+			if input.WasKeyPressed( keynums[i] ) then
+				RunConsoleCommand("mapvote_vote",mapname)
+			end
 		end
 	end
 end)

@@ -47,8 +47,6 @@ local XHairBlue = CreateClientConVar("deathrun_crosshair_blue", 255, true, false
 local XHairAlpha = CreateClientConVar("deathrun_crosshair_alpha", 255, true, false)
 
 -- convars to adjust hud positioning
-local HudX = CreateClientConVar("deathrun_hud_x", 8, true, false)
-local HudY = CreateClientConVar("deathrun_hud_y", 2, true, false)
 local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
 
 local RoundNames = {}
@@ -102,8 +100,9 @@ function DR:DrawTargetID()
 				
 
 				DR.TargetIDAlpha = 255
-				DR.TargetIDName = tr.Entity:Nick().." - "..tostring(tr.Entity:Health()).."%"
+				DR.TargetIDName = tr.Entity:Nick()
 				DR.TargetIDColor = team.GetColor( tr.Entity:Team() )
+				DR.TargetIDPlayer = tr.Entity
 
 			end
 		end
@@ -111,9 +110,10 @@ function DR:DrawTargetID()
 
 	local x , y = ScrW()/2, ScrH()/2 + 16
 	DR.TargetIDColor.a = math.sqrt(DR.TargetIDAlpha)*255 / math.sqrt(255)
-	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x+1, y+1, Color(0,0,0,DR.TargetIDColor.a*0.9) ,TEXT_ALIGN_CENTER)
-	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x, y, DR.TargetIDColor ,TEXT_ALIGN_CENTER)
-	draw.SimpleText( DR.TargetIDName , "deathrun_hud_Medium", x, y, Color(255,255,255,DR.TargetIDColor.a*0.2) ,TEXT_ALIGN_CENTER)
+	local tidText =  DR.TargetIDName..( IsValid(DR.TargetIDPlayer) and " - "..tostring( math.Clamp( DR.TargetIDPlayer:Health(), 0, 100 ) ).."%" or "" ) 
+	draw.SimpleText(tidText , "deathrun_hud_Medium", x+1, y+1, Color(0,0,0,DR.TargetIDColor.a*0.9) ,TEXT_ALIGN_CENTER)
+	draw.SimpleText( tidText , "deathrun_hud_Medium", x, y, DR.TargetIDColor ,TEXT_ALIGN_CENTER)
+	draw.SimpleText( tidText , "deathrun_hud_Medium", x, y, Color(255,255,255,DR.TargetIDColor.a*0.2) ,TEXT_ALIGN_CENTER)
 	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - 0.5, 0, 255 )
 
 end
@@ -196,3 +196,70 @@ function DR:DrawPlayerHUD( x, y )
 	draw.SimpleText( tostring( curvel ), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 
 end
+
+-- make a notification thing
+local notifications = {}
+local emptynotification = {
+	x = 0,
+	y = 0,
+	text = "",
+	dx = 0,
+	dy = 0,
+	ddx = 0,
+	ddy = 0,
+	dur = 10,
+	born = 0,
+}
+
+function DR:AddNotification( msg, x, y, dx, dy, ddx, ddy, dur )
+
+	msg = string.Replace(msg, "%newline%","\n")
+
+	local new = table.Copy( emptynotification )
+	new.text = msg
+	new.x = x or 0
+	new.y = y or 0
+	new.dx = dx or 0
+	new.dy = dy or 0
+	new.ddx = ddx or 0 
+	new.ddy = ddy or 0 
+	new.dur = dur or 10
+	new.born = CurTime()
+
+
+
+	table.insert(notifications, new)
+end
+
+local lastCycle = CurTime()
+function DR:UpdateNotifications( )
+	local dt = CurTime() - lastCycle
+	lastCycle = CurTime()
+
+	local fps = (1/dt)
+	local fmul = 100/fps
+
+	for k,v in ipairs( notifications ) do
+		
+		local aliveFor = CurTime() - v.born
+		local fadein = math.Clamp( Lerp( InverseLerp(aliveFor,0,v.dur/5), 0, 255 ), 0, 255 )
+
+		draw.DrawText( v.text, "deathrun_hud_Medium", v.x+1, v.y+1, Color(0,0,0,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+		draw.DrawText( v.text, "deathrun_hud_Medium", v.x, v.y, Color(255,255,255,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
+		v.x = v.x + v.dx * fmul
+		v.y = v.y + v.dy * fmul
+
+		v.dx = v.dx + v.ddx * fmul
+		v.dy = v.dy + v.ddy * fmul
+
+		if CurTime() - v.born > v.dur then
+			table.remove( notifications, k )
+		end
+	end
+
+end
+
+hook.Add("HUDPaint","DeathrunNotifications", function()
+	DR:UpdateNotifications()
+end)

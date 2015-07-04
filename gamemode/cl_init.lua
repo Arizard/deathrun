@@ -16,6 +16,7 @@ include( "roundsystem/cl_round.lua" )
 include( "sh_definerounds.lua" )
 
 include( "cl_hud.lua" )
+include( "cl_menus.lua" )
 
 concommand.Add("dr_test_menu", function()
 	local frame = vgui.Create("arizard_window")

@@ -146,6 +146,8 @@ function SWEP:PrimaryAttack()
 
 	if CurTime() < self.LastPrimaryShotTime + self.Primary.Delay then return end
 
+	self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
+
 	self.LastPrimaryShotTime = CurTime()
 
 	self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay )
@@ -199,7 +201,7 @@ function InverseLerp( pos, p1, p2 )
 end
 
 function SWEP:GetRecoilShiftAmount()
-	local maxshift = self.Primary.ClipSize
+	local maxshift = 30
 	local minshift = 0
 
 	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
@@ -305,7 +307,7 @@ function SWEP:GetViewModelPosition( pos, ang )
 	local forward = ang:Forward()
 	local shiftamt = self:GetRecoilShiftAmount()
 	ang:RotateAroundAxis(right, shiftamt/1.7)
-	pos = pos + forward*math.Clamp( (-shiftamt/self.Primary.ClipSize)*4, 0, 16 )
+	pos = pos + forward*math.Clamp( (-shiftamt/30)*4, 0, 16 )
 
 	local fIronTime = self.fIronTime or 0
 

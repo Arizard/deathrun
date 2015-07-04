@@ -24,7 +24,7 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_mach_m249para.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_mach_m249para.mdl"
 SWEP.WorldModel			= "models/weapons/w_mach_m249para.mdl"
 
 SWEP.Weight				= 5
@@ -32,12 +32,12 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_m249.Single" )
-SWEP.Primary.Recoil			= 1.7
+SWEP.Primary.Recoil			= 2
 SWEP.Primary.Damage			= 60
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.002
 SWEP.Primary.ClipSize		= 100
-SWEP.Primary.Delay			= 0.09
+SWEP.Primary.Delay			= 0.07
 SWEP.Primary.DefaultClip	= 200
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "smg1"

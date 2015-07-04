@@ -10,6 +10,7 @@ AddCSLuaFile( "cl_derma.lua" )
 -- base
 AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_menus.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "config.lua" )
 
@@ -143,7 +144,43 @@ function GM:PlayerDeath( ply )
 
 		end
 	end)
+
+	table.insert( DR.KillList, ply )
 end
+
+DR.KillList = {}
+
+timer.Create("DeathrunSendKillList", 1.5,0,function()
+	if #DR.KillList > 0 then
+		local message = ""
+		
+		-- remove the invalid players
+		for k,v in ipairs(DR.KillList) do
+			if not IsValid(v) then
+				table.remove( DR.KillList, k )
+			end
+		end
+
+		for i = 1, #DR.KillList do
+			local ply = DR.KillList[i]
+			if IsValid(ply) then
+				if i < #DR.KillList-1 then
+					message = message..(i == 1 and "" or " ")..ply:Nick()..","
+					if i%4 == 0 then
+						message = message.."%newline%"
+					end
+				elseif i == #DR.KillList - 1 then
+					message = message.." "..ply:Nick().." and"
+				else
+					message = message.." "..ply:Nick()
+				end
+			end
+		end
+		message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
+		BroadcastLua([[DR:AddNotification( ']]..message..[[', ScrW()-16,ScrH()/7, 0, -0.35, 0, -0.00025, 10)]])
+		DR.KillList = {}
+	end
+end)
 
 function GM:PlayerDeathThink( ply )
 	return false
@@ -167,7 +204,7 @@ function GM:EntityTakeDamage( target, dmginfo )
 	end
 	if target:IsPlayer() and attacker:IsPlayer() then
 		if target:Team() == attacker:Team() then
-			print("Attacked teammate")
+			--print("Attacked teammate")
 			--dmginfo:SetDamage(0)
 		end
 	end

@@ -28,7 +28,7 @@ SWEP.Purpose 				= ""
 SWEP.Spawnable 				= true
 SWEP.AdminSpawnable 			= true
 
-SWEP.ViewModel 				= "models/weapons/v_eq_fraggrenade.mdl"
+SWEP.ViewModel 				= "models/weapons/cstrike/c_eq_fraggrenade.mdl"
 SWEP.WorldModel 				= "models/weapons/w_eq_fraggrenade.mdl"
 
 SWEP.Primary.ClipSize 			= -1

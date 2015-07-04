@@ -21,7 +21,7 @@ SWEP.Weight				= 5
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.ViewModel 			= "models/weapons/v_smg_ump45.mdl"
+SWEP.ViewModel 			= "models/weapons/cstrike/c_smg_ump45.mdl"
 SWEP.WorldModel 			= "models/weapons/w_smg_ump45.mdl"
 
 SWEP.Primary.Sound 		= Sound("Weapon_UMP45.Single")

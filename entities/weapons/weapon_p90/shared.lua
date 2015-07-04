@@ -18,7 +18,7 @@ SWEP.Category                   = "Counter-Strike"
 SWEP.Spawnable                  = true
 SWEP.AdminSpawnable             = true
 
-SWEP.ViewModel                  = "models/weapons/v_smg_p90.mdl"
+SWEP.ViewModel                  = "models/weapons/cstrike/c_smg_p90.mdl"
 SWEP.WorldModel                 = "models/weapons/w_smg_p90.mdl"
 
 SWEP.Weight                             = 5
@@ -26,10 +26,10 @@ SWEP.AutoSwitchTo               = false
 SWEP.AutoSwitchFrom             = false
 
 SWEP.Primary.Sound                      = Sound( "Weapon_P90.Single" )
-SWEP.Primary.Recoil                     = 0.8
+SWEP.Primary.Recoil                     = 1
 SWEP.Primary.Damage                     = 20
 SWEP.Primary.NumShots           = 1
-SWEP.Primary.Cone                       = 0.01
+SWEP.Primary.Cone                       = 0.012
 SWEP.Primary.ClipSize           = 50
 SWEP.Primary.Delay                      = 0.066
 SWEP.Primary.DefaultClip        = 32

@@ -24,6 +24,11 @@ concommand.Add("mapvote_list_maps", function(ply)
 
 end)
 
+DR:AddChatCommand("nominate", function( ply )
+	ply:ConCommand( "mapvote_list_maps" )
+end)
+DR:AddChatCommandAlias("nominate", "maps")
+
 function MV:SyncMapList()
 	net.Start( "MapvoteUpdateMapList" )
 	net.WriteTable( MV.MapList )
@@ -77,7 +82,7 @@ function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
 		end
 	end
 
-	print(#MV.MapList, MV.MaxMaps, #mapfiles)
+	--print(#MV.MapList, MV.MaxMaps, #mapfiles)
 	local totalloops = 0
 	local numMaps = 0
 	for k,v in pairs(MV.MapList) do 
@@ -104,7 +109,7 @@ function MV:BeginMapVote() -- initiates the mapvote, and syncs the maps once
 		numMaps = numMaps + 1 
 	end
 
-	PrintTable( MV.MapList )
+	--PrintTable( MV.MapList )
 
 	net.Start("MapvoteSetActive")
 	net.WriteBit( true )
@@ -131,6 +136,33 @@ function MV:FinishMapVote()
 	MV.Active = false
 	-- find winning map
 	-- change to it
+
+	local win = ""
+	local winvotes = 0
+	for k,v in pairs(MV.MapList) do
+		if v > winvotes then
+			winvotes = v
+			win = k
+		end
+	end
+
+	MV.VotingMapsNoVotes = {}
+	local num = 0
+	for k,v in pairs(MV.MapList) do
+		num = num + 1
+		table.insert(MV.VotingMapsNoVotes, k)
+	end
+
+	if win == "" then win = table.Random( MV.VotingMapsNoVotes ) end
+
+	DR:ChatBroadcast("The next map will be "..win..". Map will change in 5 seconds.")
+
+	local nextmap = win
+
+	timer.Simple(5, function()
+		DR:ChatBroadcast("Changing to the next map...")
+		RunConsoleCommand("changelevel", nextmap)
+	end)
 
 end
 
@@ -159,6 +191,7 @@ concommand.Add("mapvote_begin_mapvote", function(ply, cmd, args)
 end)
 
 concommand.Add("mapvote_vote", function(ply, cmd, args)
+	if MV.Active == false then return end
 	if args[1] and IsValid( ply ) then
 		vot = args[1]
 		MV.Players[ ply:SteamID() ] = vot
@@ -213,4 +246,47 @@ concommand.Add("mapvote_update_mapvote", function(ply, cmd, args)
 
 	MV:UpdateMapVote()
 
+end)
+
+-- RTV Features
+
+local RTVRatio = CreateConVar("mapvote_rtv_ratio", 0.5, FCVAR_REPLICATED, "The ratio between votes and players in order to initiate a mapvote.")
+
+function MV:CheckRTV()
+
+	if MV.Active then return end
+
+	local votes = 0
+	local numplayers = #player.GetAll()
+
+	for k,v in ipairs(player.GetAll()) do
+		v.WantsRTV = v.WantsRTV or false
+		if v.WantsRTV == true then
+			votes = votes + 1
+		end
+	end
+
+	local ratio = votes/numplayers
+	if ratio >= RTVRatio:GetFloat() then
+		MV:BeginMapVote()
+		DR:ChatBroadcast("RTV limit reached. Initiating mapvote.")
+	else
+
+		local needed = math.ceil(RTVRatio:GetFloat() * numplayers)
+
+		DR:ChatBroadcast(tostring(needed).." more votes needed in order to change the map. Type !rtv to vote.")
+	end
+
+end
+
+concommand.Add( "mapvote_rtv", function( ply )
+
+	ply.WantsRTV = true
+
+	MV:CheckRTV()
+
+end)
+
+DR:AddChatCommand("rtv",function( ply )
+	ply:ConCommand( "mapvote_rtv" )
 end)

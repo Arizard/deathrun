@@ -12,9 +12,10 @@ if (CLIENT) then
         SWEP.DrawAmmo                   = false
         SWEP.DrawCrosshair              = false
         SWEP.ViewModelFOV                       = 65
-        SWEP.ViewModelFlip              = true
+        SWEP.ViewModelFlip              = false
         SWEP.CSMuzzleFlashes            = false
         SWEP.IconLetter                         = "P"
+        SWEP.UseHands = true
 end
 
 

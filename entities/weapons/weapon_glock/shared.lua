@@ -18,7 +18,7 @@ SWEP.Category			= "Counter-Strike"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
-SWEP.ViewModel			= "models/weapons/v_pist_glock18.mdl"
+SWEP.ViewModel			= "models/weapons/cstrike/c_pist_glock18.mdl"
 SWEP.WorldModel			= "models/weapons/w_pist_glock18.mdl"
 
 SWEP.Weight				= 5
@@ -26,10 +26,10 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_Glock.Single" )
-SWEP.Primary.Recoil			= 0.7
+SWEP.Primary.Recoil			= 0.8
 SWEP.Primary.Damage			= 16
 SWEP.Primary.NumShots		= 1
-SWEP.Primary.Cone			= 0.006
+SWEP.Primary.Cone			= 0.01
 SWEP.Primary.ClipSize		= 16
 SWEP.Primary.Delay			= 0.05
 SWEP.Primary.DefaultClip	= 21

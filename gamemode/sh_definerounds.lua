@@ -163,6 +163,13 @@ ROUND:AddState( ROUND_PREP,
 				DeathTeamStreaks[runner:SteamID()] = 0
 			end
 
+			-- make sure nobody is dead??????
+			for k,v in ipairs(player.GetAllPlaying()) do
+				if not v:Alive() then
+					v:Spawn()
+				end
+			end
+
 			for k,ply in ipairs(player.GetAll()) do
 				print( ply:Nick(), team.GetName(ply:Team()) )
 			end
