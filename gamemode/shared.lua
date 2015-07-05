@@ -93,7 +93,7 @@ if CLIENT then
 		LocalPlayer().AutoJumpEnabled = intToBool( new )
 		--print(LocalPlayer().AutoJumpEnabled)
 	end, "DeathrunAutoJumpConVarChange")
-	LocalPlayer().AutoJumpEnabled = intToBool( GetConVar("deathrun_autojump"):GetInt() )
+	
 	RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt())
 end
 
@@ -163,6 +163,10 @@ end
 CreateConVar("deathrun_allow_autojump", 1, FCVAR_REPLICATED, "Allows players to use autojump.")
 
 local function AutoHop( ply, data )
+	
+	if CLIENT then
+		LocalPlayer().AutoJumpEnabled = intToBool( GetConVar("deathrun_autojump"):GetInt() )
+	end
 
 	if lp and ply ~= lp() then return end
 	if ply.AutoJumpEnabled == false or GetConVar("deathrun_allow_autojump"):GetBool() == false then return end

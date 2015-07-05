@@ -81,7 +81,7 @@ function DR:OpenCrosshairCreator()
 		local cv = crosshair_convars[i]
 		local lbl = vgui.Create("DLabel")
 		lbl:SetFont("deathrun_derma_Tiny")
-		lbl:SetTextColor(DR.Colors.Turq)
+		lbl:SetTextColor( HexColor("#333") )
 		lbl:SetText(cv[4] or cv[1])
 		lbl:SizeToContents()
 		lbl:SetWide( dlist:GetWide() )
@@ -130,11 +130,13 @@ end)
 
 local deathrun_settings = {
 	["boolean"] = {
-		{"deathrun_autojump","Autojump (Enabling limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat())..")"},
+		{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
+		{"deathrun_enable_announcements", "Help messages"}
 	},
 	["number"] = {
 		{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
-		{"deathrun_targetid_fade_duration",0,10,"Time for names to fade from the screen after looking away from a player"}
+		{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
+		{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."}
 	},
 	["string"] = {
 		{"deathrun_sample_string_convar","Sample String ConVar"}
@@ -180,7 +182,7 @@ function DR:OpenSettings()
 	dlist:SetSize( scr:GetSize() )
 	dlist:SetPos(0,0)
 	dlist:SetSpaceX(0)
-	dlist:SetSpaceY(4)
+	dlist:SetSpaceY(8)
 
 	local lbl = vgui.Create("DLabel")
 	lbl:SetFont("deathrun_derma_Small")
@@ -195,7 +197,7 @@ function DR:OpenSettings()
 			for _,cv in ipairs(v) do
 				local lbl = vgui.Create("DLabel") -- label
 				lbl:SetFont("deathrun_derma_Tiny")
-				lbl:SetTextColor(DR.Colors.Turq)
+				lbl:SetTextColor( HexColor("#333") )
 				lbl:SetText(cv[2])
 				lbl:SizeToContents()
 				lbl:SetWide( dlist:GetWide() )
@@ -214,7 +216,7 @@ function DR:OpenSettings()
 			for _,cv in ipairs(v) do
 				local lbl = vgui.Create("DLabel") -- label
 				lbl:SetFont("deathrun_derma_Tiny")
-				lbl:SetTextColor(DR.Colors.Turq)
+				lbl:SetTextColor( HexColor("#333") )
 				lbl:SetText(cv[4])
 				lbl:SizeToContents()
 				lbl:SetWide( dlist:GetWide() )

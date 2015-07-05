@@ -211,13 +211,23 @@ function DR:NewScoreboardPlayer( ply, w, h )
 			DR:ChatMessage( self.ply:Nick().."'s SteamID was copied to the clipboard!" )
 		end
 
-		local mute = menu:AddOption( "Toggle Voice" )
+		--http://steamcommunity.com/profiles/
+
+		local openprofile = menu:AddOption( "Open Steam profile" )
+		openprofile.ply = menu.ply
+		openprofile:SetIcon("icon16/page_world.png")
+		function openprofile:DoClick()
+			gui.OpenURL( "http://steamcommunity.com/profiles/"..self.ply:SteamID64() )
+		end
+
+		local mute = menu:AddOption( "Toggle voice" )
 		mute.ply = menu.ply
 		mute:SetIcon("icon16/sound.png")
 		function mute:DoClick()
 			RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
 			DR:ChatMessage( "Toggled mute on "..mute.ply:Nick().."!" )
 		end
+		
 
 		menu:Open()
 	end

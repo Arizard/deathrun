@@ -24,8 +24,12 @@ SERVER CONVARS:
 	deathrun_help_url <string url>
 		The url to open when the player types !help.
 
+	deathrun_round_limit <0-20>
+		How many rounds should be played before the map changes?
+
 	mapvote_rtv_ratio <0.0-1.0>
 		The ratio between votes and players online. 0.5 means that 1/2 of the players online need to type !rtv before the vote is initiated.
+
 
 
 CLIENT CONVARS:
@@ -56,6 +60,11 @@ CLIENT CONVARS:
 	deathrun_autojump <0-1>
 		0 to disable autojump, 1 to enable autojump.
 
+	deathrun_announcement_interval <0-500>
+		Seconds between announcements/help messages.
+
+	deathrun_enable_announcements <0-1>
+		Enables announcements/help messages.
 
 
 

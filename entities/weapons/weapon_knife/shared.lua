@@ -139,6 +139,11 @@ function SWEP:PrimaryAttack()
 					dmginfo:SetDamage( self.Primary.Damage )
 					dmginfo:SetDamageType( DMG_SLASH )
 
+					if tr.Entity:IsPlayer() then
+						if self.Owner:Team() == tr.Entity:Team() then
+							dmginfo:SetDamage( 0 )
+						end
+					end
 					tr.Entity:TakeDamageInfo( dmginfo )
 
 					if tr.Entity:IsPlayer() then

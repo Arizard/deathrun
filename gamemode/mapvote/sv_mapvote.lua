@@ -267,7 +267,7 @@ function MV:CheckRTV()
 	end
 
 	local ratio = votes/numplayers
-	if ratio >= RTVRatio:GetFloat() then
+	if ratio > RTVRatio:GetFloat() then
 		MV:BeginMapVote()
 		DR:ChatBroadcast("RTV limit reached. Initiating mapvote.")
 	else

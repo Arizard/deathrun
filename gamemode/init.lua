@@ -48,6 +48,9 @@ include( "sv_player.lua" )
 include( "sh_buttonclaiming.lua" )
 AddCSLuaFile( "sh_buttonclaiming.lua" )
 
+-- announcements
+AddCSLuaFile( "cl_announcer.lua" )
+
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
 

@@ -14,6 +14,9 @@ if SERVER then
 	FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
 	DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 end
+RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
+
+
 
 -- for the round timer
 -- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
@@ -46,6 +49,8 @@ else
 		ROUND_TIMER = net.ReadInt( 16 )
 	end)
 end
+
+local rounds_played = 0
 
 local DeathTeamStreaks = {}
 
@@ -228,11 +233,20 @@ ROUND:AddState( ROUND_ACTIVE,
 ROUND:AddState( ROUND_OVER,
 	function()
 		print("Round State: OVER")
+		rounds_played = rounds_played + 1
 		if SERVER then
-			ROUND:SetTimer(FinishDuration:GetInt())
-			timer.Simple(FinishDuration:GetInt(), function()
-				ROUND:RoundSwitch( ROUND_PREP )
-			end)
+			if rounds_played < RoundLimit:GetInt() then
+				DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(RoundLimit:GetInt() - rounds_played).." rounds to go!")
+				ROUND:SetTimer(FinishDuration:GetInt())
+				timer.Simple(FinishDuration:GetInt(), function()
+					ROUND:RoundSwitch( ROUND_PREP )
+				end)
+			else
+				DR:ChatBroadcast("Round limit reached. Initiating RTV...")
+				timer.Simple(3, function()
+					MV:BeginMapVote()
+				end)
+			end
 		end
 	end,
 	function()
