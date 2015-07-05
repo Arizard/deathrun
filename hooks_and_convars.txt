@@ -1,0 +1,50 @@
+List of hooks and convars for them for Arizard's deathrun gamemode
+-------------------------------------
+
+SERVER CONVARS:
+
+	deathrun_round_duration <0-999>
+		How many seconds each round lasts. Not including preptime.
+
+	deathrun_preptime_duration <0-999>
+		How many seconds the preparation time lasts before the round.
+
+	deathrun_finishtime_duration <0-999>
+		How many seconds to wait when the round ends before starting a new round.
+
+	deathrun_death_ratio <0.0-1.0>
+		The ratio between Deaths and Runners. Higher values mean more deaths. Default 0.15 .
+
+	mapvote_rtv_ratio <0.0-1.0>
+		The ratio between votes and players online. 0.5 means that 1/2 of the players online need to type !rtv before the vote is initiated.
+
+
+CLIENT CONVARS:
+
+	deathrun_crosshair_thickness <0-999>
+		Stroke thickness of the crosshair, in pixels.
+
+	deathrun_crosshair_gap <0-999>
+		Gap on the inside of the crosshair (e.g. top line and bottom line), in pixels.
+
+	deathrun_crosshair_size <0-999>
+		Length of each stroke in the crosshair, in pixels.
+
+	deathrun_crosshair_red <0-255>
+	deathrun_crosshair_blue <0-255>
+	deathrun_crosshair_green <0-255>
+	deathrun_crosshair_alpha <0-255>
+		Color components for the crosshair. Alpha controls the transparency.
+
+	deathrun_hud_position <0-8>
+		Position of the main HUD (Health, Velocity).
+		Values: 
+		0.Top Left, 1.Top Center, 2.Top Right, 3.Center Left, 4. Center Center, 5.Center Right, 6.Bottom Left, 7.Bottom Center, 8.Bottom Right
+
+	deathrun_targetid_fade_duration <0-999>
+		How many seconds it takes for player's names to dissapear after looking away from them.
+
+
+
+
+

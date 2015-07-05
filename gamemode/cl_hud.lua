@@ -89,8 +89,16 @@ end
 DR.TargetIDAlpha = 0
 DR.TargetIDName = ""
 DR.TargetIDColor = Color(255,255,255)
+local lastTargetCycle = CurTime()
 
+local TargetIDFadeTime = CreateClientConVar( "deathrun_targetid_fade_duration", 1, true, false )
 function DR:DrawTargetID()
+
+	local dt = CurTime() - lastTargetCycle
+	lastTargetCycle = CurTime()
+
+	local fps = 1/dt
+	local fmul = 100/fps
 
 	local tr = LocalPlayer():GetEyeTrace()
 
@@ -109,12 +117,17 @@ function DR:DrawTargetID()
 	end
 
 	local x , y = ScrW()/2, ScrH()/2 + 16
-	DR.TargetIDColor.a = math.sqrt(DR.TargetIDAlpha)*255 / math.sqrt(255)
+	DR.TargetIDColor.a = math.pow(DR.TargetIDAlpha, 0.3)*255 / math.pow(255, 0.3)
 	local tidText =  DR.TargetIDName..( IsValid(DR.TargetIDPlayer) and " - "..tostring( math.Clamp( DR.TargetIDPlayer:Health(), 0, 100 ) ).."%" or "" ) 
 	draw.SimpleText(tidText , "deathrun_hud_Medium", x+1, y+1, Color(0,0,0,DR.TargetIDColor.a*0.9) ,TEXT_ALIGN_CENTER)
 	draw.SimpleText( tidText , "deathrun_hud_Medium", x, y, DR.TargetIDColor ,TEXT_ALIGN_CENTER)
 	draw.SimpleText( tidText , "deathrun_hud_Medium", x, y, Color(255,255,255,DR.TargetIDColor.a*0.2) ,TEXT_ALIGN_CENTER)
-	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - 0.5, 0, 255 )
+
+	-- our benchmark is 100fps
+	-- e.g. our fade time is 3s
+	-- so each frame at 100fps the alpha is alpha - 1/(3s * 100f) * 255 * fmul
+
+	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - ( 1/( (TargetIDFadeTime:GetFloat()) * 100) ) * 255 * fmul, 0, 255 )
 
 end
 

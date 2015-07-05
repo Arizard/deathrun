@@ -92,6 +92,10 @@ function GM:PlayerSpawn( ply, spec )
 		ply:SetPos( table.Random(spawns):GetPos() )
 	end
 
+	if ply:GetSpectate() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
+		GAMEMODE:PlayerSpawnAsSpectator( ply )
+	end
+
 end
 
 function GM:PlayerLoadout( ply )
@@ -205,7 +209,7 @@ function GM:EntityTakeDamage( target, dmginfo )
 	if target:IsPlayer() and attacker:IsPlayer() then
 		if target:Team() == attacker:Team() then
 			--print("Attacked teammate")
-			--dmginfo:SetDamage(0)
+			dmginfo:SetDamage(0)
 		end
 	end
 end

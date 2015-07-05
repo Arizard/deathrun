@@ -55,7 +55,9 @@ function MV:NewDermaRow( tbl_cols, w, h, customColor, customColor2, doclick )
 	btn:SetPos(0,0)
 	btn:SetText("")
 	function btn:Paint() end
-	btn.DoClick = doclick or function() end
+	btn.DoClick = doclick or function()
+		self:GetParent():DoClick()
+	end
 
 	return panel
 end
@@ -199,7 +201,12 @@ function MV:RefreshVotingPanel()
 		for k,v in pairs(MV.VotingMapList) do
 			num = num + 1
 			table.insert(MV.VotingMapsNoVotes, k)
-			dlist:Add(MV:NewDermaRow({ tostring(num)..". ", k or 0,v or 0}, dlist:GetWide(), 24, k == win and DR.Colors.Turq or DR.Colors.Clouds, k == win and DR.Colors.Clouds or DR.Colors.Turq))
+			local row = MV:NewDermaRow({ tostring(num)..". ", k or 0,v or 0}, dlist:GetWide(), 24, k == win and DR.Colors.Turq or DR.Colors.Clouds, k == win and DR.Colors.Clouds or DR.Colors.Turq)
+			row.mapname = k
+			function row:DoClick()
+				RunConsoleCommand("mapvote_vote",self.mapname)
+			end
+			dlist:Add()
 		end
 	end
 end
