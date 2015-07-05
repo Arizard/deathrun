@@ -1,9 +1,0 @@
-List of hooks and functionality for them for Arizard's bhop gamemode
--------------------------------------
-
-SERVER:
-
-SHARED:
-
-CLIENT:
-
