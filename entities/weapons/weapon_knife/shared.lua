@@ -105,7 +105,7 @@ function SWEP:PrimaryAttack()
  	
 
 		if IsValid( tr.Entity ) then
-			if not tr.Entity:IsWorld() then
+			if tr.Entity:IsPlayer() then
 			
 				
 				self.Owner:SetAnimation( PLAYER_ATTACK1 );
@@ -120,20 +120,6 @@ function SWEP:PrimaryAttack()
 
 				--print( customDirection:Dot( self.Owner:GetAimVector() ) )
 				if SERVER then
-
-					local bullet = {} -- from weapon_base
-			
-					bullet.Num 	= 1
-					bullet.Src 	= self.Owner:GetShootPos() -- Source
-					bullet.Dir 	= customDirection -- Dir of bullet
-					bullet.Spread 	= Vector( 0,0, 0 )	-- Aim Cone
-					bullet.Tracer	= 0 -- Show a tracer on every x bullets
-					bullet.Force	= 5 -- Amount of force to give to phys objects
-					bullet.Damage	= 0
-					bullet.AmmoType = ""
-
-					self.Owner:FireBullets( bullet )
-
 				
 					local dmginfo = DamageInfo()
 					dmginfo:SetDamage( self.Primary.Damage )
@@ -168,6 +154,21 @@ function SWEP:PrimaryAttack()
 					end
 
 				end
+			else
+				--if SERVER then
+					local bullet = {} -- from weapon_base
+				
+					bullet.Num 	= 1
+					bullet.Src 	= self.Owner:GetShootPos() -- Source
+					bullet.Dir 	= self.Owner:GetAimVector() -- Dir of bullet
+					bullet.Spread 	= Vector( 0,0, 0 )	-- Aim Cone
+					bullet.Tracer	= 0 -- Show a tracer on every x bullets
+					bullet.Force	= 5 -- Amount of force to give to phys objects
+					bullet.Damage	= self.Primary.Damage
+					bullet.AmmoType = ""
+
+					self.Owner:FireBullets( bullet )
+				--end
 			end
 				
 		else
@@ -175,6 +176,9 @@ function SWEP:PrimaryAttack()
 			local tr = self.Owner:GetEyeTrace()
 			if tr.HitPos:Distance( self.Owner:GetShootPos() ) < 75 then
 				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
+
+				
+
 				if SERVER then
 					self.Owner:EmitSound(self.WallSound,100,math.random(95,110))
 				end

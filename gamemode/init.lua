@@ -54,6 +54,10 @@ AddCSLuaFile( "cl_announcer.lua" )
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
 
+-- required configz
+RunConsoleCommand("sv_friction", 4)
+RunConsoleCommand("sv_sticktoground", 0)
+
 function GM:PlayerInitialSpawn( ply )
 
 	ply.FirstSpawn = true
@@ -261,3 +265,7 @@ end)
 concommand.Add("strip", function(ply)
 	ply:StripWeapons()
 end)
+
+function GM:GetFallDamage( ply, speed )
+	return speed/8
+end

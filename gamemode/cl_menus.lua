@@ -128,20 +128,24 @@ concommand.Add("deathrun_open_help", function()
 	DR:OpenHelp()
 end)
 
-local deathrun_settings = {
-	["boolean"] = {
-		{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
-		{"deathrun_enable_announcements", "Help messages"}
-	},
-	["number"] = {
-		{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
-		{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
-		{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."}
-	},
-	["string"] = {
-		{"deathrun_sample_string_convar","Sample String ConVar"}
+local deathrun_settings = {}
+
+timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
+	deathrun_settings = {
+		["boolean"] = {
+			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
+			{"deathrun_enable_announcements", "Help messages"}
+		},
+		["number"] = {
+			{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
+			{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
+			{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."}
+		},
+		["string"] = {
+			{"deathrun_sample_string_convar","Sample String ConVar"}
+		}
 	}
-}
+end)
 
 
 function DR:OpenSettings()
