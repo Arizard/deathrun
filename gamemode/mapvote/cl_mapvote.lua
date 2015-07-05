@@ -55,7 +55,7 @@ function MV:NewDermaRow( tbl_cols, w, h, customColor, customColor2, doclick )
 	btn:SetPos(0,0)
 	btn:SetText("")
 	function btn:Paint() end
-	btn.DoClick = doclick or function()
+	btn.DoClick = doclick or function( self )
 		self:GetParent():DoClick()
 	end
 
@@ -206,7 +206,7 @@ function MV:RefreshVotingPanel()
 			function row:DoClick()
 				RunConsoleCommand("mapvote_vote",self.mapname)
 			end
-			dlist:Add()
+			dlist:Add( row )
 		end
 	end
 end

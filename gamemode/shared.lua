@@ -69,11 +69,40 @@ end
 
 -- I uh... borrowed this from Gravious. I need it but I don't know why.
 
+local function intToBool( i )
+	if tonumber(i) == 0 then
+		return false
+	else
+		return true
+	end
+end
+
+if SERVER then
+	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)
+		if args[1] then
+			ply.AutoJumpEnabled = intToBool( args[1] )
+			print("Player "..ply:Nick().." set their autojump convar to "..tostring(ply.AutoJumpEnabled))
+		end
+	end)
+end
+CreateConVar("deathrun_autojump_velocity_cap",350, FCVAR_REPLICATED, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
+if CLIENT then
+	CreateClientConVar("deathrun_autojump", 1, true, false)
+	cvars.AddChangeCallback("deathrun_autojump", function( name, old, new )
+		RunConsoleCommand("deathrun_internal_set_autojump", tonumber(new))
+		LocalPlayer().AutoJumpEnabled = intToBool( new )
+		--print(LocalPlayer().AutoJumpEnabled)
+	end, "DeathrunAutoJumpConVarChange")
+	LocalPlayer().AutoJumpEnabled = intToBool( GetConVar("deathrun_autojump"):GetInt() )
+	RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt())
+end
+
 local lp, ft, ct, cap = LocalPlayer, FrameTime, CurTime
 local mc, mr, bn, ba, bo = math.Clamp, math.Round, bit.bnot, bit.band, bit.bor
 function GM:Move( ply, data )
+
 	if not IsValid( ply ) then return end
-	if lp and ply != lp() then return end
+	if lp and ply ~= lp() then return end
 	
 	if ply:IsOnGround() or not ply:Alive() then return end
 	
@@ -114,6 +143,13 @@ function GM:Move( ply, data )
 	
 	local vel = data:GetVelocity()
 	vel = vel + (wishdir * accelspeed)
+
+	if ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true then
+		ply.SpeedCap = GetConVar("deathrun_autojump_velocity_cap"):GetFloat()
+	else
+		ply.SpeedCap = 99999
+	end
+
 	
 	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap then
 		local diff = vel:Length2D() - ply.SpeedCap
@@ -124,14 +160,21 @@ function GM:Move( ply, data )
 	return false
 end
 
+CreateConVar("deathrun_allow_autojump", 1, FCVAR_REPLICATED, "Allows players to use autojump.")
+
 local function AutoHop( ply, data )
-	if lp and ply != lp() then return end
+
+	if lp and ply ~= lp() then return end
+	if ply.AutoJumpEnabled == false or GetConVar("deathrun_allow_autojump"):GetBool() == false then return end
+	--print(ply.AutoJumpEnabled)
 	
 	local ButtonData = data:GetButtons()
 	if ba( ButtonData, IN_JUMP ) > 0 then
-		if ply:WaterLevel() < 2 and ply:GetMoveType() != MOVETYPE_LADDER and not ply:IsOnGround() then
+		if ply:WaterLevel() < 2 and ply:GetMoveType() ~= MOVETYPE_LADDER and not ply:IsOnGround() then
 			data:SetButtons( ba( ButtonData, bn( IN_JUMP ) ) )
 		end
 	end
 end
 hook.Add( "SetupMove", "AutoHop", AutoHop )
+
+CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/README.md", FCVAR_REPLICATED, "The URL to open when the player types !help.")

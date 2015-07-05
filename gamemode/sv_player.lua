@@ -155,12 +155,18 @@ concommand.Add("deathrun_toggle_spectate", function(ply)
 	end
 end)
 
+local lastmsg = ""
 function PLAYER:DeathrunChatPrint( msg )
 	net.Start("DeathrunChatMessage")
 	net.WriteString( msg )
 	net.Send( self )
 
-	MsgC(DR.Colors.Turq, "Server to "..self:Nick()..": "..msg.."\n")
+	local printmsg = "Server to "..self:Nick()..": "..msg.."\n"
+
+	if printmsg ~= lastmsg then
+		MsgC(DR.Colors.Turq, printmsg)
+		lastmsg = printmsg
+	end
 end
 
 function DR:ChatBroadcast( msg )

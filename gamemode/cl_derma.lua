@@ -23,7 +23,7 @@ surface.CreateFont("deathrun_derma_Small", {
 })
 surface.CreateFont("deathrun_derma_Tiny", {
 	font = fontstandard,
-	size = 12,
+	size = 14,
 	antialias = true,
 	weight = 800
 })

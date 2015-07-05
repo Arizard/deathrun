@@ -15,6 +15,15 @@ SERVER CONVARS:
 	deathrun_death_ratio <0.0-1.0>
 		The ratio between Deaths and Runners. Higher values mean more deaths. Default 0.15 .
 
+	deathrun_allow_autojump <0-1>
+		Allow players to use autojump
+		
+	deathrun_autojump_velocity_cap <0-999>
+		The velocity to limit players to when they enable autojump. A value of 0 will make this unlimited.
+
+	deathrun_help_url <string url>
+		The url to open when the player types !help.
+
 	mapvote_rtv_ratio <0.0-1.0>
 		The ratio between votes and players online. 0.5 means that 1/2 of the players online need to type !rtv before the vote is initiated.
 
@@ -43,6 +52,10 @@ CLIENT CONVARS:
 
 	deathrun_targetid_fade_duration <0-999>
 		How many seconds it takes for player's names to dissapear after looking away from them.
+
+	deathrun_autojump <0-1>
+		0 to disable autojump, 1 to enable autojump.
+
 
 
 
