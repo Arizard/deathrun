@@ -44,6 +44,10 @@ include( "mapvote/sv_mapvote.lua" )
 --player
 include( "sv_player.lua" )
 
+--button claiming
+include( "sh_buttonclaiming.lua" )
+AddCSLuaFile( "sh_buttonclaiming.lua" )
+
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
 

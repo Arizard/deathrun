@@ -18,6 +18,8 @@ include( "sh_definerounds.lua" )
 include( "cl_hud.lua" )
 include( "cl_menus.lua" )
 
+include( "sh_buttonclaiming.lua" )
+
 concommand.Add("dr_test_menu", function()
 	local frame = vgui.Create("arizard_window")
 	frame:SetSize(640,480)
