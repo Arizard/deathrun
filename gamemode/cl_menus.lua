@@ -134,12 +134,16 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 	deathrun_settings = {
 		["boolean"] = {
 			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
-			{"deathrun_enable_announcements", "Help messages"}
+			{"deathrun_enable_announcements", "Help messages"},
+			{"deathrun_thirdperson_enabled", "Thirdperson mode"}
 		},
 		["number"] = {
 			{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
 			{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
-			{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."}
+			{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
+			{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
+			{"deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
+			{"deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
 		},
 		["string"] = {
 			{"deathrun_sample_string_convar","Sample String ConVar"}
@@ -247,3 +251,4 @@ end
 concommand.Add("deathrun_open_settings", function()
 	DR:OpenSettings()
 end)
+

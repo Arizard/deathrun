@@ -59,15 +59,7 @@ function GM:HUDPaint()
 	
 	-- draw the crosshair
 
-	local thick = XHairThickness:GetInt()
-	local gap = XHairGap:GetInt()
-	local size = XHairSize:GetInt()
-
-	surface.SetDrawColor(XHairRed:GetInt(), XHairGreen:GetInt(), XHairBlue:GetInt(), XHairAlpha:GetInt())
-	surface.DrawRect(ScrW()/2 - (thick/2), ScrH()/2 - (size + gap/2), thick, size )
-	surface.DrawRect(ScrW()/2 - (thick/2), ScrH()/2 + (gap/2), thick, size )
-	surface.DrawRect(ScrW()/2 + (gap/2), ScrH()/2 - (thick/2), size, thick )
-	surface.DrawRect(ScrW()/2 - (size + gap/2), ScrH()/2 - (thick/2), size, thick )
+	
 
 	local hud_positions = {
 		{ 8, 8 },
@@ -81,9 +73,34 @@ function GM:HUDPaint()
 		{ ScrW() - 228 - 8, ScrH() - 108 - 8 },
 	}
 
+
+	-- draw crosshair and account for thirdperson mode
+	if GetConVar("deathrun_thirdperson_enabled"):GetBool() == true then
+		local x,y = 0,0
+		local tr = LocalPlayer():GetEyeTrace()
+		x = tr.HitPos:ToScreen().x
+		y = tr.HitPos:ToScreen().y
+
+		DR:DrawCrosshair( x,y )
+	else
+		DR:DrawCrosshair( ScrW()/2, ScrH()/2 )
+	end
+
 	DR:DrawTargetID()
 	DR:DrawPlayerHUD( hud_positions[ HudPos:GetInt() +1 ][1] or 8, hud_positions[ HudPos:GetInt() +1 ][2] or 8 )
 
+end
+
+function DR:DrawCrosshair( x, y )
+	local thick = XHairThickness:GetInt()
+	local gap = XHairGap:GetInt()
+	local size = XHairSize:GetInt()
+
+	surface.SetDrawColor(XHairRed:GetInt(), XHairGreen:GetInt(), XHairBlue:GetInt(), XHairAlpha:GetInt())
+	surface.DrawRect(x - (thick/2), y - (size + gap/2), thick, size )
+	surface.DrawRect(x - (thick/2), y + (gap/2), thick, size )
+	surface.DrawRect(x + (gap/2), y - (thick/2), size, thick )
+	surface.DrawRect(x - (size + gap/2), y - (thick/2), size, thick )
 end
 
 DR.TargetIDAlpha = 0

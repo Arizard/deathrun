@@ -30,5 +30,6 @@
 * Help menu - type !help if you get stuck. Currently links to the github page, but this URL can be changed through a serverside convar.
 * Button claiming - Walk up to a button to claim it, then nobody else will be able to press the button. Walk away and it will become unclaimed. Prevents button-stealing.
 * Helpful announcements - The server will give tips to players online. Players can disable these or change how frequently they appear through the !settings menu.
+* ULX Support on Scoreboard.
 
 <video style="min-width: 20px; min-height: 20px; border: 1px solid #fff; box-shadow: 0 0 4px rgba( 0, 0, 0, 0.4 );" src="https://d.maxfile.ro/ipmzgxrrom.webm" controls="controls">Your browser doesn't support HTML 5 videos!</video>

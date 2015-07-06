@@ -362,33 +362,63 @@ if CLIENT then
 	local scopedirt = surface.GetTextureID( "sprites/scope_arc.vtf" )
 	local scoperadius = ScrH()/2 - 50
 
-	function SWEP:DrawHUD()
+	SWEP.LastCalcView = RealTime()
 
-		if self:GetIronsights() and self.Scope then
-			surface.SetDrawColor(0,0,0)
-			surface.DrawRect(0,0,ScrW(), ScrH()/2-scoperadius + 5)
-			surface.DrawRect(0,0,ScrW()/2-scoperadius + 5, ScrH())
-			surface.DrawRect(ScrW()/2 + scoperadius - 5,0,ScrW()/2-scoperadius + 5, ScrH())
-			surface.DrawRect(0,ScrH()/2 + scoperadius - 5, ScrW(), ScrH()/2 - scoperadius)
-
-			surface.SetTexture( scopedirt )
-			surface.DrawTexturedRectUV((ScrW()/2) - scoperadius, (ScrH()/2) - scoperadius, scoperadius, scoperadius, 1,1,0,0)
-			surface.DrawTexturedRectUV((ScrW()/2), (ScrH()/2) - scoperadius, scoperadius, scoperadius, 0,1,1,0)
-			surface.DrawTexturedRectUV((ScrW()/2) - scoperadius, (ScrH()/2) , scoperadius, scoperadius, 1,0,0,1)
-			surface.DrawTexturedRectUV((ScrW()/2) , (ScrH()/2) , scoperadius, scoperadius, 0,0,1,1)
-		end
+	function SWEP:GetDesiredFOVForThirdperson()
+		return self.ScopedFOV
 	end
 
-
-	SWEP.LastCalcView = RealTime()
-	
-	function SWEP:CalcView( ply, pos, ang, fov )
+	function SWEP:DrawHUD()
 		local dt = RealTime() - self.LastCalcView
 		--print(dt, engine.TickInterval())
 		if dt > engine.TickInterval() then
 			self.KickBack = self:CalculateFalloff( self.KickBack, engine.TickInterval() )
 			self.LastCalcView = RealTime()
 		end
+
+		if self:GetIronsights() and self.Scope then
+			local x,y = 0,0
+			if GetConVar("deathrun_thirdperson_enabled"):GetBool() == true then
+				local tr = LocalPlayer():GetEyeTrace()
+				x = tr.HitPos:ToScreen().x - ScrW()/2
+				y = tr.HitPos:ToScreen().y - ScrH()/2
+			end
+
+			surface.SetDrawColor(0,0,0)
+			surface.DrawRect(0+x-200,y+0-800,ScrW()+200, ScrH()/2-scoperadius + 5 +800)
+			surface.DrawRect(0+x-500,y+0-700,500+ScrW()/2-scoperadius + 5, ScrH()+1200)
+			surface.DrawRect(x+ScrW()/2 + scoperadius - 5,y+0-750,ScrW()/2-scoperadius + 5+500, ScrH()+1200)
+			surface.DrawRect(x+0-100,y+ScrH()/2 + scoperadius - 5, ScrW()+200, ScrH()/2 - scoperadius+700)
+
+			surface.SetTexture( scopedirt )
+			surface.DrawTexturedRectUV(x+(ScrW()/2) - scoperadius, y+(ScrH()/2) - scoperadius, scoperadius, scoperadius, 1,1,0,0)
+			surface.DrawTexturedRectUV(x+(ScrW()/2), y+(ScrH()/2) - scoperadius, scoperadius, scoperadius, 0,1,1,0)
+			surface.DrawTexturedRectUV(x+(ScrW()/2) - scoperadius, y+(ScrH()/2) , scoperadius, scoperadius, 1,0,0,1)
+			surface.DrawTexturedRectUV(x+(ScrW()/2) , y+(ScrH()/2) , scoperadius, scoperadius, 0,0,1,1)
+		end
+	end
+
+	-- we need two of these because the above doesnt run when in thirdperson, and below doesnt run in firstperson
+
+	function SWEP:DrawWorldModel() -- incase we are in tp
+		self:DrawModel()
+		local dt = RealTime() - self.LastCalcView
+		--print(dt, engine.TickInterval())
+		if dt > engine.TickInterval() then
+			self.KickBack = self:CalculateFalloff( self.KickBack, engine.TickInterval() )
+			self.LastCalcView = RealTime()
+		end
+	end
+
+	
+	
+	function SWEP:CalcView( ply, pos, ang, fov )
+		-- local dt = RealTime() - self.LastCalcView
+		-- --print(dt, engine.TickInterval())
+		-- if dt > engine.TickInterval() then
+		-- 	self.KickBack = self:CalculateFalloff( self.KickBack, engine.TickInterval() )
+		-- 	self.LastCalcView = RealTime()
+		-- end
 
 		local right = ang:Right();
 		local shiftamt = self:GetRecoilShiftAmount()

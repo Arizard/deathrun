@@ -58,6 +58,24 @@ util.AddNetworkString("DeathrunSyncMutelist")
 RunConsoleCommand("sv_friction", 4)
 RunConsoleCommand("sv_sticktoground", 0)
 
+local playermodels = {
+	"models/player/group01/male_01.mdl",
+	"models/player/group01/male_02.mdl",
+	"models/player/group01/male_03.mdl",
+	"models/player/group01/male_04.mdl",
+	"models/player/group01/male_05.mdl",
+	"models/player/group01/male_06.mdl",
+	"models/player/group01/male_07.mdl",
+	"models/player/group01/male_08.mdl",
+	"models/player/group01/male_09.mdl",
+	"models/player/group01/female_01.mdl",
+	"models/player/group01/female_02.mdl",
+	"models/player/group01/female_03.mdl",
+	"models/player/group01/female_04.mdl",
+	"models/player/group01/female_05.mdl",
+	"models/player/group01/female_06.mdl",
+}
+
 function GM:PlayerInitialSpawn( ply )
 
 	ply.FirstSpawn = true
@@ -114,7 +132,7 @@ function GM:PlayerLoadout( ply )
 	ply:StripWeapons()
 	ply:StripAmmo()
 
-	ply:SetModel("models/player/group01/male_07.mdl")
+	ply:SetModel( table.Random( playermodels ) )
 	ply:Give("weapon_knife")
 
 	local teamcol = team.GetColor( ply:Team() )
@@ -269,3 +287,7 @@ end)
 function GM:GetFallDamage( ply, speed )
 	return speed/8
 end
+
+-- Function Key Binds
+hook.Add("ShowTeam", "DeathrunSettingsBind", function( ply ) ply:ConCommand("deathrun_open_settings") end)
+hook.Add("ShowHelp", "DeathrunHelpBind", function( ply ) ply:ConCommand("deathrun_open_help") end)

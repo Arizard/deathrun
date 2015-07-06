@@ -44,3 +44,71 @@ net.Receive("DeathrunSyncMutelist", function(len, ply)
 	LocalPlayer().mutelist = net.ReadTable()
 end)
 
+-- thirdperson support -- from arizard_thirdperson.lua
+if CLIENT then
+	local ThirdpersonOn = CreateClientConVar("deathrun_thirdperson_enabled", 0, true, false)
+	local ThirdpersonX = CreateClientConVar("deathrun_thirdperson_offset_x", 0, true, false)
+	local ThirdpersonY = CreateClientConVar("deathrun_thirdperson_offset_y", 0, true, false)
+	local ThirdpersonZ = CreateClientConVar("deathrun_thirdperson_offset_z", 0, true, false)
+
+	local function CalcViewThirdPerson( ply, pos, ang, fov, nearz, farz )
+
+		if ThirdpersonOn:GetBool() == true and ply:Alive() and (ply:Team() ~= TEAM_SPECTATOR) then
+			local view = {}
+
+			local newpos = Vector(0,0,0)
+			local dist = 100 + ThirdpersonZ:GetFloat()
+
+			local tr = util.TraceHull(
+				{
+				start = pos, 
+				endpos = pos + ang:Forward()*-dist*2,
+				mins = Vector(-10,-10,-10),
+				maxs = Vector(10,10,10),
+				filter = player.GetAll(),
+				mask = MASK_SHOT_HULL
+				
+			})
+
+			local tracedist = tr.HitPos:Distance( tr.StartPos )
+
+			local fixpos = Vector(0,0,0)
+
+			if tracedist < dist then 
+				dist = tracedist-5
+			end
+
+			newpos = pos + ang:Forward()*-dist + fixpos + Vector(0,0,9) + ang:Right() * ThirdpersonX:GetFloat() + ang:Up() * ThirdpersonY:GetFloat()
+
+			view.origin = newpos
+			view.angles = ang
+			view.fov = fov
+
+			-- test for thirdperson scoped weapons
+			local wep = ply:GetActiveWeapon()
+			if wep then
+				if wep.Scope then
+					if wep:GetIronsights() == true then
+						view.fov = wep.ScopedFOV or fov
+					end
+				end
+			end
+
+			--print( tracedist )
+
+			return view
+		end
+
+	end
+	hook.Add("CalcView", "deathrun_thirdperson_script", CalcViewThirdPerson )
+
+	local function DrawLocalPlayerThirdPerson()
+		local ply = LocalPlayer()
+		if ThirdpersonOn:GetBool() == true and ply:Alive() and (ply:Team() ~= TEAM_SPECTATOR) then
+			return true
+		end
+	end
+	hook.Add("ShouldDrawLocalPlayer", "deathrun_thirdperson_script", DrawLocalPlayerThirdPerson)
+else
+
+end
