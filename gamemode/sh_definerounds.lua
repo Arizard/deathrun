@@ -54,7 +54,12 @@ local rounds_played = 0
 
 local DeathTeamStreaks = {}
 
-
+hook.Add("PlayerInitialSpawn", "DeathrunCleanupSinglePlayer", function( ply )
+	if #ply.GetAll() <= 1 then
+		game.CleanUpMap()
+		DR:ChatBroadcast("Cleaned up the map.")
+	end
+end)
 ROUND:AddState( ROUND_WAITING,
 	function()
 		print("Round State: WAITING")
@@ -72,7 +77,7 @@ ROUND:AddState( ROUND_WAITING,
 
 			end
 
-		
+			
 			timer.Create("DeathrunWaitingStateCheck", 5, 0, function()
 				--print("Waiting for players...", #player.GetAllPlaying() )
 				if #player.GetAllPlaying() >= 2 then
