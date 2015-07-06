@@ -225,9 +225,82 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		mute:SetIcon("icon16/sound.png")
 		function mute:DoClick()
 			RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
-			DR:ChatMessage( "Toggled mute on "..mute.ply:Nick().."!" )
+			DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
 		end
 		
+		menu:AddSpacer()
+
+		-- ulx support
+		if ulx then
+
+			local option = menu:AddOption( "Gag player voice" ) -- gag
+			option.ply = menu.ply
+			option:SetIcon("icon16/sound.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand( "ulx gag "..[["]]..self.ply:Nick()..[["]] )
+			end
+			local option = menu:AddOption( "Ungag player voice" ) -- ugag
+			option.ply = menu.ply
+			option:SetIcon("icon16/sound.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand( "ulx ungag "..[["]]..self.ply:Nick()..[["]] )
+			end
+			local option = menu:AddOption( "Mute player chat" ) -- gag
+			option.ply = menu.ply
+			option:SetIcon("icon16/style_delete.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx mute "..[["]]..self.ply:Nick()..[["]] )
+			end
+			local option = menu:AddOption( "Unmute player chat" ) -- gag
+			option.ply = menu.ply
+			option:SetIcon("icon16/style_delete.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx unmute "..[["]]..self.ply:Nick()..[["]] )
+			end
+			local option = menu:AddOption( "Slay player" ) -- gag
+			option.ply = menu.ply
+			option:SetIcon("icon16/newspaper.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx slay "..[["]]..self.ply:Nick()..[["]] )
+			end
+			local option = menu:AddOption( "Kick from server" ) -- kick
+			option.ply = menu.ply
+			option:SetIcon("icon16/sport_football.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx kick "..[["]]..self.ply:Nick()..[["]]..' Kicked by server staff.' )
+			end
+			local option = menu:AddOption( "Ban for 30 minutes" ) -- 30m ban
+			option.ply = menu.ply
+			option:SetIcon("icon16/clock.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx banid 30 "..self.ply:SteamID()..' Banned by server staff for half an hour.' )
+			end
+			local option = menu:AddOption( "Ban for 2 hours" ) -- 2hr ban
+			option.ply = menu.ply
+			option:SetIcon("icon16/clock.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx banid 120 "..self.ply:SteamID()..' Banned by server staff for 2 hours.' )
+			end
+			local option = menu:AddOption( "Ban for 24 hours" ) -- 1d ban
+			option.ply = menu.ply
+			option:SetIcon("icon16/clock.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx banid 1440 "..self.ply:SteamID()..' Banned by server staff for 1 day.' )
+			end
+			local option = menu:AddOption( "Ban for 1 week" ) -- 7d ban
+			option.ply = menu.ply
+			option:SetIcon("icon16/clock.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx banid 10080 "..self.ply:SteamID()..' Banned by server staff for 1 week.' )
+			end
+			local option = menu:AddOption( "Ban permanently" ) -- 7d ban
+			option.ply = menu.ply
+			option:SetIcon("icon16/clock_red.png")
+			function option:DoClick()
+				LocalPlayer():ConCommand("ulx banid 0 "..self.ply:SteamID()..' Banned by server staff forever.' )
+			end
+
+		end
 
 		menu:Open()
 	end
