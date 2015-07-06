@@ -62,24 +62,15 @@ if CLIENT then
 			local tr = util.TraceHull(
 				{
 				start = pos, 
-				endpos = pos + ang:Forward()*-dist*2,
-				mins = Vector(-10,-10,-10),
-				maxs = Vector(10,10,10),
+				endpos = pos + ang:Forward()*-dist + Vector(0,0,9) + ang:Right() * ThirdpersonX:GetFloat() + ang:Up() * ThirdpersonY:GetFloat(),
+				mins = Vector(-5,-5,-5),
+				maxs = Vector(5,5,5),
 				filter = player.GetAll(),
 				mask = MASK_SHOT_HULL
 				
 			})
 
-			local tracedist = tr.HitPos:Distance( tr.StartPos )
-
-			local fixpos = Vector(0,0,0)
-
-			if tracedist < dist then 
-				dist = tracedist-5
-			end
-
-			newpos = pos + ang:Forward()*-dist + fixpos + Vector(0,0,9) + ang:Right() * ThirdpersonX:GetFloat() + ang:Up() * ThirdpersonY:GetFloat()
-
+			newpos = tr.HitPos
 			view.origin = newpos
 			view.angles = ang
 			view.fov = fov
