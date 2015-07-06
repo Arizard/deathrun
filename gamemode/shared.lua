@@ -181,4 +181,4 @@ local function AutoHop( ply, data )
 end
 hook.Add( "SetupMove", "AutoHop", AutoHop )
 
-CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/README.md", FCVAR_REPLICATED, "The URL to open when the player types !help.")
+CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", FCVAR_REPLICATED, "The URL to open when the player types !help.")
