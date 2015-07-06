@@ -85,7 +85,7 @@ if SERVER then
 		end
 	end)
 end
-CreateConVar("deathrun_autojump_velocity_cap",350, FCVAR_REPLICATED, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
+CreateConVar("deathrun_autojump_velocity_cap",450, FCVAR_REPLICATED, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 if CLIENT then
 	CreateClientConVar("deathrun_autojump", 1, true, false)
 	cvars.AddChangeCallback("deathrun_autojump", function( name, old, new )
