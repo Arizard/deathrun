@@ -54,9 +54,12 @@ local rounds_played = 0
 
 local DeathTeamStreaks = {}
 
+
 ROUND:AddState( ROUND_WAITING,
 	function()
 		print("Round State: WAITING")
+
+		hook.Call("DeathrunBeginWaiting", nil )
 
 		if SERVER then
 			for k,ply in ipairs(player.GetAllPlaying()) do
@@ -90,6 +93,7 @@ ROUND:AddState( ROUND_WAITING,
 ROUND:AddState( ROUND_PREP,
 	function()
 		print("Round State: PREP")
+		hook.Call("DeathrunBeginPrep", nil )
 		if SERVER then
 			game.CleanUpMap()
 
@@ -191,6 +195,7 @@ ROUND:AddState( ROUND_PREP,
 ROUND:AddState( ROUND_ACTIVE,
 	function()
 		print("Round State: ACTIVE")
+		hook.Call("DeathrunBeginActive", nil )
 		if SERVER then
 			ROUND:SetTimer( RoundDuration:GetInt() )
 		end
@@ -233,6 +238,7 @@ ROUND:AddState( ROUND_ACTIVE,
 ROUND:AddState( ROUND_OVER,
 	function()
 		print("Round State: OVER")
+		hook.Call("DeathrunBeginOver", nil )
 		rounds_played = rounds_played + 1
 		if SERVER then
 			if rounds_played < RoundLimit:GetInt() then
@@ -242,10 +248,14 @@ ROUND:AddState( ROUND_OVER,
 					ROUND:RoundSwitch( ROUND_PREP )
 				end)
 			else
-				DR:ChatBroadcast("Round limit reached. Initiating RTV...")
-				timer.Simple(3, function()
-					MV:BeginMapVote()
-				end)
+				local shouldswitch = hook.Call("DeathrunShouldMapSwitch") or true
+				
+				if shouldswitch == true then
+					DR:ChatBroadcast("Round limit reached. Initiating RTV...")
+					timer.Simple(3, function()
+						MV:BeginMapVote()
+					end)
+				end
 			end
 		end
 	end,

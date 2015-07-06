@@ -1,6 +1,10 @@
 List of hooks and convars for them for Arizard's deathrun gamemode
 -------------------------------------
 
+-------------
+-- CONVARS --
+-------------
+
 SERVER CONVARS:
 
 	deathrun_round_duration <0-999>
@@ -65,6 +69,56 @@ CLIENT CONVARS:
 
 	deathrun_enable_announcements <0-1>
 		Enables announcements/help messages.
+
+	deathrun_thirdperson_enabled <0-1>
+		Enables thirdperson mode.
+
+	deathrun_thirdperson_offset_x <-100 - 100>
+	deathrun_thirdperson_offset_y <-100 - 100>
+	deathrun_thirdperson_offset_z <-100 - 100>
+		Offsets for thirdperson mode.
+
+
+-----------
+-- HOOKS --
+-----------
+
+SERVER:
+
+	DeathrunPlayerLoadout ( PLAYER ply ) 
+		Called when the player finishes spawning from dead/spectator and weapons are given.
+
+	DeathrunDeadToSpectator ( PLAYER ply )
+		Called when a dead player starts spectating (but not TEAM_SPECTATE)
+
+	DeathrunTeamDamage ( PLAYER attacker, PLAYER victim, DAMAGEINFO dmginfo, FLOAT originalDamage )
+		Called when a player attacks a teammate. Called AFTER the damage is set to 0. Hook this to allow team damage?????
+
+	DeathrunFallDamage ( PLAYER ply, FLOAT speed )
+		Called to calculate fall damage. Return a value to override the default fall damage.
+
+	DeathrunShouldMapSwitch ()
+		Called when the mapvote is about to be initiated. Return false to suppress the mapvote and replace it with your own.
+
+SHARED:
+
+	DeathrunBeginWaiting ()
+		Called when round state is switched to ROUND_WAITING ( 3 )
+
+	DeathrunBeginPreptime ()
+		Called when round state is switched to ROUND_PREP ( 4 )
+
+	DeathrunBeginActive ()
+		Called when round state is switched to ROUND_ACTIVE ( 5 )
+
+	DeathrunBeginOver ()
+		Called when round state is switched to ROUND_OVER ( 6 )
+
+	DeathrunPreventPreptimeMovement ()
+		Called when preventing player movement during Prep Time. Return false to allow players to move.
+
+
+
 
 
 

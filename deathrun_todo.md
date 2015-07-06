@@ -12,6 +12,7 @@
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
 * ULX + Evolve support for scoreboard (kick, ban, slay, gag)
 * Celebration screen when one team wins - List the team and the names of the winning players.
+* HOOKS
 
 ##Separate stuff
 * RTD

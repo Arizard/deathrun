@@ -145,6 +145,8 @@ function GM:PlayerLoadout( ply )
 	ply:SetRunSpeed( 250 )
 	ply:SetWalkSpeed( 250 )
 	ply:SetJumpPower( 200 )
+
+	hook.Call("DeathrunPlayerLoadout", self, ply)
 	
 end
 
@@ -174,6 +176,8 @@ function GM:PlayerDeath( ply )
 			end
 
 			ply.JustDied = false
+
+			hook.Call("DeathrunDeadToSpectator", GAMEMODE, ply)
 
 		end
 	end)
@@ -238,7 +242,11 @@ function GM:EntityTakeDamage( target, dmginfo )
 	if target:IsPlayer() and attacker:IsPlayer() then
 		if target:Team() == attacker:Team() then
 			--print("Attacked teammate")
+			local od = dmginfo:GetDamage()
 			dmginfo:SetDamage(0)
+
+			hook.Call( "DeathrunTeamDamage", self, attacker, target, dmginfo, od)
+			
 		end
 	end
 end
@@ -285,6 +293,10 @@ concommand.Add("strip", function(ply)
 end)
 
 function GM:GetFallDamage( ply, speed )
+	local dmg = hook.Call("DeathrunFallDamage", self, ply, speed)
+	if dmg ~= nil then
+		return dmg
+	end
 	return speed/8
 end
 
