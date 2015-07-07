@@ -241,6 +241,10 @@ local emptynotification = {
 	born = 0,
 }
 
+net.Receive("DeathrunNotification", function()
+	DR:AddNotification( net.ReadString(), ScrW()-16,ScrH()/7, 0, -0.35, 0, -0.00025, 10 )
+end)
+
 function DR:AddNotification( msg, x, y, dx, dy, ddx, ddy, dur )
 
 	msg = string.Replace(msg, "%newline%","\n")

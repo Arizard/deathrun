@@ -53,6 +53,7 @@ AddCSLuaFile( "cl_announcer.lua" )
 
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
+util.AddNetworkString("DeathrunNotification")
 
 -- required configz
 RunConsoleCommand("sv_friction", 4)
@@ -214,10 +215,16 @@ timer.Create("DeathrunSendKillList", 1.5,0,function()
 			end
 		end
 		message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
-		BroadcastLua([[DR:AddNotification( ']]..message..[[', ScrW()-16,ScrH()/7, 0, -0.35, 0, -0.00025, 10)]])
+		DR:DeathNotification( message )
 		DR.KillList = {}
 	end
 end)
+
+function DR:DeathNotification( msg )
+	net.Start("DeathrunNotification")
+	net.WriteString( msg )
+	net.Broadcast( )
+end
 
 function GM:PlayerDeathThink( ply )
 	return false

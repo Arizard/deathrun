@@ -55,7 +55,7 @@ local rounds_played = 0
 local DeathTeamStreaks = {}
 
 hook.Add("PlayerInitialSpawn", "DeathrunCleanupSinglePlayer", function( ply )
-	if #ply.GetAll() <= 1 then
+	if #player.GetAll() <= 1 then
 		game.CleanUpMap()
 		DR:ChatBroadcast("Cleaned up the map.")
 	end
