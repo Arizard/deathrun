@@ -135,7 +135,8 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 		["boolean"] = {
 			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
 			{"deathrun_enable_announcements", "Help messages"},
-			{"deathrun_thirdperson_enabled", "Thirdperson mode"}
+			{"deathrun_thirdperson_enabled", "Thirdperson mode"},
+			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"}
 		},
 		["number"] = {
 			{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},

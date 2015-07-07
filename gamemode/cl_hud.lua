@@ -18,6 +18,13 @@ end
 local fontstandard = "Franklin Gothic"
 
 
+surface.CreateFont("deathrun_hud_Xlarge", {
+	font = fontstandard,
+	size = 48,
+	antialias = true,
+	weight = 1200
+})
+
 surface.CreateFont("deathrun_hud_Large", {
 	font = fontstandard,
 	size = 30,
@@ -46,6 +53,9 @@ local XHairGreen = CreateClientConVar("deathrun_crosshair_green", 255, true, fal
 local XHairBlue = CreateClientConVar("deathrun_crosshair_blue", 255, true, false)
 local XHairAlpha = CreateClientConVar("deathrun_crosshair_alpha", 255, true, false)
 
+--start and end cues
+local CuesConVar = CreateClientConVar("deathrun_round_cues", 1, true, false)
+
 -- convars to adjust hud positioning
 local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
 
@@ -54,6 +64,33 @@ RoundNames[ROUND_WAITING] = "Waiting for players"
 RoundNames[ROUND_PREP] = "Preparing"
 RoundNames[ROUND_ACTIVE] = "Time Left"
 RoundNames[ROUND_OVER] = "Round Over"
+
+local RoundEndData = {
+	Active = false,
+	BeginTime = 0,
+}
+net.Receive("DeathrunSendMVPs", function()
+	RoundEndData = net.ReadTable()
+	RoundEndData.BeginTime = CurTime()
+	RoundEndData.Active = true
+
+	if CuesConVar:GetBool() == true then
+		if RoundEndData.winteam == 1 then
+			local stalematesounds = {
+				"ambient/animal/cow.wav",
+				"ambient/misc/flush1.wav",
+				"npc/crow/alert2.wav",
+				"ambient/animal/dog_med_inside_bark_2.wav"
+			}
+			surface.PlaySound(table.Random(stalematesounds))
+		else
+			local endingsounds = {
+			"ambient/alarms/warningbell1.wav",
+			}
+			surface.PlaySound(table.Random(endingsounds))
+		end
+	end
+end)
 
 function GM:HUDPaint()
 	
@@ -88,6 +125,13 @@ function GM:HUDPaint()
 
 	DR:DrawTargetID()
 	DR:DrawPlayerHUD( hud_positions[ HudPos:GetInt() +1 ][1] or 8, hud_positions[ HudPos:GetInt() +1 ][2] or 8 )
+
+	if RoundEndData.Active then -- check if it's stalemate, and don't do the thing, zhu li!
+		DR:DrawWinners( RoundEndData.winteam, RoundEndData.mvps, ScrW()/2 - 628/2, 24, RoundEndData.winteam == 1 and true or false)
+		if CurTime() > RoundEndData.BeginTime + RoundEndData.duration then
+			RoundEndData.Active = false
+		end
+	end
 
 end
 
@@ -297,3 +341,39 @@ end
 hook.Add("HUDPaint","DeathrunNotifications", function()
 	DR:UpdateNotifications()
 end)
+
+
+function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
+	local col = stalemate == false and team.GetColor( winteam ) or HexColor("#303030")
+
+	local spread = 2
+	local w, h = 628, 88
+	local sinval = math.sin(CurTime()*1.5)
+	local cosval = math.cos(CurTime()*1.5)
+	local doubleval = math.cos(CurTime()*0.7)
+	local mw, mh = w, 24
+	local gap = 4
+
+	surface.SetDrawColor( col )
+	surface.DrawRect(x,y,w,h)
+
+	if not stalemate then
+		surface.SetDrawColor( DR.Colors.Clouds )
+		surface.DrawRect(x, y + h + gap, mw, mh)
+		draw.SimpleText( "NOTABLE PLAYERS", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		-- draw MVPs
+		surface.SetDrawColor( col )
+		for i = 1, #tbl_mvps do
+			local name = tbl_mvps[i]
+			if name then
+				surface.DrawRect(x, y+h+(gap+mh)*i + gap, mw, mh)
+				draw.SimpleText( name, "deathrun_hud_Medium", x + w/2, y + h +(gap+mh)*i + gap +mh/2 - 1, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			end
+		end
+	end
+
+	draw.SimpleText( stalemate == false and string.upper(team.GetName( winteam ).." win the round!") or "STALEMATE!", "deathrun_hud_Xlarge", x + w/2, y + h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	surface.SetDrawColor( DR.Colors.Clouds )
+	surface.DrawRect(x, y + h + gap, mw, mh)
+	draw.SimpleText( "YOU'RE ALL TERRIBLE!", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+end

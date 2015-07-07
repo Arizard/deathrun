@@ -16,8 +16,6 @@ if SERVER then
 end
 RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
 
-
-
 -- for the round timer
 -- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
 -- timer going every 0.2s updating ROUND_TIMER so we have a precision of 1/5th of a second ?????
@@ -38,6 +36,7 @@ end)
 
 if SERVER then
 	util.AddNetworkString("DeathrunSyncRoundTimer")
+	util.AddNetworkString("DeathrunSendMVPs")
 	function ROUND:SetTimer( s )
 		ROUND_TIMER = s
 		net.Start("DeathrunSyncRoundTimer")
@@ -99,6 +98,12 @@ ROUND:AddState( ROUND_PREP,
 	function()
 		print("Round State: PREP")
 		hook.Call("DeathrunBeginPrep", nil )
+		if CLIENT then
+			if GetConVar("deathrun_round_cues"):GetBool() == true then
+				surface.PlaySound("ui/achievement_earned.wav") -- round start cue
+			end
+		end
+
 		if SERVER then
 			game.CleanUpMap()
 
@@ -224,8 +229,6 @@ ROUND:AddState( ROUND_ACTIVE,
 				end
 			end
 
-			--PrintTable( runners )
-
 			if #deaths == 0 and #runners == 0 then
 				ROUND:FinishRound( WIN_STALEMATE )
 			elseif #deaths == 0 then
@@ -276,6 +279,22 @@ if SERVER then
 	function ROUND:FinishRound( winteam )
 		ROUND:RoundSwitch( ROUND_OVER )
 		DR:ChatBroadcast("Round over! "..( winteam == WIN_RUNNER and team.GetName( TEAM_RUNNER ).." win!" or winteam == WIN_DEATH and team.GetName( TEAM_DEATH ).." win!" or "Stalemate! Unbelievable!" ) )
+		--calculate MVPs
+		net.Start("DeathrunSendMVPs")
+
+		local mvps = {}
+		for k,v in ipairs( team.GetPlayers(winteam) ) do
+			if v:Alive() then
+				table.insert(mvps,v:Nick().." survived the round!")
+			end
+		end
+		local data = {}
+		data.mvps = table.Copy(mvps)
+		data.duration = FinishDuration:GetInt() -- how long we want to show this screen for, in seconds (temporary?)
+		data.winteam = winteam
+
+		net.WriteTable( data )
+		net.Broadcast()
 	end
 
 	--initial round

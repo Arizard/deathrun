@@ -7,11 +7,9 @@
 ##Planned Features:
 * Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
 * Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
-* Pointshop support.
-* RTD - convar to enable/disable, or even release as a separate addon.
+* Pointshop support ????
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
 * ULX + Evolve support for scoreboard (kick, ban, slay, gag)
-* Celebration screen when one team wins - List the team and the names of the winning players.
 * HOOKS
 
 ##Separate stuff
@@ -19,6 +17,8 @@
 * Leveling/XP (hooks into starts/ends)
 
 ##Currently Implemented
+* Sound cues for round starts and round ends
+* Celebration screen when one team wins - List the team and the names of the winning players.
 * Mapvote - Players can nominate maps to be voted for through the nomination menu. Players can rock the vote with !rtv if they don't like the current map. Ratio of votes:players can be customized with **mapvote_rtv_ratio <0-1>**. Players use the keys 1-9 to vote for maps.
 * Weapons - CS:S Weapons are included by default and require no configuration (CS:S must be mounted on the server). They have predictable spray patterns so that experienced players can express their skill. 
 * HUD - HUD Displays Health, Velocity, team and time left. HUD can be positions to one of 9 spots on the screen using **deathrun_hud_position <0-8>**, or through the !settings menu.
