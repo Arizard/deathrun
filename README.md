@@ -36,10 +36,10 @@ Also, if you see any horriffic, eye-meltingly bad code anywhere in this reposito
 ##Currently Implemented Features
 
 ###Menus
-####Help
+######Help
 Typing !help or pressing F1 will open the Help menu. This window displays a webpage from the github repository listing a bunch of useful commands to help the player get started. It also includes information about how to play deathrun.
 
-####Settings
+######Settings
 Typing !settings or pressing F2 will open the Settings menu. This lets players easily customise all their clientside convars.
 
 ###Button Claiming
@@ -49,32 +49,32 @@ This gamemode features automatic button claiming, inspired by BlackVoid's manual
 Spray patterns for all weapons are somewhat predictable - an inverted triangle leaning to the right. Pull down and to the left to compensate! This aims to remove randomness from shooting, because nobody likes aiming directly onto another player, only for the random spread to miss the shot!
 
 ###HUD
-####Health and Velocity
+######Health and Velocity
 HUD displays the Health, Velocity, round timer, round state and current team. The position of the HUD can be changed from the settings menu. Type !settings or press F2.
 
-####Crosshair
+######Crosshair
 You can customise your crosshair using a bunch of convars, similar to the ones used in CS:GO. Type !crosshair to open the crosshair creator. Choose color, gap, length and thickness.
 
-####Scoreboard
+######Scoreboard
 From the scoreboard you can view the full list of players currently on the server, their living status (alive/dead), and you can copy their steam ID and mute the player by right-clicking to free the cursor, and then left-clicking on the player. Muted players show up with a muted icon on their avatar. Dead players will have a red X on their avatar and their scoreboard row will be washed out. The header changes to your server's Hostname. Supports scrolling for large player counts.
 
 Scoreboard will support customization of columns through a series of gamemode hooks.
 
 If you have ULX installed, the scoreboard allows you to gag, mute, slay, kick and ban players by clicking on their name.
 
-####Celebration screen
+######Celebration screen
 When a team wins, a victory screen is displayed on the HUD, listing the winning team and it's MVPs.
 
-####Sound Cues
+######Sound Cues
 There are sound cues at the start and end of each round. These can be disabled in the settings menu.
 
 ###Mapvote
 The gamemode features a native mapvote with an included nomination system. The mapvote can be configured to display any number of maps to be voted for, though it is recommended to choose a value between 5 and 10.
 
-####Nominations
+######Nominations
 Players can type !nominate or !maps to view a full list of maps on the server. They can click on a map to nominate it for the mapvote. Once nominated, the map will show up in the mapvote window.
 
-####Mapvote window
+######Mapvote window
 The mapvote window is initialized by default on the end of the last round of the map, but it can also be initiated when enough players vote to RTV. The ratio of votes:players required can be customized with the convar **mapvote_rtv_ratio <0.0 - 1.0>**.
 
 Players press the keys 1-9 to vote for maps, but they can also hold the scoreboard open and click on the mapvote with their mouse to vote for a map (e.g. if you display more than 9 maps).
