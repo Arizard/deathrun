@@ -72,7 +72,7 @@ function InverseLerp( pos, p1, p2 )
 
 end
 
--- I uh... borrowed this from Gravious. I need it but I don't know why.
+
 
 local function intToBool( i )
 	if tonumber(i) == 0 then
@@ -103,6 +103,8 @@ if CLIENT then
 		RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt()) -- in case some trickery happens on the client we'll sync this right up. They can probably destroy the timer but whatever
 	end)
 end
+
+-- I uh... "borrowed" this from Gravious. I need it but I don't know why.
 
 local lp, ft, ct, cap = LocalPlayer, FrameTime, CurTime
 local mc, mr, bn, ba, bo = math.Clamp, math.Round, bit.bnot, bit.band, bit.bor

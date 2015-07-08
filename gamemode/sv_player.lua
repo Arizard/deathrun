@@ -16,6 +16,7 @@ function PLAYER:EndSpectate() -- when you want to end spectating when he respawn
 	self.StaySpectating = false
 
 end
+
 function PLAYER:StopSpectate() -- when you want to end spectating immediately
 
 	self.Spectating = false

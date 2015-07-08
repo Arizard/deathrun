@@ -89,7 +89,10 @@ function GM:PlayerDisconnected( ply )
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end
 
-function GM:PlayerSpawn( ply, spec )
+
+function GM:PlayerSpawn( ply )
+
+	ply:SetModel( table.Random( playermodels ) )
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
@@ -100,7 +103,7 @@ function GM:PlayerSpawn( ply, spec )
 			ply:SetTeam( TEAM_RUNNER )
 		end
 		ply:SetupHands()
-		GAMEMODE:PlayerLoadout( ply )
+		hook.Call("PlayerLoadout", self, ply)
 		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
@@ -112,7 +115,7 @@ function GM:PlayerSpawn( ply, spec )
 
 		ply:SetupHands( ply )
 
-		GAMEMODE:PlayerLoadout( ply )
+		hook.Call("PlayerLoadout", self, ply)
 	end
 
 	if ply:Team() ~= TEAM_RUNNER and ply:Team() ~= TEAM_DEATH and ply:Team() ~= TEAM_SPECTATOR then ply:SetTeam( TEAM_RUNNER ) end
@@ -133,7 +136,6 @@ function GM:PlayerLoadout( ply )
 	ply:StripWeapons()
 	ply:StripAmmo()
 
-	ply:SetModel( table.Random( playermodels ) )
 	ply:Give("weapon_knife")
 
 	local teamcol = team.GetColor( ply:Team() )
@@ -147,11 +149,23 @@ function GM:PlayerLoadout( ply )
 	ply:SetWalkSpeed( 250 )
 	ply:SetJumpPower( 200 )
 
+	ply:DrawViewModel( true )
+
 	hook.Call("DeathrunPlayerLoadout", self, ply)
 	
 end
 
 function GM:PlayerDeath( ply )
+
+	ply:SetupHands( nil )
+	ply:DrawViewModel( false )
+
+	if ply:Team() == TEAM_SPECTATOR then 
+		ply:Spawn()
+		ply:BeginSpectate()
+		return
+	end
+
 	timer.Simple(5, function()
 		if not IsValid( ply ) then return end -- incase they die and disconnect, prevents console errors.
 		if not ply:Alive() then
