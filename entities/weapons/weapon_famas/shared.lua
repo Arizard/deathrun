@@ -4,7 +4,7 @@ if ( CLIENT ) then
 	SWEP.Author				= "Counter-Strike"
 	SWEP.Slot				= 3
 	SWEP.SlotPos			= 0
-	SWEP.IconLetter			= "v"
+	SWEP.IconLetter			= "t"
 	
 	killicon.AddFont( "weapon_famas", "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 

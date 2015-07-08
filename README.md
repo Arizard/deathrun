@@ -46,7 +46,7 @@ Typing !settings or pressing F2 will open the Settings menu. This lets players e
 This gamemode features automatic button claiming, inspired by BlackVoid's manual button claiming in his deathrun gamemode. Walk up to a button to claim it as yours. Once claimed, it is impossible for another player to press the button - thus it is impossible to button steal. Walk away from a button and it will become unclaimed, allowing other players to claim it. There is a subtle text indicator which will tell you if the button is claimed or unclaimed, and the name of the player who claims it.
 
 ###Weapons
-Spray patterns for all weapons are somewhat predictable - an inverted triangle leaning to the right. Pull down and to the left to compensate! This aims to remove randomness from shooting, because nobody likes aiming directly onto another player, only for the random spread to miss the shot!
+Spray patterns for all weapons are somewhat predictable - an inverted triangle leaning to the right. Pull down and to the left to compensate! This aims to remove randomness from shooting, because nobody likes aiming directly onto another player, only for the random spread to miss the shot! Weapons also do extra damage for headshots.
 
 ###HUD
 ######Health and Velocity

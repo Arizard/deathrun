@@ -220,18 +220,47 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Src 		= self.Owner:GetShootPos()			// Source
 	bullet.Dir 		= self.Owner:GetAimVector()			// Dir of bullet
 
-	bullet.Spread 	= Vector( cone, cone, 0 )			// Aim Cone
+	bullet.Spread 	= Vector( 0, 0, 0 )			// Aim Cone
 	bullet.Tracer	= 4									// Show a tracer on every x bullets 
 	bullet.Force	= 5									// Amount of force to give to phys objects
 	bullet.Damage	= dmg
 
 	local shootAng = bullet.Dir:Angle()
 	local right = shootAng:Right()
+
+
 	local up = shootAng:Up()
 	local shiftamt = self:GetRecoilShiftAmount()
 	shootAng:RotateAroundAxis( right, shiftamt )
 	shootAng:RotateAroundAxis( up, math.random(-shiftamt*100/4, shiftamt*100/8)/100 )
+
+	-- add spread cone
+	shootAng:RotateAroundAxis( up, math.random( -cone*1000, cone*1000 )/40 )
+	shootAng:RotateAroundAxis( right, math.random( -cone*1000, cone*1000 )/40 )
+
 	bullet.Dir = shootAng:Forward()
+
+	-- test for hitboxes
+	--if SERVER then
+		local tr = util.TraceLine({
+			start = bullet.Src,
+			endpos = bullet.Src + bullet.Dir * 5120,
+			filter = {self, self.Owner, self.Weapon},
+		})
+
+		if tr.Entity:IsPlayer() then
+			if tr.HitGroup == HITGROUP_HEAD then
+				if SERVER then
+					tr.Entity:EmitSound("player/bhit_helmet-1.wav", 400, 100, 1 )
+				end
+				local ed = EffectData()
+				ed:SetOrigin( tr.HitPos )
+				ed:SetMagnitude( 0.5 )
+				util.Effect("StunstickImpact", ed)
+				bullet.Damage = dmg*1.4 -- headshot buff
+			end
+		end
+	--end
 	
 	local owner = self.Owner
 	local slf = self
@@ -246,17 +275,12 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK ) 		// View model animation
 	self.Owner:MuzzleFlash()								// Crappy muzzle light
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )				// 3rd Person Animation
+
+	
+
+	--print(tr.Entity:IsPlayer() and tr.HitGroup or "no hitgroup")
 	
 	if ( self.Owner:IsNPC() ) then return end
-	
-	// CUSTOM RECOIL !
-	if ( (game.SinglePlayer() && SERVER) || ( !game.SinglePlayer() && CLIENT && IsFirstTimePredicted() ) ) then
-	
-		--local eyeang = self.Owner:EyeAngles()
-		--eyeang.pitch = eyeang.pitch - recoil
-		--self.Owner:SetEyeAngles( eyeang )
-	
-	end
 
 end
 
