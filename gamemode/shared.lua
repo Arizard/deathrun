@@ -86,7 +86,7 @@ if SERVER then
 	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)
 		if args[1] then
 			ply.AutoJumpEnabled = intToBool( args[1] )
-			print("Player "..ply:Nick().." set their autojump convar to "..tostring(ply.AutoJumpEnabled))
+			--print("Player "..ply:Nick().." set their autojump convar to "..tostring(ply.AutoJumpEnabled))
 		end
 	end)
 end
@@ -96,10 +96,12 @@ if CLIENT then
 	cvars.AddChangeCallback("deathrun_autojump", function( name, old, new )
 		RunConsoleCommand("deathrun_internal_set_autojump", tonumber(new))
 		LocalPlayer().AutoJumpEnabled = intToBool( new )
-		--print(LocalPlayer().AutoJumpEnabled)
 	end, "DeathrunAutoJumpConVarChange")
 	
 	RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt())
+	timer.Create("DeathrunAutojumpSendToServer", 5, 0, function()
+		RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt()) -- in case some trickery happens on the client we'll sync this right up. They can probably destroy the timer but whatever
+	end)
 end
 
 local lp, ft, ct, cap = LocalPlayer, FrameTime, CurTime
@@ -149,7 +151,7 @@ function GM:Move( ply, data )
 	local vel = data:GetVelocity()
 	vel = vel + (wishdir * accelspeed)
 
-	if ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true then
+	if ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true and GetConVar("deathrun_autojump_velocity_cap"):GetFloat() ~= 0 then
 		ply.SpeedCap = GetConVar("deathrun_autojump_velocity_cap"):GetFloat()
 	else
 		ply.SpeedCap = 99999
