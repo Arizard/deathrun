@@ -3,10 +3,9 @@
 <tr>
 <td>
  <p><b>GAMEMODE STATUS</b></p>
-</td>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
 <td>
- <b>SOMEWHAT READY</b><br/>It definitely works, but main features will be missing.
+ <b><i>SOMEWHAT READY</i></b> - It's mostly stable but expect some bugs.
 </td>
 </tr>
 </table>
@@ -22,51 +21,138 @@ This means I'm taking suggestions for what should be standard in Deathrun (i.e. 
 
 Also, if you see any horriffic, eye-meltingly bad code anywhere in this repository, feel free to spam my steam or github messages about it and I will try and fix it as soon as possible.
 
-I plan to include features such as map start/end zones (with hooks for customization), button claiming, easy scoreboard customization, appealing HUD and a focus on graphical interfaces for admins and players (menus for *everything*). The gamemode will also include formatted gamemode chat messages and an easy way to add chat commands. Also features css weapons by default.
+###Planned Features:
+* Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
+* Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
+* Pointshop support ????
+* ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
+* Evolve support for scoreboard (kick, ban, slay, gag)
+* MORE HOOKS
 
-##Weapons
-![](http://i.imgur.com/oR8DjMY.png, "Somewhat predictable recoil patterns for all weapons")
+###Separate stuff
+* RTD
+* Leveling/XP (hooks into starts/ends)
 
-Spray patterns for all weapons are somewhat predictable - an inverted triangle leaning to the right. Pull down and to the left to compensate!
-##HUD
-###Health and Velocity
-![](http://i.imgur.com/zeY8EcB.png "More HUD Positions!")
+##Currently Implemented Features
 
-You can change the position of the HUD with the convar 
-<pre>
-deathrun_hud_position <0-8>
+###Menus
+####Help
+Typing !help or pressing F1 will open the Help menu. This window displays a webpage from the github repository listing a bunch of useful commands to help the player get started. It also includes information about how to play deathrun.
 
-values:
-	0 top left
-	1 top center
-	2 top right
-	3 center left
-	4 center center (?why?)
-	5 center right
-	6 bottom left
-	7 bottom center
-	8 bottom right
-</pre>
-###Crosshair
-You can customise your crosshair using a bunch of convars, similar to the ones used in CS:GO. Type !crosshair to open the crosshair creator.
+####Settings
+Typing !settings or pressing F2 will open the Settings menu. This lets players easily customise all their clientside convars.
 
-<pre>
-Convars:
-	deathrun_crosshair_gap <int> // the space inside the cross
-	deathrun_crosshair_size <int> // the length of each line
-	deathrun_crosshair_thickness <int> // the thickness of each line
-	deathrun_crosshair_alpha <0-255> // transparency of the crosshair
-	deathrun_crosshair_red
-	deathrun_crosshair_green
-	deathrun_crosshair_blue <0-255> // red, green, blue values for the color.
-</pre>
-![](http://i.imgur.com/WXhPeLV.png)
-![](http://i.imgur.com/95pKGCK.png)
-![](http://i.imgur.com/SPBUqLq.png)
+###Button Claiming
+This gamemode features automatic button claiming, inspired by BlackVoid's manual button claiming in his deathrun gamemode. Walk up to a button to claim it as yours. Once claimed, it is impossible for another player to press the button - thus it is impossible to button steal. Walk away from a button and it will become unclaimed, allowing other players to claim it. There is a subtle text indicator which will tell you if the button is claimed or unclaimed, and the name of the player who claims it.
 
-###Scoreboard
-From the scoreboard you can view the full list of players currently on the server, their living status (alive/dead), and you can (currently) copy their steam ID and mute the player by right-clicking to free the cursor, and then left-clicking on the player. Muted players show up with a muted icon on their avatar. Dead players will have a red X on their avatar and their scoreboard row will be washed out. The header changes to your server's Hostname. Supports scrolling for large player counts.
+###Weapons
+Spray patterns for all weapons are somewhat predictable - an inverted triangle leaning to the right. Pull down and to the left to compensate! This aims to remove randomness from shooting, because nobody likes aiming directly onto another player, only for the random spread to miss the shot!
+
+###HUD
+####Health and Velocity
+HUD displays the Health, Velocity, round timer, round state and current team. The position of the HUD can be changed from the settings menu. Type !settings or press F2.
+
+####Crosshair
+You can customise your crosshair using a bunch of convars, similar to the ones used in CS:GO. Type !crosshair to open the crosshair creator. Choose color, gap, length and thickness.
+
+####Scoreboard
+From the scoreboard you can view the full list of players currently on the server, their living status (alive/dead), and you can copy their steam ID and mute the player by right-clicking to free the cursor, and then left-clicking on the player. Muted players show up with a muted icon on their avatar. Dead players will have a red X on their avatar and their scoreboard row will be washed out. The header changes to your server's Hostname. Supports scrolling for large player counts.
 
 Scoreboard will support customization of columns through a series of gamemode hooks.
 
-![](http://i.imgur.com/OagMUse.png)
+If you have ULX installed, the scoreboard allows you to gag, mute, slay, kick and ban players by clicking on their name.
+
+####Celebration screen
+When a team wins, a victory screen is displayed on the HUD, listing the winning team and it's MVPs.
+
+####Sound Cues
+There are sound cues at the start and end of each round. These can be disabled in the settings menu.
+
+###Mapvote
+The gamemode features a native mapvote with an included nomination system. The mapvote can be configured to display any number of maps to be voted for, though it is recommended to choose a value between 5 and 10.
+
+####Nominations
+Players can type !nominate or !maps to view a full list of maps on the server. They can click on a map to nominate it for the mapvote. Once nominated, the map will show up in the mapvote window.
+
+####Mapvote window
+The mapvote window is initialized by default on the end of the last round of the map, but it can also be initiated when enough players vote to RTV. The ratio of votes:players required can be customized with the convar **mapvote_rtv_ratio <0.0 - 1.0>**.
+
+Players press the keys 1-9 to vote for maps, but they can also hold the scoreboard open and click on the mapvote with their mouse to vote for a map (e.g. if you display more than 9 maps).
+
+###Idle Support
+When there is nobody else on the server except for one player, they have access to godmode and the commands !respawn and !cleanup. This allows them to practice the map or mess around with traps until more players join, giving them something to do in the meantime, rather than be forced to fly around in spectate mode.
+
+This will help servers fill up, rather than staff having to idle on the server until it has enough players to sustain itself.
+
+###Chat Commands
+The gamemode features a number of simple chat commands, but more importantly, the gamemode allows developers to easily attach console commands to chat commands using the sv_commands.lua API.
+
+<pre>
+-- Example adding a simple chat command linked to a console command
+----------
+--SERVER--
+----------
+
+-- ply is the player who issued the command
+-- args is a table of string arguments specifed after the command 
+-- (it does not include the command itself)
+
+DR:AddChatCommand("help", function( ply, args ) 
+	ply:ConCommand("deathrun_open_help")
+end)
+
+-- When a player types !help, it runs that console command on the player
+-- When they type /help, it does the same, except the command does not 
+-- show in chat (silent command).
+
+----------
+--CLIENT--
+----------
+
+concommand.Add("deathrun_open_help", function()
+	DR:OpenHelp()
+end)
+
+</pre>
+
+###Autojump
+Yes, this gamemode includes Autojump by default. However - players using autojump will be capped at a maximum velocity of 450u/s (this can be customised by server owners with the convar **deathrun_autojump_velocity_cap <0-99999> ; 0 = unlimited**. Disabling autojump through the settings menu will remove this velocity cap and allow legitimate bhoppers to achieve any speed they like.
+
+Players using autojump will see AUTO in capital letters displayed on their velocity bar.
+
+*FAQ - Why velocity cap?*
+
+*A:* Why should a scrollwheel bhopper lose to a player who holds spacebar? Autojump is viral in the deathrun scene because it makes the game really easy for anyone who knows how to hold a key down. Scrollwheel bhoppers take time to practice and become good at legitimate bhopping, so they should be rewarded for their skill - autojump is too easy and requires very little skill, so players should not be rewarded for completing a map with autojump on, and instead be handicapped.
+
+###Helpful Announcements
+Help messages are regularly printed to each player's chat. The frequency and visibility of these messages can be customised through the settings menu.
+
+##Images
+Help Menu
+![](http://i.imgur.com/Ealwjha.png)
+
+Settings Menu
+![](http://i.imgur.com/DJtmTaw.png)
+
+Weapon recoil pattern
+![](http://i.imgur.com/qoUp7qb.png)
+
+Health and Velocity HUD
+![](http://i.imgur.com/RdleFGm.png)
+
+Crosshair Creator
+![](http://i.imgur.com/LB95Yko.png)
+
+Scoreboard
+![](http://i.imgur.com/WkyEzwd.png)
+
+Nomination window
+
+![](http://i.imgur.com/5w0oNpT.png)
+
+Mapvote window
+![](http://i.imgur.com/al5IQ4E.png)
+
+Autojump Velocity Cap
+
+![](http://i.imgur.com/sMcW33i.png)
