@@ -87,4 +87,4 @@ end
 
 hook.Add("Think", "ROUND_THINK", function() -- keep thinking for the current round, i.e. to check for living players
 	ROUND:RoundThink( ROUND_CURRENT )
-end
+end)
