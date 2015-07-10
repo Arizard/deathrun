@@ -3,7 +3,7 @@
 ##TODO
 
 ##Planned Features:
-* Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
+
 * Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
 * Pointshop support ????
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
@@ -15,6 +15,7 @@
 * Leveling/XP (hooks into starts/ends)
 
 ##Currently Implemented
+* Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
 * ULX support for scoreboard
 * F1 and F2 bound to Help and Settings
 * Sound cues for round starts and round ends

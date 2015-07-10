@@ -156,3 +156,7 @@ Mapvote window
 Autojump Velocity Cap
 
 ![](http://i.imgur.com/sMcW33i.png)
+
+Start and End zones with Zone Editor
+
+![](http://i.imgur.com/mjJcrmH.png)
