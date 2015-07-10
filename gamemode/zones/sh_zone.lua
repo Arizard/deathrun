@@ -6,7 +6,7 @@
 -- color
 -- type <start|end>
 
-ZONE = {} -- global table
+ZONE = ZONE or {} -- global table
 
 function VectorMinMax( vec1, vec2 )
 	local min = Vector(0,0,0)
@@ -42,7 +42,7 @@ end
 
 function VectorInCuboid( pos, min, max ) -- check if vector is within cuboid
 	local min, max = VectorMinMax( min, max ) -- get the min and max of the two corners
-	if (pos.x > min.x and pos.x > max.x) and (pos.y > min.y and pos.y > max.y) and (pos.z > min.z and pos.z > max.z) then
+	if (pos.x > min.x and pos.x < max.x) and (pos.y > min.y and pos.y < max.y) and (pos.z > min.z and pos.z < max.z) then
 		return true
 	else
 		return false

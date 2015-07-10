@@ -253,3 +253,206 @@ concommand.Add("deathrun_open_settings", function()
 	DR:OpenSettings()
 end)
 
+function DR:OpenZoneEditor()
+	local frame = vgui.Create("deathrun_window")
+	frame:SetSize(320,480)
+	frame:Center()
+	frame:MakePopup()
+	frame:SetTitle("Zone Editor")
+
+	local panel = vgui.Create("DPanel", frame)
+	panel:SetSize( frame:GetWide()-8, frame:GetTall()-44 )
+	panel:SetPos(4,32)
+	function panel:Paint(w,h)
+		surface.SetDrawColor(DR.Colors.Clouds)
+		surface.DrawRect(0,0,w,h)
+	end
+
+	local scr = vgui.Create("DScrollPanel", panel)
+	scr:SetSize( panel:GetWide()-12, panel:GetTall()-16 )
+	scr:SetPos(8,8)
+
+	local vbar = scr:GetVBar()
+	vbar:SetWide(4)
+
+	function vbar:Paint(w,h)
+		surface.SetDrawColor(0,0,0,100) 
+		surface.DrawRect(0,0,w,h)
+	end
+	function vbar.btnUp:Paint() end
+	function vbar.btnDown:Paint() end
+	function vbar.btnGrip:Paint(w, h)
+		surface.SetDrawColor(0,0,0,200)
+		surface.DrawRect(0,0,w,h)
+	end
+
+	local dlist = vgui.Create("DIconLayout", scr)
+	dlist:SetSize( scr:GetWide()-6, scr:GetTall() )
+	dlist:SetPos(0,0)
+	dlist:SetSpaceX(4)
+	dlist:SetSpaceY(8)
+
+	local lbl = vgui.Create("DLabel")
+	lbl:SetFont("deathrun_derma_Small")
+	lbl:SetTextColor(DR.Colors.Turq)
+	lbl:SetText("Create Zone")
+	lbl:SizeToContents()
+	lbl:SetWide( dlist:GetWide() )
+	dlist:Add(lbl)
+
+	local lbl = vgui.Create("DLabel")
+	lbl:SetFont("deathrun_derma_Tiny")
+	lbl:SetTextColor( HexColor("#333") )
+	lbl:SetText("Zone Name:")
+	lbl:SizeToContents()
+	lbl:SetWide( dlist:GetWide()/2 -2 )
+	dlist:Add(lbl)
+
+	local te = vgui.Create("DTextEntry")
+	te:SetSize( dlist:GetWide()/2 -2, 18 )
+	te:SetText("new_zone")
+	dlist:Add(te)
+
+	local lbl = vgui.Create("DLabel")
+	lbl:SetFont("deathrun_derma_Tiny")
+	lbl:SetTextColor( HexColor("#333") )
+	lbl:SetText("Zone Type:")
+	lbl:SizeToContents()
+	lbl:SetWide( dlist:GetWide()/2 -2 )
+	dlist:Add(lbl)
+
+	local dd = vgui.Create("DComboBox")
+	dd:SetSize( dlist:GetWide()/2 -2, 18 )
+	dd:SetValue("end")
+	dd:AddChoice("start")
+	dd:AddChoice("end")
+	dd:AddChoice("custom")
+	dlist:Add(dd)
+
+	local sbmt =  vgui.Create("deathrun_button")
+	sbmt:SetSize(dlist:GetWide(), 18)
+	sbmt:SetText("Create Zone")
+	sbmt:SetFont("deathrun_derma_Tiny")
+	sbmt:SetOffsets(0,-7)
+	dlist:Add(sbmt)
+
+	sbmt.te = te
+	te.sbmt = sbmt
+	sbmt.dd = dd
+
+	function te:OnTextChanged()
+		self.sbmt:SetText("Create Zone '"..self:GetText().."'")
+	end
+
+	function sbmt:DoClick()
+		LocalPlayer():ConCommand("zone_create "..self.te:GetText().." "..self.dd:GetValue().." " )
+		print("zone_create", self.te:GetText().." "..self.dd:GetValue())
+	end
+
+	--edit zones
+	local lbl = vgui.Create("DLabel")
+	lbl:SetFont("deathrun_derma_Small")
+	lbl:SetTextColor(DR.Colors.Turq)
+	lbl:SetText("Modify Zone")
+	lbl:SizeToContents()
+	lbl:SetWide( dlist:GetWide() )
+	dlist:Add(lbl)
+
+	local dd = vgui.Create("DComboBox")
+	dd:SetSize( dlist:GetWide(), 18 )
+	dd:SetValue(LocalPlayer().LastSelectZone or "Select Zone")
+	for name,z in pairs(ZONE.zones) do
+		if z.type then
+			dd:AddChoice( name )
+		end
+	end
+	function dd:OnSelect( index, value )
+		LocalPlayer().LastSelectZone = value
+	end
+	dlist:Add(dd)
+
+	local pnl = vgui.Create("DPanel")
+	pnl:SetSize( dlist:GetWide(), 85 )
+	dlist:Add( pnl )
+	pnl.dd = dd
+	function pnl:Paint( w, h )
+		local zone = ZONE.zones[ self.dd:GetValue() ] or nil
+		if zone then
+			local col = zone.color
+			local info = {
+				"Zone Name: "..self.dd:GetValue(),
+				"Zone Type: "..zone.type,
+				"Pos1: "..tostring(zone.pos1),
+				"Pos2: "..tostring(zone.pos2),
+				"Color:".." "..tostring(col.r).." "..tostring(col.g).." "..tostring(col.b).." "..tostring(col.a),
+			}
+
+			for i = 1, #info do
+				local k = i-1
+				draw.SimpleText(info[i], "deathrun_derma_Tiny", 0, 14*k, HexColor("#303030"))
+			end
+		end
+	end
+
+	-- ripped from wiki lmao
+	local Mixer = vgui.Create( "DColorMixer" )
+	Mixer:SetSize( dlist:GetWide(), 196 )
+	Mixer:SetPalette( true ) 		--Show/hide the palette			DEF:true
+	Mixer:SetAlphaBar( true ) 		--Show/hide the alpha bar		DEF:true
+	Mixer:SetWangs( true )			--Show/hide the R G B A indicators 	DEF:true
+	Mixer:SetColor( Color( 255, 255, 255 ) )	--Set the default color
+	Mixer.dd = dd
+
+	dlist:Add(Mixer)
+
+	local but =  vgui.Create("deathrun_button")
+	but:SetSize(dlist:GetWide(), 18)
+	but:SetText("Set zone color")
+	but:SetFont("deathrun_derma_Tiny")
+	but:SetOffsets(0,-7)
+	but.dd = dd
+	but.mixer = Mixer
+	dlist:Add(but)
+	function but:DoClick()
+		local col = self.mixer:GetColor()
+		LocalPlayer():ConCommand("zone_setcolor "..self.dd:GetValue().." "..tostring(col.r).." "..tostring(col.g).." "..tostring(col.b).." "..tostring(col.a))
+	end
+
+	local but =  vgui.Create("deathrun_button")
+	but:SetSize(dlist:GetWide(), 18)
+	but:SetText("Set Pos1 to eyetrace")
+	but:SetFont("deathrun_derma_Tiny")
+	but:SetOffsets(0,-7)
+	but.dd = dd
+	dlist:Add(but)
+	function but:DoClick()
+		LocalPlayer():ConCommand("zone_setpos1 "..self.dd:GetValue().." eyetrace")
+	end
+
+	local but =  vgui.Create("deathrun_button")
+	but:SetSize(dlist:GetWide(), 18)
+	but:SetText("Set Pos2 to eyetrace")
+	but:SetFont("deathrun_derma_Tiny")
+	but:SetOffsets(0,-7)
+	but.dd = dd
+	dlist:Add(but)
+	function but:DoClick()
+		LocalPlayer():ConCommand("zone_setpos2 "..self.dd:GetValue().." eyetrace")
+	end
+
+	local but =  vgui.Create("deathrun_button")
+	but:SetSize(dlist:GetWide(), 18)
+	but:SetText("Remove this zone")
+	but:SetFont("deathrun_derma_Tiny")
+	but:SetOffsets(0,-7)
+	but.dd = dd
+	dlist:Add(but)
+	function but:DoClick()
+		LocalPlayer():ConCommand("zone_remove "..self.dd:GetValue())
+	end
+
+
+end
+concommand.Add("deathrun_open_zone_editor", function()
+	DR:OpenZoneEditor()
+end)

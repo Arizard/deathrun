@@ -100,11 +100,14 @@ SERVER:
 	DeathrunShouldMapSwitch ()
 		Called when the mapvote is about to be initiated. Return false to suppress the mapvote and replace it with your own.
 
-	DeathrunPlayerEnteredZone ( PLAYER ply, STRING type, STRING name )
-		Called when a player enters a zone. type = "start" for start zone and "end" for end zone. Only called when entering, not while they are inside. name = the identifier of that zone.
+	DeathrunPlayerEnteredZone ( PLAYER ply, STRING name, TABLE zone )
+		Called when a player enters a zone. name = identifier of that zone. zone = table storing zone data.
 
-	DeathrunPlayerExitedZone ( PLAYER ply, STRING type, STRING name )
+	DeathrunPlayerExitedZone ( PLAYER ply, STRING name, TABLE zone )
 		Same as above, except for exiting zones.
+
+	DeathrunPlayerFinishMap (PLAYER ply, STRING name, TABLE zone, INT place)
+		Arguments are the same as above. place = which place did the player finish at, e.g. 1st, 2nd, 3rd, 4th. place will be an integer such as 1, 2, 3, or 4. Use this to hand out pointshop points or other rewards for finishing maps.
 
 SHARED:
 
