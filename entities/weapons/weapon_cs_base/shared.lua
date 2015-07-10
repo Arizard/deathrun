@@ -1,3 +1,11 @@
+-- Note from Arizard:
+-- This is a heavily modified version of the weapon_cs_base in Gravious' release of Flow Network Gamemodes.
+-- It features additions such as recoil predictability (almost a spray pattern) and headshot damage buffs.
+-- Also allows for scoped weapons, it draws a scope (however with no crosshair because it's not needed for this deathrun gamemode)
+-- Despite this being a modified version of another base i'd appreciate it if you credited the following people if you use this in your own project:
+-- * Arizard - Custom weapon recoil, scopes, and headshot damage buffs
+-- * Gravious - Original weapon base
+
 if (SERVER) then
 	SWEP.Weight				= 5
 	SWEP.AutoSwitchTo		= false
@@ -22,11 +30,11 @@ SWEP.Contact		= ""
 SWEP.Purpose		= ""
 SWEP.Instructions	= ""
 
-// Note: This is how it should have worked. The base weapon would set the category
-// then all of the children would have inherited that.
-// But a lot of SWEPS have based themselves on this base (probably not on purpose)
-// So the category name is now defined in all of the child SWEPS.
-//SWEP.Category			= "Counter-Strike"
+-- Note: This is how it should have worked. The base weapon would set the category
+-- then all of the children would have inherited that.
+-- But a lot of SWEPS have based themselves on this base (probably not on purpose)
+-- So the category name is now defined in all of the child SWEPS.
+SWEP.Category			= "Counter-Strike"
 
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
@@ -56,8 +64,9 @@ SWEP.ScopedFOV = 25
 
 SWEP.Reloading = false
 
-/*---------------------------------------------------------
----------------------------------------------------------*/
+-----------------------------------------------------------
+-- Initialize
+-----------------------------------------------------------
 function SWEP:Initialize()
 
 	if ( SERVER ) then
@@ -80,9 +89,9 @@ function SWEP:Holster()
 	return true
 end
 
-/*---------------------------------------------------------
-	Reload does nothing
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	Reload does nothing
+-----------------------------------------------------------
 function SWEP:Reload()
 	
 	if (self:Clip1() == self.Primary.ClipSize) or self.Reloading == true then return end
@@ -130,9 +139,9 @@ else
 end
 
 
-/*---------------------------------------------------------
-	PrimaryAttack
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	PrimaryAttack
+-----------------------------------------------------------
 function SWEP:PrimaryAttack2() end
 
 SWEP.LastPrimaryShotTime = 0
@@ -155,25 +164,25 @@ function SWEP:PrimaryAttack()
 	
 	if ( !self:CanPrimaryAttack() ) then return end
 	
-	// Play shoot sound
+	-- Play shoot sound
 	self.Weapon:EmitSound( self.Primary.Sound )
 	
-	// Shoot the bullet
+	-- Shoot the bullet
 	self:CSShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self.Primary.Cone )
 	-- simulate recoil????
 	self.KickBack = self.KickBack + 1
 	
-	// Remove 1 bullet from our clip
+	-- Remove 1 bullet from our clip
 	self:TakePrimaryAmmo( 1 )
 	
 	if ( self.Owner:IsNPC() ) then return end
 	
-	// Punch the player's view
+	-- Punch the player's view
 	self.Owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) *self.Primary.Recoil, 0 ) )
 	
-	// In singleplayer this function doesn't get called on the client, so we use a networked float
-	// to send the last shoot time. In multiplayer this is predicted clientside so we don't need to 
-	// send the float.
+	-- In singleplayer this function doesn't get called on the client, so we use a networked float
+	-- to send the last shoot time. In multiplayer this is predicted clientside so we don't need to 
+	-- send the float.
 	if ( (game.SinglePlayer() && SERVER) || CLIENT ) then
 		self.Weapon:SetNetworkedFloat( "LastShootTime", CurTime() )
 	end
@@ -207,9 +216,9 @@ function SWEP:GetRecoilShiftAmount()
 	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
 	return shiftamt
 end
-/*---------------------------------------------------------
-   Name: SWEP:CSShootBullet( )
----------------------------------------------------------*/
+-----------------------------------------------------------
+--   Name: SWEP:CSShootBullet( )
+-----------------------------------------------------------
 function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	numbul 	= numbul 	or 1
@@ -217,12 +226,12 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	local bullet = {}
 	bullet.Num 		= numbul
-	bullet.Src 		= self.Owner:GetShootPos()			// Source
-	bullet.Dir 		= self.Owner:GetAimVector()			// Dir of bullet
+	bullet.Src 		= self.Owner:GetShootPos()			-- Source
+	bullet.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
 
-	bullet.Spread 	= Vector( 0, 0, 0 )			// Aim Cone
-	bullet.Tracer	= 4									// Show a tracer on every x bullets 
-	bullet.Force	= 5									// Amount of force to give to phys objects
+	bullet.Spread 	= Vector( 0, 0, 0 )			-- Aim Cone
+	bullet.Tracer	= 4									-- Show a tracer on every x bullets 
+	bullet.Force	= 5									-- Amount of force to give to phys objects
 	bullet.Damage	= dmg
 
 	local shootAng = bullet.Dir:Angle()
@@ -272,9 +281,9 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	end
 
 	self.Owner:FireBullets( bullet )
-	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK ) 		// View model animation
-	self.Owner:MuzzleFlash()								// Crappy muzzle light
-	self.Owner:SetAnimation( PLAYER_ATTACK1 )				// 3rd Person Animation
+	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK ) 		-- View model animation
+	self.Owner:MuzzleFlash()								-- Crappy muzzle light
+	self.Owner:SetAnimation( PLAYER_ATTACK1 )				-- 3rd Person Animation
 
 	
 
@@ -285,26 +294,20 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 end
 
 
-/*---------------------------------------------------------
-	Checks the objects before any action is taken
-	This is to make sure that the entities haven't been removed
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	Checks the objects before any action is taken
+--	This is to make sure that the entities haven't been removed
+-----------------------------------------------------------
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-	
 	draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
-	
-	// try to fool them into thinking they're playing a Tony Hawks game -- NOT!
-	--draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-14, 14), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
-	--draw.SimpleText( self.IconLetter, "CSSelectIcons", x + wide/2 + math.Rand(-4, 4), y + tall*0.2+ math.Rand(-9, 9), Color( 255, 210, 0, math.Rand(10, 120) ), TEXT_ALIGN_CENTER )
-	
 end
 
 local IRONSIGHT_TIME = 0.25
 
-/*---------------------------------------------------------
-   Name: GetViewModelPosition
-   Desc: Allows you to re-position the view model
----------------------------------------------------------*/
+-----------------------------------------------------------
+--   Name: GetViewModelPosition
+--   Desc: Allows you to re-position the view model
+-----------------------------------------------------------
 function SWEP:GetViewModelPosition( pos, ang )
 
 	if ( !self.IronSightsPos ) then return pos, ang end
@@ -471,9 +474,9 @@ if CLIENT then
 	end
 end
 
-/*---------------------------------------------------------
-	SetIronsights
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	SetIronsights
+-----------------------------------------------------------
 function SWEP:SetIronsights( b, mute )
 
 	self.Weapon:SetNWBool( "Ironsights", b )
@@ -492,9 +495,9 @@ end
 
 
 SWEP.LastSecondaryShotTime = 0
-/*---------------------------------------------------------
-	SecondaryAttack
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	SecondaryAttack
+-----------------------------------------------------------
 function SWEP:SecondaryAttack2()
 end
 function SWEP:SecondaryAttack()
@@ -506,77 +509,10 @@ function SWEP:SecondaryAttack()
 
 end
 
-/*---------------------------------------------------------
-	DrawHUD
-	
-	Just a rough mock up showing how to draw your own crosshair.
-	
----------------------------------------------------------*/
-
--- local CCrosshair = CreateClientConVar( "sl_crosshair", "1", true, false )
--- local CGap = CreateClientConVar( "sl_cross_gap", "1", true, false )
--- local CThick = CreateClientConVar( "sl_cross_thick", "0", true, false )
--- local CLength = CreateClientConVar( "sl_cross_length", "1", true, false )
--- local CColorR = CreateClientConVar( "sl_cross_color_r", "0", true, false )
--- local CColorG = CreateClientConVar( "sl_cross_color_g", "255", true, false )
--- local CColorB = CreateClientConVar( "sl_cross_color_b", "0", true, false )
--- local CColorA = CreateClientConVar( "sl_cross_opacity", "255", true, false )
-
--- function SWEP:DrawHUD()
--- 	if true then return end
-
--- 	// No crosshair when ironsights is on
--- 	if ( self.Weapon:GetNetworkedBool( "Ironsights" ) ) then return end
--- 	if ( !CCrosshair:GetBool() ) then return end
-	
--- 	local x, y
-
--- 	// If we're drawing the local player, draw the crosshair where they're aiming,
--- 	// instead of in the center of the screen.
--- 	if ( self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer() ) then
-
--- 		local tr = util.GetPlayerTrace( self.Owner )
--- 		tr.mask = bit.bor( CONTENTS_SOLID,CONTENTS_MOVEABLE,CONTENTS_MONSTER,CONTENTS_WINDOW,CONTENTS_DEBRIS,CONTENTS_GRATE,CONTENTS_AUX )
--- 		local trace = util.TraceLine( tr )
-		
--- 		local coords = trace.HitPos:ToScreen()
--- 		x, y = coords.x, coords.y
-
--- 	else
--- 		x, y = ScrW() / 2.0, ScrH() / 2.0
--- 	end
-	
--- 	local scale = 10 * self.Primary.Cone
-	
--- 	// Scale the size of the crosshair according to how long ago we fired our weapon
--- 	local LastShootTime = self.Weapon:GetNetworkedFloat( "LastShootTime", 0 )
--- 	scale = scale * (2 - math.Clamp( (CurTime() - LastShootTime) * 5, 0.0, 1.0 ))
-
--- 	surface.SetDrawColor( CColorR:GetInt(), CColorG:GetInt(), CColorB:GetInt(), CColorA:GetInt() )
-	
--- 	// Draw an awesome crosshair
--- 	local gap = 40 * (scale * CGap:GetInt())
--- 	local length = gap + 20 * (scale * CLength:GetInt())
--- 	local thick = CThick:GetInt()
--- 	if thick > 0 then
--- 		for i = -thick, thick do
--- 			surface.DrawLine( x - length, y + i, x - gap, y + i )
--- 			surface.DrawLine( x + length, y + i, x + gap, y + i )
--- 			surface.DrawLine( x + i, y - length, x + i, y - gap )
--- 			surface.DrawLine( x + i, y + length, x + i, y + gap )
--- 		end
--- 	else
--- 		surface.DrawLine( x - length, y, x - gap, y )
--- 		surface.DrawLine( x + length, y, x + gap, y )
--- 		surface.DrawLine( x, y - length, x, y - gap )
--- 		surface.DrawLine( x, y + length, x, y + gap )
--- 	end
--- end
-
-/*---------------------------------------------------------
-	onRestore
-	Loaded a saved game (or changelevel)
----------------------------------------------------------*/
+-----------------------------------------------------------
+--	onRestore
+--	Loaded a saved game (or changelevel)
+-----------------------------------------------------------
 function SWEP:OnRestore()
 
 	self.NextSecondaryAttack = 0
