@@ -154,6 +154,6 @@ DR:AddChatCommand("settings", function( ply )
 	ply:ConCommand("deathrun_open_settings")
 end)
 
-DR:AddChatCommand("!zones", function( ply )
+DR:AddChatCommand("zones", function( ply )
 	ply:ConCommand("deathrun_open_zone_editor")
 end)
