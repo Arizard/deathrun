@@ -25,7 +25,7 @@ function ZONE:Load()
 		file.CreateDir("deathrun/zones")
 	end
 
-	if not file.Exists( path ) then
+	if not file.Exists( path, "DATA" ) then
 		file.Write( path, "{}" )
 	end
 
