@@ -336,3 +336,15 @@ end
 -- Function Key Binds
 hook.Add("ShowTeam", "DeathrunSettingsBind", function( ply ) ply:ConCommand("deathrun_open_settings") end)
 hook.Add("ShowHelp", "DeathrunHelpBind", function( ply ) ply:ConCommand("deathrun_open_help") end)
+
+-- stop people whoring the weapons
+hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( ply, wep )
+	local class = wep:GetClass()
+	local weps = ply:GetWeapons()
+	local wepsclasses = {}
+	local filledslots = {}
+	for k,v in ipairs(weps) do
+		table.insert( wepsclasses, v:GetClass() )
+	end
+	if table.HasValue(wepsclasses, class) then return false end
+end)
