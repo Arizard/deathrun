@@ -245,9 +245,12 @@ function GM:PlayerDeathThink( ply )
 end
 
 function GM:CanPlayerSuicide( ply )
-	if not ply:GetSpectate() then
-		return true
-	end
+
+	if not ply:Alive() then return false end
+	if ply:Team() == TEAM_DEATH then return false end
+	--if ROUND:GetTimer() == ROUND_PREP then return false end
+
+	return self.BaseClass:CanPlayerSuicide( ply )
 end
 
 -- damage hooks
