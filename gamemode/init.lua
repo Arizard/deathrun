@@ -34,6 +34,14 @@ include( "roundsystem/sh_round.lua" )
 include( "roundsystem/sv_round.lua" )
 include( "sh_definerounds.lua" )
 
+-- zones
+AddCSLuaFile( "zones/sh_zone.lua" )
+AddCSLuaFile( "zones/cl_zone.lua" )
+
+include( "zones/sh_zone.lua" )
+include( "zones/sv_zone.lua" )
+
+
 -- map votes
 AddCSLuaFile( "mapvote/sh_mapvote.lua" )
 AddCSLuaFile( "mapvote/cl_mapvote.lua" )

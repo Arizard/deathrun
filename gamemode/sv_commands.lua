@@ -28,12 +28,20 @@ local function AdminAccess( ply ) -- accounts for when ply = console
 	end
 end
 
+function DR:GeneralAdminAccess( ply )
+	return AdminAccess( ply )
+end
+
 local function DeathrunSafeChatPrint( ply, msg )
 	if IsValid( ply ) then
 		ply:DeathrunChatPrint( msg )
 	else
 		MsgC(DR.Colors.Turq, msg.."\n")
 	end
+end
+
+function DR:SafeChatPrint( ply, msg )
+	DeathrunSafeChatPrint( ply, msg )
 end
 
 --console commands

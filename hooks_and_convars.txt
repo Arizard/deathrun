@@ -100,6 +100,12 @@ SERVER:
 	DeathrunShouldMapSwitch ()
 		Called when the mapvote is about to be initiated. Return false to suppress the mapvote and replace it with your own.
 
+	DeathrunPlayerEnteredZone ( PLAYER ply, STRING type, STRING name )
+		Called when a player enters a zone. type = "start" for start zone and "end" for end zone. Only called when entering, not while they are inside. name = the identifier of that zone.
+
+	DeathrunPlayerExitedZone ( PLAYER ply, STRING type, STRING name )
+		Same as above, except for exiting zones.
+
 SHARED:
 
 	DeathrunBeginWaiting ()
