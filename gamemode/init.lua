@@ -59,12 +59,16 @@ AddCSLuaFile( "sh_buttonclaiming.lua" )
 -- announcements
 AddCSLuaFile( "cl_announcer.lua" )
 
+-- pointshop support
+include("sh_pointshopsupport.lua")
+AddCSLuaFile( "sh_pointshopsupport.lua" )
+
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
 util.AddNetworkString("DeathrunNotification")
 
 -- required configz
-RunConsoleCommand("sv_friction", 4)
+RunConsoleCommand("sv_friction", 8)
 RunConsoleCommand("sv_sticktoground", 0)
 
 local playermodels = {
