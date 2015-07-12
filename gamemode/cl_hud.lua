@@ -177,7 +177,7 @@ function DR:DrawTargetID()
 	local fps = 1/dt
 	local fmul = 100/fps
 
-	local tr = LocalPlayer():GetEyeTrace()
+	local tr = LocalPlayer and LocalPlayer():GetEyeTrace() or {}
 
 	if tr.Hit then
 		if tr.Entity then
