@@ -117,6 +117,12 @@ function DR:OpenHelp()
 	frame:MakePopup()
 	frame:SetTitle("Deathrun Help")
 
+	local lbl = vgui.Create("DLabel", frame)
+	lbl:SetText("Please wait while page loads...")
+	lbl:SetFont("deathrun_derma_Large")
+	lbl:SizeToContents()
+	lbl:Center()
+
 	local html = vgui.Create("DHTML", frame)
 	html:SetSize( frame:GetWide()-8, frame:GetTall() - 44 )
 	html:SetPos(4, 32)
@@ -136,7 +142,8 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
 			{"deathrun_enable_announcements", "Help messages"},
 			{"deathrun_thirdperson_enabled", "Thirdperson mode"},
-			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"}
+			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
+			{"deathrun_info_on_join", "Show the info menu when joining the server"}
 		},
 		["number"] = {
 			{"deathrun_hud_theme",0,1,"HUD Theme"},
@@ -458,4 +465,49 @@ function DR:OpenZoneEditor()
 end
 concommand.Add("deathrun_open_zone_editor", function()
 	DR:OpenZoneEditor()
+end)
+
+function DR:OpenQuickInfo()
+
+	local frame = vgui.Create("deathrun_window")
+	frame:SetSize(640, 480)
+	frame:Center()
+	frame:MakePopup()
+	frame:SetTitle("Deathrun Information")
+
+	local lbl = vgui.Create("DLabel", frame)
+	lbl:SetText("Please wait while page loads...")
+	lbl:SetFont("deathrun_derma_Large")
+	lbl:SizeToContents()
+	lbl:Center()
+
+	local html = vgui.Create("DHTML", frame)
+	html:SetSize( frame:GetWide()-8, frame:GetTall() - 44 )
+	html:SetPos(4, 32)
+	html:OpenURL( "http://arizard.github.io/deathruninfo.html" )
+	html:SetAllowLua( true )
+
+	DR.QuickInfoFrame = frame
+
+end
+
+function OpenSteamGroup()
+	if IsValid( DR.QuickInfoFrame ) then
+		DR.QuickInfoFrame:Close()
+		gui.OpenURL("http://steamcommunity.com/groups/vhs7")
+	end
+end
+
+concommand.Add("deathrun_open_quickinfo", function()
+	DR:OpenQuickInfo()
+end)
+
+infoOpened = infoOpened ~= nil and infoOpened or false -- needs to be global
+local ShowInfo = CreateClientConVar("deathrun_info_on_join", 1, true, false) -- whether we see info on join
+
+hook.Add("HUDPaint", "openquickinfo", function()
+	if infoOpened == false and ShowInfo:GetBool() == true then
+		DR:OpenQuickInfo()
+	end
+	infoOpened = true -- only check once, then leave it
 end)

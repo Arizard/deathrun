@@ -157,3 +157,7 @@ end)
 DR:AddChatCommand("zones", function( ply )
 	ply:ConCommand("deathrun_open_zone_editor")
 end)
+
+DR:AddChatCommand("info", function( ply )
+	ply:ConCommand("deathrun_open_quickinfo")
+end)
