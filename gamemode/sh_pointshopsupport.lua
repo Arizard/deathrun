@@ -10,10 +10,10 @@ end
 if RS then
 	hasRedactedHub = true 
 end
-
-if (false) then
-	hasPointshop2 = true -- ask kamshak about this so i can add support
+if Pointshop2 then
+	hasPointshop2 = true
 end
+
 
 local PointshopReward = CreateConVar("deathrun_pointshop_reward", 10, FCVAR_REPLICATED, "How many points to award the player when he finishes the map." )
 
@@ -37,6 +37,10 @@ if SERVER then
 			else
 				ply:DeathrunChatPrint("You finished the map, but unfortunately the store does not have enough points to reward you.")
 			end			
+		end
+		if hasPointshop2 then
+			local amt = PointshopReward:GetInt()
+			ply:PS2_AddStandardPoints( amt, "You were given "..tostring( amt ).." points for finishing the map!", true)
 		end
 	end)
 end
