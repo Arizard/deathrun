@@ -23,7 +23,7 @@ Also, if you see any horriffic, eye-meltingly bad code anywhere in this reposito
 
 ###Planned Features:
 * Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
-* Pointshop support ????
+* Pointshop 2 support (pointshop 1 support already implemented)
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
 * Evolve support for scoreboard (kick, ban, slay, gag)
 * MORE HOOKS
@@ -52,7 +52,10 @@ End zones call the hook:
 -- place is the player's finishing place, e.g. 1, 2, 3 for 1st, 2nd, 3rd place
 </pre>
 
-In this hook, you can hand out rewards, ranks, or whatever you'd like to implement through lua. Pointshop 1 and 2 support will be included by default and will be customizable through the convars **deathrun_pointshop_1_reward <0-999>** and **deathrun_pointshop_2_reward <0-999>**
+In this hook, you can hand out rewards, ranks, or whatever you'd like to implement through lua.
+
+######Pointshop 1 and RedactedHub
+Pointshop 1 and RedactedHub support is included by default. When a player reaches and end zone, the gamemode checks if you have either of these installed, and will reward the player with a specific amount of points. This amount is customised using the **deathrun_pointshop_support <0-9999>** convar.
 
 ###Button Claiming
 This gamemode features automatic button claiming, inspired by BlackVoid's manual button claiming in his deathrun gamemode. Walk up to a button to claim it as yours. Once claimed, it is impossible for another player to press the button - thus it is impossible to button steal. Walk away from a button and it will become unclaimed, allowing other players to claim it. There is a subtle text indicator which will tell you if the button is claimed or unclaimed, and the name of the player who claims it.
