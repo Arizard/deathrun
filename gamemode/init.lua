@@ -103,7 +103,7 @@ end
 
 
 function GM:PlayerSpawn( ply )
-
+	ply:AllowFlashlight( true )
 	ply:SetModel( table.Random( playermodels ) )
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
