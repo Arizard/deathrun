@@ -133,11 +133,11 @@ function GM:HUDPaint()
 	local ax = hud_positions[ HudAmmoPos:GetInt() +1 ][1] or 8
 	local ay = hud_positions[ HudAmmoPos:GetInt() +1 ][2] or 8
 
-	if HudTheme:GetInt() == 1 then
+	if HudTheme:GetInt() == 0 then
 		DR:DrawPlayerHUD( hx, hy )
 		DR:DrawPlayerHUDAmmo( ax, ay )
 	end
-	if HudTheme:GetInt() == 0 then
+	if HudTheme:GetInt() == 1 then
 		DR:DrawPlayerHUDSass( hx, hy )
 		DR:DrawPlayerHUDAmmoSass( ax, ay )
 	end
@@ -581,11 +581,11 @@ function avatar:Think()
 		self:SetPlayer( ply, 64 )
 	end
 
-	if HudTheme:GetInt() == 0 and self.visible == false then
+	if HudTheme:GetInt() == 1 and self.visible == false then
 		self:SetPos( self.desiredpos[1] or 0, self.desiredpos[2] or 0 )
 		self.visible = true
 	end
-	if HudTheme:GetInt() ~= 0 and self.visible == true then
+	if HudTheme:GetInt() ~= 1 and self.visible == true then
 		self:SetPos( -128, self.desiredpos[2] or 0 )
 		self.visible = false
 	end
