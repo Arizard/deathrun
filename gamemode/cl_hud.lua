@@ -133,10 +133,11 @@ function GM:HUDPaint()
 	local ax = hud_positions[ HudAmmoPos:GetInt() +1 ][1] or 8
 	local ay = hud_positions[ HudAmmoPos:GetInt() +1 ][2] or 8
 
-	if HudTheme:GetInt() == 0 then
+	if HudTheme:GetInt() == 1 then
 		DR:DrawPlayerHUD( hx, hy )
 		DR:DrawPlayerHUDAmmo( ax, ay )
-	elseif HudTheme:GetInt() == 1 then
+	end
+	if HudTheme:GetInt() == 0 then
 		DR:DrawPlayerHUDSass( hx, hy )
 		DR:DrawPlayerHUDAmmoSass( ax, ay )
 	end
@@ -268,9 +269,8 @@ function DR:DrawPlayerHUD( x, y )
 	surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
 
 	local maxhp = 100 -- yeah fuck yall
-	local curhp = math.Clamp( ply:Health(), 0, maxhp )
-	
-	local hpfrac = InverseLerp( curhp, 0, maxhp )
+	local curhp = math.Clamp( ply:Health(), 0, 999 )	
+	local hpfrac = math.Clamp( InverseLerp( curhp, 0, maxhp ), 0, 1 )
 
 	surface.SetDrawColor( aliz )
 
@@ -524,15 +524,213 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 	draw.SimpleText( stalemate and "YOU'RE ALL TERRIBLE!" or "MOST VALUABLE PLAYERS", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 end
 
+-- sass hud
+surface.CreateFont("sassLarge",
+{
+	font = "Coolvetica",
+	size = 56,
+	antialias = true,
+})
+
+surface.CreateFont("sassMedium",
+{
+	font = "Coolvetica",
+	size = 36,
+	antialias = true,
+	weight = 100,
+})
+surface.CreateFont("sassSmall",
+{
+	font = "Coolvetica",
+	size = 20,
+	antialias = true,
+	weight = 500,
+})
+surface.CreateFont("sassTiny",
+{
+	font = "Coolvetica",
+	size = 12,
+	antialias = true,
+	weight = 500,
+})
+
+if IsValid( avatar ) then avatar:Remove() end
+local avatar = IsValid(avatar) and avatar or vgui.Create("AvatarImage")
+avatar:SetSize(46,46)
+avatar:SetPos(0,0)
+avatar:SetPlayer( LocalPlayer(), 64 )
+avatar.ply = LocalPlayer()
+avatar.visible = true
+avatar.desiredpos = {-128, 0}
+
+function avatar:Think()
+	local ply = LocalPlayer()
+
+	if not self.desiredpos then return end
+
+	if not IsValid( ply ) then return end
+
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		if IsValid( ply:GetObserverTarget() ) then
+			ply = ply:GetObserverTarget()
+		end
+	end
+
+	if ply ~= self.ply then
+		self.ply = ply
+		self:SetPlayer( ply, 64 )
+	end
+
+	if HudTheme:GetInt() == 0 and self.visible == false then
+		self:SetPos( self.desiredpos[1] or 0, self.desiredpos[2] or 0 )
+		self.visible = true
+	end
+	if HudTheme:GetInt() ~= 0 and self.visible == true then
+		self:SetPos( -128, self.desiredpos[2] or 0 )
+		self.visible = false
+	end
+
+	self:SetAlpha( HudAlpha:GetInt() )
+
+end
+
 function DR:DrawPlayerHUDSass( x, y )
 	-- dimensions:
 	-- 228 x 108
+	local ply = LocalPlayer()
+
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		if IsValid( ply:GetObserverTarget() ) then
+			ply = ply:GetObserverTarget()
+		end
+	end
 
 	local w, h = 228, 108
+	local alpha = HudAlpha:GetInt()
+	local amul = alpha/255
 
 	surface.SetDrawColor(255,0,0)
-	surface.DrawOutlinedRect( x,y,w,h )
+	--surface.DrawOutlinedRect( x,y,w,h )
+
+	surface.SetDrawColor( HexColor("#101010", alpha) )
+	--size of avatar: 46x46
+	--size of container: 48x48
+	draw.RoundedBox( 2, x + 8, y + h/2 - 24, 48,48, HexColor("#101010", alpha) )
+
+	-- hp bar
+	-- width 228 - 16 - 48
+	-- height 20
+	draw.RoundedBox(2, x + 8+48, y + h/2 - 10, 228-16-48,20, HexColor("#101010", alpha))
+	surface.SetDrawColor( HexColor("#909090", alpha/2) )
+	surface.DrawRect( x + 8 + 48, y + h/2 - 10 + 2, 228-16-48-2, 16)
+
+	-- velocity
+	draw.RoundedBox(2, x + 8+48, y + h/2 + 8, 228-16-48,10, HexColor("#101010", alpha))
+	surface.SetDrawColor( HexColor("#909090", alpha/2) )
+	surface.DrawRect( x + 8 + 48, y + h/2 + 8 + 2, 228-16-48-2, 6)
+
+	local maxvel = 1000 -- yeah fuck yall
+	local curvel = math.Round( math.Clamp( ply:GetVelocity():Length2D(), 0, maxvel ) )
+	local velfrac = InverseLerp( curvel, 0, maxvel )
+
+	surface.SetDrawColor( Color(50,50,255, alpha) )
+	surface.DrawRect( x + 8 + 48, y + h/2 + 8 + 2, (228-16-48-2)*velfrac, 6)
+	surface.SetDrawColor( Color(255,255,255, 5*amul) )
+	surface.DrawRect( x + 8 + 48, y + h/2 + 8 + 2, (228-16-48-2)*velfrac, 2)
+
+	local maxhp = 100 -- yeah fuck yall
+	local curhp = math.Clamp( ply:Health(), 0, 999 )	
+	local hpfrac = math.Clamp( InverseLerp( curhp, 0, maxhp ), 0, 1 )
+
+	surface.SetDrawColor( Color(50,255,50, alpha) )
+	surface.DrawRect(x + 8 + 48, y + h/2 - 10 + 2, (228-16-48-2)*hpfrac, 16)
+	surface.SetDrawColor( Color(255,255,255, 40*amul) )
+	surface.DrawRect(x + 8 + 48, y + h/2 -10 + 2, (228-16-48-2)*hpfrac, 7)
+
+	-- HP TEXT
+	draw.SimpleText(tostring(curhp), "sassLarge", x+128 + 1,y + h/2+2 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+	draw.SimpleText(tostring(curhp), "sassLarge", x+128,y + h/2+2, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+	draw.SimpleText("HP", "sassSmall", x+132 + 1,y + h/2+1 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	draw.SimpleText("HP", "sassSmall", x+132,y + h/2+1, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+
+	draw.SimpleText(tostring(curvel).." VL", "sassSmall", x+w - 12 +1,y + h/2 + 24+1 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
+	-- team text
+	draw.SimpleText(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8+1, y + h/2 + 24+1, Color(0,0,0,255/1.2), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+
+
+	-- position avatar
+	local avx, avy = avatar:GetPos()
+	if avx ~= x+9 or avy ~= y + h/2 - 24+1 then
+		avatar:SetPos( x+9, y + h/2 - 23 )
+	end
+
+	avatar.desiredpos = { avx, avy }
+
 end
 function DR:DrawPlayerHUDAmmoSass( x, y )
+
+	local alpha = HudAlpha:GetInt()
+	
+	local w, h = 228, 108
+	surface.SetDrawColor(255,0,0)
+--	surface.DrawOutlinedRect(x,y,w,h)
+
+	local ply = LocalPlayer()
+
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		if IsValid( ply:GetObserverTarget() ) then
+			ply = ply:GetObserverTarget()
+		end
+	end
+
+	local wep = ply:GetActiveWeapon()
+
+	if not IsValid( wep ) then
+		return
+	else
+		local weptable = wep:GetTable()
+		if weptable and weptable.Primary then
+			if weptable.Primary.ClipSize == -1 then
+				return
+			end
+		end
+	end
+
+
+	local tcol = team.GetColor( ply:Team() )
+	local dx, dy = x, y
+
+
+	if IsValid( wep ) then
+		local weptable = wep:GetTable()
+
+		local wepname = weptable.PrintName or ""
+
+		draw.SimpleText( tostring( wepname ), "sassSmall", x + w - 4 +1, y + h - 68+1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+		draw.SimpleText( tostring( wepname ), "sassSmall", x + w - 4, y + h - 68, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+		
+		local currentmag = wep:Clip1()
+		local maxmag = 1
+		if weptable.Primary then
+			maxmag = (weptable.Primary.ClipSize or 1) > 1 and weptable.Primary.ClipSize or 1
+		end
+		local remaining = 0
+		if wep.Ammo1 or wep.Primary then
+			remaining = ply:GetAmmoCount( wep.Primary.Ammo ) or wep:Ammo1() or 0
+		end
+
+		local frac = currentmag/maxmag
+		if frac < 0 then frac = 1 end
+
+		draw.SimpleText( tostring( currentmag or 0 ).." +"..tostring( remaining ), "sassLarge", x + w - 4+1, y + h+1 - 20, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+		draw.SimpleText( tostring( currentmag or 0 ).." +"..tostring( remaining ), "sassLarge", x + w - 4, y + h - 20, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+
+	else
+		return
+	end
+
 
 end

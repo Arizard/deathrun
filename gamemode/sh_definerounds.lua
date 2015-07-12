@@ -229,7 +229,7 @@ ROUND:AddState( ROUND_ACTIVE,
 				end
 			end
 
-			if #deaths == 0 and #runners == 0 then
+			if (#deaths == 0 and #runners == 0) or ROUND:GetTimer() == 0 then
 				ROUND:FinishRound( WIN_STALEMATE )
 			elseif #deaths == 0 then
 				ROUND:FinishRound( WIN_RUNNER )
