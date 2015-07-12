@@ -12,7 +12,9 @@ DR.Colors = {
 	Peter = HexColor("#3498db"),
 	Turq = HexColor("#1abc9c"),
 	DarkBlue = HexColor("#1B325F"),
-	LightBlue = HexColor("#9CC4E4")
+	LightBlue = HexColor("#9CC4E4"),
+	Sunflower = HexColor("#f1c40f"),
+	Orange = HexColor("#f39c12")
 }
 
 DR.AirAccelerate = 1000

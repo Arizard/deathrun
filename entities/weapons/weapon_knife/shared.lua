@@ -5,7 +5,7 @@ if SERVER then
 elseif CLIENT then
 
 	SWEP.PrintName			= "Tactical Knife"	
-	SWEP.Author				= "cheesylard" -- Works fine - I lost my own one because of update, since then I use this one with a minor edit
+	SWEP.Author				= "cheesylard" -- Works fine - I lost my own one because of update, since then I use this one with a minor edit -- traces modified by arizard
 	SWEP.DrawAmmo			= false
 	SWEP.ViewModelFOV		= 82
 	SWEP.ViewModelFlip		= false

@@ -22,7 +22,6 @@ This means I'm taking suggestions for what should be standard in Deathrun (i.e. 
 Also, if you see any horriffic, eye-meltingly bad code anywhere in this repository, feel free to spam my steam or github messages about it and I will try and fix it as soon as possible.
 
 ###Planned Features:
-* Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
 * Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
 * Pointshop support ????
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
@@ -41,6 +40,19 @@ Typing !help or pressing F1 will open the Help menu. This window displays a webp
 
 ######Settings
 Typing !settings or pressing F2 will open the Settings menu. This lets players easily customise all their clientside convars.
+
+###Zones and Rewards
+Server admins can add customisable ending zones to each map, specifying their dimensions, color, and behavior. A number of presets for zones are included in the gamemode - notably, the "end" preset. Selecting this preset will register the zone as a map ending, and any players passing through the zone will be considered to have finished the map.
+
+End zones call the hook:
+<pre>DeathrunPlayerFinishMap (PLAYER ply, STRING name, TABLE zone, INT place)
+-- Where ply is the player finishing the map
+-- name is the name of the zone
+-- zone is the zone's table storing all it's data (positions, color, type)
+-- place is the player's finishing place, e.g. 1, 2, 3 for 1st, 2nd, 3rd place
+</pre>
+
+In this hook, you can hand out rewards, ranks, or whatever you'd like to implement through lua. Pointshop 1 and 2 support will be included by default and will be customizable through the convars **deathrun_pointshop_1_reward <0-999>** and **deathrun_pointshop_2_reward <0-999>**
 
 ###Button Claiming
 This gamemode features automatic button claiming, inspired by BlackVoid's manual button claiming in his deathrun gamemode. Walk up to a button to claim it as yours. Once claimed, it is impossible for another player to press the button - thus it is impossible to button steal. Walk away from a button and it will become unclaimed, allowing other players to claim it. There is a subtle text indicator which will tell you if the button is claimed or unclaimed, and the name of the player who claims it.

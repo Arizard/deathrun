@@ -58,6 +58,12 @@ CLIENT CONVARS:
 		Values: 
 		0.Top Left, 1.Top Center, 2.Top Right, 3.Center Left, 4. Center Center, 5.Center Right, 6.Bottom Left, 7.Bottom Center, 8.Bottom Right
 
+	deathrun_hud_ammo_position <0-8>
+		Position of the ammo HUD (Magazine, Remaining) - values same as above, defaults to 8.
+
+	deathrun_hud_alpha <0-255>
+		Changes the transparency of the HUD background.
+
 	deathrun_targetid_fade_duration <0-999>
 		How many seconds it takes for player's names to dissapear after looking away from them.
 

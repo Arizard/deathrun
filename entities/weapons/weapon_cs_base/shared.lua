@@ -124,6 +124,14 @@ if SERVER then
 	SWEP.LastThink = RealTime()
 	function SWEP:Think()
 
+		self.Owner.LastSpeed = self.Owner.LastSpeed or 0
+
+		local speed = self.Owner:GetVelocity():Length()
+
+		local accel = math.abs(speed - self.Owner.LastSpeed)
+		self.Owner.LastSpeed = speed
+		self.Owner.CurAccel = accel
+
 		local dt = RealTime() - self.LastThink
 		self.LastThink = RealTime()
 
@@ -134,6 +142,15 @@ if SERVER then
 	end
 else
 	function SWEP:Think() -- clientside think
+
+		self.Owner.LastSpeed = self.Owner.LastSpeed or 0
+
+		local speed = self.Owner:GetVelocity():Length()
+
+		local accel = math.abs(speed - self.Owner.LastSpeed)
+		self.Owner.LastSpeed = speed
+		self.Owner.CurAccel = accel
+
 		self.Reloading = false
 	end
 end
@@ -169,11 +186,9 @@ function SWEP:PrimaryAttack()
 	
 	-- Shoot the bullet
 	self:CSShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self.Primary.Cone )
-	-- simulate recoil????
-	self.KickBack = self.KickBack + 1
 	
-	-- Remove 1 bullet from our clip
-	self:TakePrimaryAmmo( 1 )
+	
+	
 	
 	if ( self.Owner:IsNPC() ) then return end
 	
@@ -188,6 +203,8 @@ function SWEP:PrimaryAttack()
 	end
 
 	self:PrimaryAttack2()
+
+
 	
 end
 
@@ -221,6 +238,20 @@ end
 -----------------------------------------------------------
 function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
+	-- reduce accuracy when speed is higher
+
+	--local accfrac = (1 + self.Owner.CurAccel/5) -- double the cone when walking at full pace
+
+	accfrac = ( self.Owner:GetVelocity():Length()/self.Owner:GetWalkSpeed() )*0.2
+
+	if not self.Owner:IsOnGround() then
+		accfrac = accfrac + (1 + self.Owner.CurAccel/50)
+	else
+		accfrac = accfrac * 10
+	end
+
+	accfrac = accfrac / 10
+
 	numbul 	= numbul 	or 1
 	cone 	= cone 		or 0.01
 
@@ -228,8 +259,8 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Num 		= numbul
 	bullet.Src 		= self.Owner:GetShootPos()			-- Source
 	bullet.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
-
-	bullet.Spread 	= Vector( 0, 0, 0 )			-- Aim Cone
+	--print(accfrac)
+	bullet.Spread 	= Vector( math.pow(accfrac, 1), math.pow(accfrac, 1), 0 )			-- Aim Cone
 	bullet.Tracer	= 4									-- Show a tracer on every x bullets 
 	bullet.Force	= 5									-- Amount of force to give to phys objects
 	bullet.Damage	= dmg
@@ -287,8 +318,11 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	
 
-	--print(tr.Entity:IsPlayer() and tr.HitGroup or "no hitgroup")
-	
+	-- Remove 1 bullet from our clip
+	self:TakePrimaryAmmo( 1 )
+	-- simulate recoil????
+	self.KickBack = self.KickBack + 1 + (accfrac*10)
+
 	if ( self.Owner:IsNPC() ) then return end
 
 end

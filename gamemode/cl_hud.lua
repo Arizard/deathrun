@@ -58,6 +58,9 @@ local CuesConVar = CreateClientConVar("deathrun_round_cues", 1, true, false)
 
 -- convars to adjust hud positioning
 local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
+local HudAmmoPos = CreateClientConVar("deathrun_hud_ammo_position", 8, true, false) 
+local HudTheme = CreateClientConVar("deathrun_hud_theme", 0, true, false) -- different themes
+local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 50, true, false)
 
 local RoundNames = {}
 RoundNames[ROUND_WAITING] = "Waiting for players"
@@ -124,7 +127,19 @@ function GM:HUDPaint()
 	end
 
 	DR:DrawTargetID()
-	DR:DrawPlayerHUD( hud_positions[ HudPos:GetInt() +1 ][1] or 8, hud_positions[ HudPos:GetInt() +1 ][2] or 8 )
+
+	local hx = hud_positions[ HudPos:GetInt() +1 ][1] or 8
+	local hy = hud_positions[ HudPos:GetInt() +1 ][2] or 8
+	local ax = hud_positions[ HudAmmoPos:GetInt() +1 ][1] or 8
+	local ay = hud_positions[ HudAmmoPos:GetInt() +1 ][2] or 8
+
+	if HudTheme:GetInt() == 0 then
+		DR:DrawPlayerHUD( hx, hy )
+		DR:DrawPlayerHUDAmmo( ax, ay )
+	elseif HudTheme:GetInt() == 1 then
+		DR:DrawPlayerHUDSass( hx, hy )
+		DR:DrawPlayerHUDAmmoSass( ax, ay )
+	end
 
 	if RoundEndData.Active then -- check if it's stalemate, and don't do the thing, zhu li!
 		DR:DrawWinners( RoundEndData.winteam, RoundEndData.mvps, ScrW()/2 - 628/2, 24, RoundEndData.winteam == 1 and true or false)
@@ -192,7 +207,13 @@ function DR:DrawTargetID()
 
 end
 
+local clouds = table.Copy(DR.Colors.Clouds)
+local aliz = table.Copy(DR.Colors.Alizarin)
+local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
+
 function DR:DrawPlayerHUD( x, y )
+
+	local alpha = HudAlpha:GetInt()
 
 	-- 228x16 text size 12
 	-- 228x16 text size 12
@@ -210,7 +231,15 @@ function DR:DrawPlayerHUD( x, y )
 	end
 
 	local tcol = team.GetColor( ply:Team() )
+	otcol = table.Copy( tcol )
+	tcol.a = alpha
 	local dx, dy = x, y
+
+	
+	clouds.a = alpha
+	aliz.a = alpha
+	turq.a = alpha
+
 
 	surface.SetDrawColor( tcol )
 	surface.DrawRect(dx,dy,228,16) -- team box
@@ -219,19 +248,23 @@ function DR:DrawPlayerHUD( x, y )
 
 	dy = dy + 16 + 4
 
-	surface.SetDrawColor( DR.Colors.Clouds ) -- Time Left
+	surface.SetDrawColor( clouds ) -- Time Left
 	surface.DrawRect(dx,dy,228,16)
 
-	draw.SimpleText( string.upper( RoundNames[ ROUND:GetCurrent() ]  or "TIME LEFT" ), "deathrun_hud_Small", dx+4,  dy + 16/2, tcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	draw.SimpleText( string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "deathrun_hud_Small", dx + 228-4,  dy + 16/2, tcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+	draw.SimpleText( string.upper( RoundNames[ ROUND:GetCurrent() ]  or "TIME LEFT" ), "deathrun_hud_Small", dx+4,  dy + 16/2, otcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+	draw.SimpleText( string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "deathrun_hud_Small", dx + 228-4,  dy + 16/2, otcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
 	dy = dy + 16 + 4
 
-	surface.SetDrawColor( DR.Colors.Alizarin ) -- hp bar
+	surface.SetDrawColor( aliz ) -- hp bar
+	surface.DrawRect( dx, dy, 32, 32 )
+	surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+	surface.DrawRect( dx, dy, 32, 32 )
+	surface.SetDrawColor( aliz )
 	surface.DrawRect( dx, dy, 32, 32 )
 	surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
 
-	surface.SetDrawColor( 255,255,255,100 )
+	surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
 	surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
 
 	local maxhp = 100 -- yeah fuck yall
@@ -239,7 +272,7 @@ function DR:DrawPlayerHUD( x, y )
 	
 	local hpfrac = InverseLerp( curhp, 0, maxhp )
 
-	surface.SetDrawColor( DR.Colors.Alizarin )
+	surface.SetDrawColor( aliz )
 
 	surface.DrawRect( dx + 32 + 4, dy, 192*hpfrac, 32 )
 
@@ -249,11 +282,15 @@ function DR:DrawPlayerHUD( x, y )
 
 	dy = dy + 32 + 4
 
-	surface.SetDrawColor( DR.Colors.Turq ) -- vel bar
+	surface.SetDrawColor( turq ) -- vel bar
+	surface.DrawRect( dx, dy, 32, 32 )
+	surface.SetDrawColor( 255,255,255,(alpha/255)*50 ) -- vel bar
+	surface.DrawRect( dx, dy, 32, 32 )
+	surface.SetDrawColor( turq ) -- vel bar
 	surface.DrawRect( dx, dy, 32, 32 )
 	surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
 
-	surface.SetDrawColor( 255,255,255,100 )
+	surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
 	surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
 
 	local maxvel = 1000 -- yeah fuck yall
@@ -261,13 +298,122 @@ function DR:DrawPlayerHUD( x, y )
 	
 	local velfrac = InverseLerp( curvel, 0, maxvel )
 
-	surface.SetDrawColor( DR.Colors.Turq )
+	surface.SetDrawColor( turq )
 
 	surface.DrawRect( dx + 32 + 4, dy, 192*velfrac, 32 )
 
 	-- hp text
 	draw.SimpleText( "VL", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	draw.SimpleText( tostring( curvel )..((ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true) and " AUTO" or ""), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+
+end
+local orange = table.Copy(DR.Colors.Orange) 
+local clouds2 = table.Copy(DR.Colors.Clouds)
+function DR:DrawPlayerHUDAmmo( x, y )
+
+	local alpha = HudAlpha:GetInt()
+	orange.a = alpha
+	clouds2.a = alpha
+
+	-- 228x16 text size 12
+	-- 228x16 text size 12
+
+	-- 32x32 text 18, 192x32 text 30
+	-- 32x32 text 18, 192x32 text 30
+
+	-- spacing of 4 between all
+	local ply = LocalPlayer()
+
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		if IsValid( ply:GetObserverTarget() ) then
+			ply = ply:GetObserverTarget()
+		end
+	end
+
+	local wep = ply:GetActiveWeapon()
+
+	if not IsValid( wep ) then
+		return
+	else
+		local weptable = wep:GetTable()
+		if weptable then
+			if weptable.Primary.ClipSize == -1 then
+				return
+			end
+		end
+	end
+
+
+	local tcol = team.GetColor( ply:Team() )
+	local dx, dy = x, y
+
+	local otrans = table.Copy( orange )
+	otrans.a = 200*(alpha/255)
+
+	surface.SetDrawColor( clouds2 )
+	surface.DrawRect( dx, dy, 228, 16 )
+	surface.SetDrawColor( otrans )
+	surface.DrawRect( dx, dy, 228, 16 )
+
+
+	dy = dy + 16  +4
+
+	surface.SetDrawColor( orange ) -- name of wep
+	surface.DrawRect( dx, dy, 228, 32 )
+	surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+	surface.DrawRect( dx, dy, 228, 32 )
+	surface.SetDrawColor( orange )
+	surface.DrawRect( dx, dy, 228, 32 )	
+
+
+	if IsValid( wep ) then
+		local weptable = wep:GetTable()
+
+		local wepname = weptable.PrintName or ""
+
+		draw.SimpleText( tostring( wepname ), "deathrun_hud_Large", dx + 224, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+	else
+		return
+	end
+
+	dy = dy + 32 + 4
+
+	if IsValid( wep ) then
+		local weptable = wep:GetTable()
+
+		local currentmag = wep:Clip1()
+		local maxmag = (weptable.Primary.ClipSize or 1) > 1 and weptable.Primary.ClipSize or 1
+
+		local remaining = wep:Ammo1() or 0
+
+		local frac = currentmag/maxmag
+		if frac < 0 then frac = 1 end
+
+		surface.SetDrawColor( orange )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.SetDrawColor( orange )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
+
+		surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+		surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
+
+		surface.SetDrawColor( orange )
+		surface.DrawRect( dx + 32 + 4, dy, 192*frac, 32 )
+
+		draw.SimpleText( "AM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+		draw.SimpleText( ( ( (currentmag ~= -1) and tostring( currentmag ) or string.upper( weptable.HoldType or "" ) )..(remaining > 0 and ( " +"..tostring( remaining ) ) or "") ), "deathrun_hud_Large", dx + 32 + 192, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+	end
+
+	dy = dy + 32 + 4
+
+	surface.SetDrawColor( clouds2 )
+	surface.DrawRect( dx, dy, 228, 16 )
+	surface.SetDrawColor( otrans )
+	surface.DrawRect( dx, dy, 228, 16 )
 
 end
 
@@ -376,4 +522,17 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 	surface.SetDrawColor( DR.Colors.Clouds )
 	surface.DrawRect(x, y + h + gap, mw, mh)
 	draw.SimpleText( stalemate and "YOU'RE ALL TERRIBLE!" or "MOST VALUABLE PLAYERS", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+end
+
+function DR:DrawPlayerHUDSass( x, y )
+	-- dimensions:
+	-- 228 x 108
+
+	local w, h = 228, 108
+
+	surface.SetDrawColor(255,0,0)
+	surface.DrawOutlinedRect( x,y,w,h )
+end
+function DR:DrawPlayerHUDAmmoSass( x, y )
+
 end

@@ -139,7 +139,10 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"}
 		},
 		["number"] = {
+			{"deathrun_hud_theme",0,1,"HUD Theme"},
 			{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
+			{"deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
+			{"deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
 			{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
 			{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
 			{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
