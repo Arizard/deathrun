@@ -8,14 +8,15 @@ WIN_STALEMATE = 1
 WIN_RUNNER = TEAM_RUNNER
 WIN_DEATH = TEAM_DEATH
 
-if SERVER then
-	RoundDuration = CreateConVar("deathrun_round_duration", 60*5, FCVAR_REPLICATED, "How many seconds each round should last, not including preptime.")
-	PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "How many seconds preptime should go for.")
-	FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
-	DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
-end
+
+RoundDuration = CreateConVar("deathrun_round_duration", 60*5, FCVAR_REPLICATED, "How many seconds each round should last, not including preptime.")
+PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "How many seconds preptime should go for.")
+FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
+DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
 DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 3, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
+DeathMax = CreateConVar("deathrun_max_deaths", 64, FCVAR_REPLICATED, "Maximum amount of players on the Death team at any given time.")
+
 
 -- for the round timer
 -- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
@@ -139,6 +140,9 @@ ROUND:AddState( ROUND_PREP,
 			local runners = {}
 			local pool = table.Copy( player.GetAllPlaying() )
 			
+			if deathsNeeded > DeathMax:GetInt() then
+				deathsNeeded = DeathMax:GetInt()
+			end
 
 			for k,v in ipairs(pool) do -- here we remove all the players who were ever death twice in a row
 				v:KillSilent()

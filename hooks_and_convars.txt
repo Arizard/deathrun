@@ -19,6 +19,9 @@ SERVER CONVARS:
 	deathrun_death_ratio <0.0-1.0>
 		The ratio between Deaths and Runners. Higher values mean more deaths. Default 0.15 .
 
+	deathrun_max_deaths <1-64>
+		The maximum amount of players on the Death team at any given time.
+
 	deathrun_allow_autojump <0-1>
 		Allow players to use autojump
 		
