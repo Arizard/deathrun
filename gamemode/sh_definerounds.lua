@@ -15,6 +15,7 @@ if SERVER then
 	DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 end
 RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
+DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 3, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
 
 -- for the round timer
 -- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
@@ -52,6 +53,17 @@ end
 local rounds_played = 0
 
 local DeathTeamStreaks = {}
+
+-- handle death avoidance here, using the functions defined in init.lua
+hook.Add("PlayerDisconnected", "DeathrunWatchDeathAvoid", function( ply )
+	print("checking for death avoid...")
+	local avoided = (ply:Team() == TEAM_DEATH and ply:Alive()) and true or false
+	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) then
+		DR:PunishDeathAvoid( ply, DeathAvoidPunishment:GetInt() )
+		DR:ChatBroadcast("Player "..ply:Nick().." will be punished for attempting to avoid being on the Death team!")
+	end
+end)
+
 
 hook.Add("PlayerInitialSpawn", "DeathrunCleanupSinglePlayer", function( ply )
 	if #player.GetAll() <= 1 then
@@ -120,14 +132,12 @@ ROUND:AddState( ROUND_PREP,
 				DeathTeamStreaks[ply:SteamID()] = DeathTeamStreaks[ply:SteamID()] or 0
 			end
 
-			PrintTable(DeathTeamStreaks)
 
 			-- let's pick deaths at random, but ignore if they have been death the 2 previous rounds
 			local deaths = {}
 			local deathsNeeded = math.ceil(DeathRatio:GetFloat() * #player.GetAllPlaying())
 			local runners = {}
 			local pool = table.Copy( player.GetAllPlaying() )
-
 			
 
 			for k,v in ipairs(pool) do -- here we remove all the players who were ever death twice in a row
@@ -144,15 +154,27 @@ ROUND:AddState( ROUND_PREP,
 
 			local timesLooped = 0
 
+			local punishmentpool = table.Copy( DR:GetOnlineBarredPlayers() )
+
 			while #deaths < deathsNeeded and timesLooped < 100 do
-				local randnum = math.random(#pool)
-				if pool[randnum] then
-					table.insert( deaths, pool[randnum] )
-					table.remove( pool, randnum )
+
+				if #punishmentpool > 0 then
+					local ply = punishmentpool[#punishmentpool]
+					DR:PardonDeathAvoid( ply, 1 )
+
+					DR:ChatBroadcast( "Player "..ply:Nick().." is being punished for death avoidance! They have "..tostring(DR:GetDeathAvoid( ply )).." Death rounds remaining." )
+
+					table.insert( deaths, punishmentpool[#punishmentpool] ) -- add players to the deaths if they are being punishd for death avoid
+					table.RemoveByValue( pool, punishmentpool[#punishmentpool] )
+					table.remove( punishmentpool, #punishmentpool )
+				else
+					local randnum = math.random(#pool)
+					if pool[randnum] then
+						table.insert( deaths, pool[randnum] )
+						table.remove( pool, randnum )
+					end
 				end
 			end
-
-
 
 			if timesLooped >= 100 then
 				print("---WARNING!!!!! WHILE LOOP EXCEEDED ALLOWED LOOP TIME!!!!-----")

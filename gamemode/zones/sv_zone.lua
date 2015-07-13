@@ -17,10 +17,6 @@ function ZONE:Load()
 	local map = game.GetMap()
 	local path = "deathrun/zones/"..map..".txt"
 
-	if not file.Exists("deathrun", "DATA") then
-		file.CreateDir("deathrun")
-	end
-
 	if not file.Exists("deathrun/zones", "DATA") then
 		file.CreateDir("deathrun/zones")
 	end

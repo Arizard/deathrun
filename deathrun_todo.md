@@ -4,8 +4,6 @@
 
 ##Planned Features:
 
-* Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
-* Pointshop 2 support
 * ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
 * Evolve support for scoreboard (kick, ban, slay, gag)
 * MORE HOOKS
@@ -15,7 +13,9 @@
 * Leveling/XP (hooks into starts/ends)
 
 ##Currently Implemented
-* Pointshop 1 support and RedactedHub support for map endings. Players are awarded a certain amount of points when finishing the map (map end is set up with !zones). Configure with **deathrun_pointshop_reward <0-9999>**
+* AFK / Idle kicker - configurable with convar ***deathrun_idle_kick_time <0-999>***
+* Death Avoid Penalty - players who disconnect while on the Death team will be forced to play 3 extra rounds in a row as Death (configurable)
+* Pointshop 1 & 2 support and RedactedHub support for map endings. Players are awarded a certain amount of points when finishing the map (map end is set up with !zones). Configure with **deathrun_pointshop_reward <0-9999>**
 * Map start and end zones - To allow for timing and rewards. Specify two corners of a cuboid.
 * ULX support for scoreboard
 * F1 and F2 bound to Help and Settings

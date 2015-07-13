@@ -1,3 +1,7 @@
+if not file.Exists("deathrun", "DATA") then -- creates a folder in data for the gamemode
+	file.CreateDir("deathrun")
+end
+
 --hexcolor
 AddCSLuaFile( "hexcolor.lua" )
 
@@ -89,17 +93,17 @@ local playermodels = {
 	"models/player/group01/female_06.mdl",
 }
 
-function GM:PlayerInitialSpawn( ply )
+hook.Add("PlayerInitialSpawn", "DeathrunPlayerInitialSpawn", function( ply )
 
 	ply.FirstSpawn = true
 
 	DR:ChatBroadcast(ply:Nick().." has joined the server.")
 
-end
+end)
 
-function GM:PlayerDisconnected( ply )
+hook.Add("PlayerDisconnected", "DeathrunPlayerDisconnectMessage", function( ply )
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
-end
+end)
 
 
 function GM:PlayerSpawn( ply )
@@ -351,4 +355,106 @@ hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( pl
 		table.insert( wepsclasses, v:GetClass() )
 	end
 	if table.HasValue(wepsclasses, class) then return false end
+end)
+
+-- Something to check how long it's been since the player last did something
+hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
+
+	ply.LastActiveTime = ply.LastActiveTime or CurTime()
+
+	ply.LastAngles = ply.LastAngles or ply:EyeAngles()
+	local dang = ply.LastAngles - ply:EyeAngles() -- use dang:IsZero() to check if it's changed
+
+
+	-- when the player stands still, mv:GetButtons() == 0, at least in binary
+	-- so we can check when no keys are being pressed, or when they keys haven't changed for a while
+	ply.LastButtons = ply.LastButtons or mv:GetButtons()
+
+	if (mv:GetButtons() ~= ply.LastButtons) or (not dang:IsZero()) then
+		-- if there's a change in angle or a change in buttons, then they must not be afk.
+		-- sometimes they can type +forward, but we know they are afk because it's constant +forward and no other keys
+		ply.LastActiveTime = CurTime()
+	end
+
+	ply.LastAngles = ply:EyeAngles()
+	ply.LastButtons = mv:GetButtons()
+
+end)
+
+function DR:CheckIdleTime( ply ) -- return how long the player has been idle for
+	ply.LastActiveTime = ply.LastActiveTime or CurTime()
+	return CurTime() - ply.LastActiveTime
+end
+local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*4.5, FCVAR_REPLICATED, "How many seconds each to wait before kicking idle players.")
+timer.Create("CheckIdlePlayers", 0.95, 0, function()
+	for k, ply in ipairs(player.GetAllPlaying()) do -- don't kick afk spectators or bots
+		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
+			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be kicked from the server due to being idle.")
+		end
+		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" then
+			ply:Kick("Kicked for being idle")
+			DR:ChatBroadcast( ply:Nick().." was kicked for being idle too long." )
+		end
+	end
+end)
+
+-- timer.Create("TestIdleCheck", 1, 0, function()
+-- 	for k, ply in ipairs(player.GetAll()) do
+-- 		ply:DeathrunChatPrint( tostring(DR:CheckIdleTime( ply )).." seconds idle." )
+-- 	end
+-- end)
+
+-- Punish death avoiders
+-- Bar the player for the next 3 rounds if they disconnect or idle while death.
+
+-- this stuff gets handled in sh_definerounds.lua and shared.lua
+-- Barred players are not included in player.GetAllPlaying()
+
+if not file.Exists("deathrun/deathbarred.txt", "DATA") then
+	file.Write("deathrun/deathbarred.txt","")
+end
+
+DR.BarredPlayers = util.JSONToTable( file.Read("deathrun/deathbarred.txt", "DATA") ) or { ["STEAMID_EXAMPLE"] = 3 }
+PrintTable( DR.BarredPlayers )
+
+function DR:SaveDeathAvoid()
+	file.Write("deathrun/deathbarred.txt",util.TableToJSON( DR.BarredPlayers ) )
+	PrintTable( DR.BarredPlayers )
+end
+
+DR:SaveDeathAvoid()
+
+function DR:PunishDeathAvoid( ply, amt )
+	local id = "id"..tostring( ply:SteamID64() )
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] or 0 -- create the entry if it doesn't exist
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] + (amt or 1) -- add 3 rounds
+
+	DR:SaveDeathAvoid()
+end
+
+function DR:GetDeathAvoid( ply ) -- returns how many rounds they still need to serve as punishment
+	local id = "id"..tostring( ply:SteamID64() )
+	return DR.BarredPlayers[id] or 0
+end
+
+function DR:GetOnlineBarredPlayers()
+	local plys = {}
+	for k,v in ipairs(player.GetAll()) do
+		if DR:GetDeathAvoid( v ) > 0 then
+			table.insert( plys, v )
+		end
+	end
+	return plys
+end
+
+function DR:PardonDeathAvoid( ply, amt )
+	local id = "id"..tostring( ply:SteamID64() )
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] or 0
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] - (amt or 1)
+
+	DR:SaveDeathAvoid()
+end
+
+concommand.Add("test_avoid", function( ply )
+	DR:PunishDeathAvoid( ply, 10 )
 end)

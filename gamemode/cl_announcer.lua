@@ -17,7 +17,9 @@ timer.Create("UpdateDeathrunAnnouncements", 1,0, function() -- when convars chan
 		"Did you know the weapons have recoil patterns? Pull down gently to concentrate your spray!",
 		"Too many squeakers? Mute players from the scoreboard by holding TAB.",
 		"Disable these messages through the !settings menu or by pressing F2.",
-		"Enable Thirdperson, disable Autojump, change HUD position and more by pressing F2."
+		"Enable Thirdperson, disable Autojump, change HUD position and more by pressing F2.",
+		"Change your HUD them in the F2 menu.",
+		"Disconnecting while on the Death team is not allowed and will be considered death avoidance. You will be forced to play "..tostring( GetConVar("deathrun_death_avoid_punishment"):GetInt() ).." extra rounds as Death.",
 	}
 
 end)
