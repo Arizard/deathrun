@@ -1,4 +1,6 @@
-#Deathrun by Arizard
+
+![](http://i.imgur.com/3mXgadr.png)
+
 
 ##Information
 
