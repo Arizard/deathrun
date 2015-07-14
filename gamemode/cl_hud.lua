@@ -94,7 +94,7 @@ net.Receive("DeathrunSendMVPs", function()
 		end
 	end
 
-	hook.Run("DeathrunRoundWin", RoundEndData.winteam)
+	hook.Call("DeathrunRoundWin", nil, RoundEndData.winteam)
 end)
 
 function GM:HUDPaint()

@@ -322,7 +322,7 @@ if SERVER then
 		net.WriteTable( data )
 		net.Broadcast()
 
-		hook.Run("DeathrunRoundWin", winteam)
+		hook.Call("DeathrunRoundWin", nil, winteam)
 	end
 
 	--initial round
