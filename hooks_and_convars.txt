@@ -37,8 +37,11 @@ SERVER CONVARS:
 	mapvote_rtv_ratio <0.0-1.0>
 		The ratio between votes and players online. 0.5 means that 1/2 of the players online need to type !rtv before the vote is initiated.
 
-	deathrun_pointshop_reward <0-999>
+	deathrun_pointshop_finish_reward <0-999>
 		Reward for finishing the map, in points. Will automatically check for pointshop or pointshop2 installation.
+
+	deathrun_pointshop_kill_reward <0-999>
+		Reward for killing another player, in points. Will automatically check for pointshop or pointshop2 installation.
 
 
 CLIENT CONVARS:
@@ -133,6 +136,9 @@ SHARED:
 
 	DeathrunBeginOver ()
 		Called when round state is switched to ROUND_OVER ( 6 )
+
+	DeathrunRoundWin( INT winner )
+		Called when a team wins the round. Runners = WIN_RUNNER, Deaths = WIN_DEATH, Stalemate = WIN_STALEMATE
 
 	DeathrunPreventPreptimeMovement ()
 		Called when preventing player movement during Prep Time. Return false to allow players to move.

@@ -93,6 +93,8 @@ net.Receive("DeathrunSendMVPs", function()
 			surface.PlaySound(table.Random(endingsounds))
 		end
 	end
+
+	hook.Run("DeathrunRoundWin", RoundEndData.winteam)
 end)
 
 function GM:HUDPaint()

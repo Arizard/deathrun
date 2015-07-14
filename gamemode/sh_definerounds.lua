@@ -321,6 +321,8 @@ if SERVER then
 
 		net.WriteTable( data )
 		net.Broadcast()
+
+		hook.Run("DeathrunRoundWin", winteam)
 	end
 
 	--initial round
