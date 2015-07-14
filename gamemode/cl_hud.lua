@@ -337,6 +337,7 @@ function DR:DrawPlayerHUDAmmo( x, y )
 	else
 		local weptable = wep:GetTable()
 		if weptable then
+			if not weptable.Primary then return end
 			if weptable.Primary.ClipSize == -1 then
 				return
 			end
@@ -692,6 +693,7 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 		return
 	else
 		local weptable = wep:GetTable()
+		if not weptable.Primary then return end
 		if weptable and weptable.Primary then
 			if weptable.Primary.ClipSize == -1 then
 				return
