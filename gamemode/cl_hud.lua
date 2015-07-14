@@ -334,16 +334,9 @@ function DR:DrawPlayerHUDAmmo( x, y )
 
 	if not IsValid( wep ) then
 		return
-	else
-		local weptable = wep:GetTable()
-		if weptable then
-			if not weptable.Primary then return end
-			if weptable.Primary.ClipSize == -1 then
-				return
-			end
-		end
 	end
 
+	local wepdata = GetWeaponHUDData( ply )
 
 	local tcol = team.GetColor( ply:Team() )
 	local dx, dy = x, y
@@ -368,11 +361,7 @@ function DR:DrawPlayerHUDAmmo( x, y )
 
 
 	if IsValid( wep ) then
-		local weptable = wep:GetTable()
-
-		local wepname = weptable.PrintName or ""
-
-		draw.SimpleText( tostring( wepname ), "deathrun_hud_Large", dx + 224, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		deathrunShadowTextSimple( tostring( wepdata.Name ), "deathrun_hud_Large", dx + 224, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1 )
 	else
 		return
 	end
@@ -380,15 +369,9 @@ function DR:DrawPlayerHUDAmmo( x, y )
 	dy = dy + 32 + 4
 
 	if IsValid( wep ) then
-		local weptable = wep:GetTable()
 
-		local currentmag = wep:Clip1()
-		local maxmag = (weptable.Primary.ClipSize or 1) > 1 and weptable.Primary.ClipSize or 1
-
-		local remaining = wep:Ammo1() or 0
-
-		local frac = currentmag/maxmag
-		if frac < 0 then frac = 1 end
+		local frac = wepdata.Clip1/wepdata.Clip1Max
+		frac = math.Clamp( frac, 0, 1 )
 
 		surface.SetDrawColor( orange )
 		surface.DrawRect( dx, dy, 32, 32 )
@@ -404,9 +387,11 @@ function DR:DrawPlayerHUDAmmo( x, y )
 		surface.SetDrawColor( orange )
 		surface.DrawRect( dx + 32 + 4, dy, 192*frac, 32 )
 
-		draw.SimpleText( "AM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		deathrunShadowTextSimple( "AM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 
-		draw.SimpleText( ( ( (currentmag ~= -1) and tostring( currentmag ) or string.upper( weptable.HoldType or "" ) )..(remaining > 0 and ( " +"..tostring( remaining ) ) or "") ), "deathrun_hud_Large", dx + 32 + 192, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		if wepdata.ShouldDrawHUD then
+			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "deathrun_hud_Large", dx + 32 + 192, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1)
+		end
 	end
 
 	dy = dy + 32 + 4
@@ -649,17 +634,13 @@ function DR:DrawPlayerHUDSass( x, y )
 	surface.DrawRect(x + 8 + 48, y + h/2 -10 + 2, (228-16-48-2)*hpfrac, 7)
 
 	-- HP TEXT
-	draw.SimpleText(tostring(curhp), "sassLarge", x+128 + 1,y + h/2+2 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-	draw.SimpleText(tostring(curhp), "sassLarge", x+128,y + h/2+2, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-	draw.SimpleText("HP", "sassSmall", x+132 + 1,y + h/2+1 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-	draw.SimpleText("HP", "sassSmall", x+132,y + h/2+1, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	deathrunShadowTextSimple(tostring(curhp), "sassLarge", x+128,y + h/2+2, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 2 )
+	deathrunShadowTextSimple("HP", "sassSmall", x+132,y + h/2+1, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 2 )
 
-	draw.SimpleText(tostring(curvel).." VL", "sassSmall", x+w - 12 +1,y + h/2 + 24+1 + 1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	deathrunShadowTextSimple(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
 
 	-- team text
-	draw.SimpleText(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8+1, y + h/2 + 24+1, Color(0,0,0,255/1.2), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+	deathrunShadowTextSimple(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
 
 
 	-- position avatar
@@ -677,7 +658,6 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 	
 	local w, h = 228, 108
 	surface.SetDrawColor(255,0,0)
---	surface.DrawOutlinedRect(x,y,w,h)
 
 	local ply = LocalPlayer()
 
@@ -691,49 +671,56 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 
 	if not IsValid( wep ) then
 		return
-	else
-		local weptable = wep:GetTable()
-		if not weptable.Primary then return end
-		if weptable and weptable.Primary then
-			if weptable.Primary.ClipSize == -1 then
-				return
-			end
-		end
 	end
 
+	local wepdata = GetWeaponHUDData( ply )
 
 	local tcol = team.GetColor( ply:Team() )
 	local dx, dy = x, y
 
-
 	if IsValid( wep ) then
-		local weptable = wep:GetTable()
-
-		local wepname = weptable.PrintName or ""
-
-		draw.SimpleText( tostring( wepname ), "sassSmall", x + w - 4 +1, y + h - 68+1, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-		draw.SimpleText( tostring( wepname ), "sassSmall", x + w - 4, y + h - 68, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-		
-		local currentmag = wep:Clip1()
-		local maxmag = 1
-		if weptable.Primary then
-			maxmag = (weptable.Primary.ClipSize or 1) > 1 and weptable.Primary.ClipSize or 1
+		local frac = wepdata.Clip1/wepdata.Clip1Max
+		frac = math.Clamp( frac, 0, 1 )
+		--print( wepdata.ShouldDrawHUD )
+		if wepdata.ShouldDrawHUD == true then
+			deathrunShadowTextSimple( wepdata.Name, "sassSmall", x + w - 4, y + h - 68, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
+			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "sassLarge", x + w - 4, y + h - 20, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
 		end
-		local remaining = 0
-		if wep.Ammo1 or wep.Primary then
-			remaining = ply:GetAmmoCount( wep.Primary.Ammo ) or wep:Ammo1() or 0
-		end
-
-		local frac = currentmag/maxmag
-		if frac < 0 then frac = 1 end
-
-		draw.SimpleText( tostring( currentmag or 0 ).." +"..tostring( remaining ), "sassLarge", x + w - 4+1, y + h+1 - 20, Color(0,0,0,255/1.2), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-		draw.SimpleText( tostring( currentmag or 0 ).." +"..tostring( remaining ), "sassLarge", x + w - 4, y + h - 20, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-
 	else
 		return
 	end
 
+
+end
+
+function GetWeaponHUDData( ply )
+
+	local data = {}
+	local weptable = {}
+	local wep = ply:GetActiveWeapon()
+
+	if IsValid( wep ) then
+		weptable = wep:GetTable()
+
+		data.Name = wep:GetPrintName() or "Weapon"
+		data.Clip1 = wep:Clip1() or -1
+		data.Clip2 = wep:Clip2() or -1
+		data.Clip1Max = 1
+		data.Clip2Max = 1
+		data.Remaining1 = ply:GetAmmoCount( wep:GetPrimaryAmmoType()  ) or wep:Ammo1() or 0
+		data.Remaining2 = ply:GetAmmoCount( wep:GetSecondaryAmmoType()  ) or wep:Ammo2() or 0
+		if weptable.Primary then
+			data.Clip1Max = weptable.Primary.ClipSize or data.Clip2Max
+		end
+		if weptable.Secondary then
+			data.Clip2Max = weptable.Secondary.ClipSize or data.Clip2Max
+		end
+
+		data.ShouldDrawHUD = true
+		if data.Clip1 < 0 then data.ShouldDrawHUD = false end
+	end
+
+	return data	
 
 end
 

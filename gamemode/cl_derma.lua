@@ -41,10 +41,17 @@ COLORS.Turq = DR.Colors.Turq
 COLORS.TurqDark = HexColor("#d35400")
 
 function deathrunShadowText( text, font, x, y, col, ax, ay , d)
-	if d ~= 0 then
-		draw.DrawText( text, font, x+d, y+d, Color(0,0,0,col.a), ax, ay )
+	if d ~= 0 and d ~= nil then
+		draw.DrawText( text, font, x+d, y+d, Color(0,0,0,col.a/1.2), ax, ay )
 	end
 	draw.DrawText( text, font, x, y, col, ax, ay)
+end
+
+function deathrunShadowTextSimple( text, font, x, y, col, ax, ay , d)
+	if d ~= 0 and d ~= nil then
+		draw.SimpleText( text, font, x+d, y+d, Color(0,0,0,col.a/1.2), ax, ay )
+	end
+	draw.SimpleText( text, font, x, y, col, ax, ay)
 end
 
 local blur = Material("pp/blurscreen")
