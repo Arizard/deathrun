@@ -43,6 +43,9 @@ SERVER CONVARS:
 	deathrun_pointshop_kill_reward <0-999>
 		Reward for killing another player, in points. Will automatically check for pointshop or pointshop2 installation.
 
+	deathrun_pointshop_win_reward <0-999>
+		Reward for winning the round. Checks for pointshop and pointshop2 installation.
+
 
 CLIENT CONVARS:
 
