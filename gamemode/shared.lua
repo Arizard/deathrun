@@ -160,7 +160,7 @@ function GM:Move( ply, data )
 	end
 
 	
-	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap then
+	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap and ply:IsOnGround() then
 		local diff = vel:Length2D() - ply.SpeedCap
 		vel:Sub( Vector( vel.x > 0 and diff or -diff, vel.y > 0 and diff or -diff, 0 ) )
 	end
