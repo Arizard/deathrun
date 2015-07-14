@@ -734,3 +734,36 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 
 
 end
+
+
+if IsValid( DR.TVBorder ) then
+	DR.TVBorder:Remove()
+end
+
+local meme = CreateClientConVar("deathrun_vhs7", 0, false, false)
+if meme:GetBool() == true then
+	DR.TVBorder = vgui.Create("DHTML")
+	DR.TVBorder:SetSize( ScrW(), ScrH() )
+	DR.TVBorder:SetPos(0,0)
+	DR.TVBorder:OpenURL("http://arizard.github.io/overlay.html")
+end
+
+hook.Add("RenderScreenspaceEffects", "DeathrunTVBorder", function()
+	if meme:GetBool() == true then
+		DrawSharpen( 1.1, 1.7 )
+		DrawMotionBlur( 0.4, 0.8, 0.005 )
+	end
+end)
+
+cvars.AddChangeCallback("deathrun_vhs7", function( name, old, new )
+	if IsValid( DR.TVBorder ) then
+		DR.TVBorder:Remove()
+	end
+	if tonumber(new) == 1 then
+		DR.TVBorder = vgui.Create("DHTML")
+		DR.TVBorder:SetSize( ScrW(), ScrH() )
+		DR.TVBorder:SetPos(0,0)
+		DR.TVBorder:OpenURL("http://arizard.github.io/overlay.html")
+	end
+end, "tvborder_callback")
+
