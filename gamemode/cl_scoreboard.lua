@@ -8,6 +8,7 @@ local columnFunctions = {
 		if ply:SteamID() == "STEAM_0:0:29351088" then
 			return  "Worst Player Ever"
 		end
+		return ""
 	end,
 	function( ply ) 
 		return string.upper(ply:GetUserGroup())
