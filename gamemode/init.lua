@@ -391,7 +391,7 @@ timer.Create("CheckIdlePlayers", 0.95, 0, function()
 		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
 			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be kicked from the server due to being idle.")
 		end
-		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" then
+		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" and (not ply:IsAdmin()) then
 			ply:Kick("Kicked for being idle")
 			DR:ChatBroadcast( ply:Nick().." was kicked for being idle too long." )
 		end

@@ -155,7 +155,7 @@ function SWEP:PrimaryAttack()
 
 				end
 			else
-				--if SERVER then
+				if SERVER then
 					local bullet = {} -- from weapon_base
 				
 					bullet.Num 	= 1
@@ -168,14 +168,16 @@ function SWEP:PrimaryAttack()
 					bullet.AmmoType = ""
 
 					self.Owner:FireBullets( bullet )
-				--end
+					self.Owner:EmitSound(self.WallSound,100,math.random(95,110))
+				end
+
 			end
 				
 		else
 			
 			local tr = self.Owner:GetEyeTrace()
 			if tr.HitPos:Distance( self.Owner:GetShootPos() ) < 75 then
-				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
+				
 
 				
 
@@ -189,6 +191,12 @@ function SWEP:PrimaryAttack()
 			end
 			
 		end
+
+	-- decal
+	local tr = self.Owner:GetEyeTrace()
+	if tr.HitPos:Distance( self.Owner:GetShootPos() ) < 75 then
+		util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
+	end
 	
 	
 	self.Owner:SetAnimation( PLAYER_ATTACK1 ) --3rd Person Animation

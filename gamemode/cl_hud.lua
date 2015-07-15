@@ -1,5 +1,23 @@
 print("Loaded cl_hud.lua")
 
+--local CrosshairStyle = CreateClientConVar("deathrun_crosshair_style", 1, true, false)
+local XHairThickness = CreateClientConVar("deathrun_crosshair_thickness", 2, true, false)
+local XHairGap = CreateClientConVar("deathrun_crosshair_gap", 8, true, false)
+local XHairSize = CreateClientConVar("deathrun_crosshair_size", 8, true, false)
+local XHairRed = CreateClientConVar("deathrun_crosshair_red", 255, true, false)
+local XHairGreen = CreateClientConVar("deathrun_crosshair_green", 255, true, false)
+local XHairBlue = CreateClientConVar("deathrun_crosshair_blue", 255, true, false)
+local XHairAlpha = CreateClientConVar("deathrun_crosshair_alpha", 255, true, false)
+
+--start and end cues
+local CuesConVar = CreateClientConVar("deathrun_round_cues", 1, true, false)
+
+-- convars to adjust hud positioning
+local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
+local HudAmmoPos = CreateClientConVar("deathrun_hud_ammo_position", 8, true, false) 
+local HudTheme = CreateClientConVar("deathrun_hud_theme", 0, true, false) -- different themes
+local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 50, true, false)
+
 local HideElements = {
 	["CHudBattery"] = true,
 	["CHudCrosshair"] = true,
@@ -9,7 +27,11 @@ local HideElements = {
 
 function GM:HUDShouldDraw( el )
 	if HideElements[ el ] then
-		return false
+		if HudTheme:GetInt() == 2 and el == "CHudAmmo" then --incase we use classic deathrun hud
+			return true
+		else
+			return false
+		end
 	else
 		return true
 	end
@@ -44,23 +66,7 @@ surface.CreateFont("deathrun_hud_Small", {
 	weight = 800
 })
 
---local CrosshairStyle = CreateClientConVar("deathrun_crosshair_style", 1, true, false)
-local XHairThickness = CreateClientConVar("deathrun_crosshair_thickness", 2, true, false)
-local XHairGap = CreateClientConVar("deathrun_crosshair_gap", 8, true, false)
-local XHairSize = CreateClientConVar("deathrun_crosshair_size", 8, true, false)
-local XHairRed = CreateClientConVar("deathrun_crosshair_red", 255, true, false)
-local XHairGreen = CreateClientConVar("deathrun_crosshair_green", 255, true, false)
-local XHairBlue = CreateClientConVar("deathrun_crosshair_blue", 255, true, false)
-local XHairAlpha = CreateClientConVar("deathrun_crosshair_alpha", 255, true, false)
 
---start and end cues
-local CuesConVar = CreateClientConVar("deathrun_round_cues", 1, true, false)
-
--- convars to adjust hud positioning
-local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
-local HudAmmoPos = CreateClientConVar("deathrun_hud_ammo_position", 8, true, false) 
-local HudTheme = CreateClientConVar("deathrun_hud_theme", 0, true, false) -- different themes
-local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 50, true, false)
 
 local RoundNames = {}
 RoundNames[ROUND_WAITING] = "Waiting for players"
@@ -142,6 +148,10 @@ function GM:HUDPaint()
 	if HudTheme:GetInt() == 1 then
 		DR:DrawPlayerHUDSass( hx, hy )
 		DR:DrawPlayerHUDAmmoSass( ax, ay )
+	end
+	if HudTheme:GetInt() == 2 then
+		DR:DrawPlayerHUDClassic( hx, hy )
+		DR:DrawPlayerHUDAmmoClassic( ax, ay )
 	end
 
 	if RoundEndData.Active then -- check if it's stalemate, and don't do the thing, zhu li!
@@ -691,6 +701,52 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 		return
 	end
 
+
+end
+
+-- draw classic deathrun HUD
+
+surface.CreateFont( "Deathrun_Smooth", { font = "Trebuchet18", size = 14, weight = 700, antialias = true } ) -- taken from Mr. Gash's gamemode
+surface.CreateFont( "Deathrun_SmoothMed", { font = "Trebuchet18", size = 24, weight = 700, antialias = true } )
+surface.CreateFont( "Deathrun_SmoothBig", { font = "Trebuchet18", size = 34, weight = 700, antialias = true } )
+
+function DR:DrawPlayerHUDClassic(x,y)
+
+	local ply = LocalPlayer()
+
+	if ply:GetObserverMode() ~= OBS_MODE_NONE then
+		if IsValid( ply:GetObserverTarget() ) then
+			ply = ply:GetObserverTarget()
+		end
+	end
+
+	local w, h = 228, 108
+	local alpha = HudAlpha:GetInt()
+	local amul = alpha/255
+
+	local hw, hh = 204, 36
+
+	draw.RoundedBox( 4, x + w/2 - hw/2, y+h-hh, hw, hh, Color( 44, 44, 44, 175*amul ) )
+	draw.RoundedBox( 0, x + w/2 - hw/2 +4, y+h-hh+4, hw - 8, hh-8, Color( 180, 80, 80, 255*amul*amul ) )
+
+	local maxhp = 100 -- yeah fuck yall
+	local curhp = math.Clamp( ply:Health(), 0, 999 )	
+	local hpfrac = math.Clamp( InverseLerp( curhp, 0, maxhp ), 0, 1 )
+
+	draw.RoundedBox( 0, x + w/2 - hw/2 +4, y+h-hh+4, (hw - 8)*hpfrac, hh-8, Color( 80, 180, 60, 255*amul ) )
+
+	deathrunShadowText( tostring(curhp > 999 and "dafuq" or math.max( curhp, 0 ) ), "Deathrun_SmoothBig", x+w/2 - hw/2 + 5, y + h - hh, Color(255,255,255), nil, nil, 1 )
+
+	-- timer
+	local timetext = string.ToMinutesSeconds( ROUND:GetTimer() )
+	local tw, th = hw/2, hh*1.25
+	local tx, ty = x + w/2 - tw/2, y + h - hh - 4 - th 
+	draw.RoundedBox( 4, tx, ty, tw, th, Color(44,44,44,175*amul) )
+	deathrunShadowText( timetext, "Deathrun_SmoothBig", tx + tw/2, ty + 4, Color(255,255,255), TEXT_ALIGN_CENTER, nil, 1 )
+
+end
+
+function DR:DrawPlayerHUDAmmoClassic(x,y)
 
 end
 
