@@ -74,6 +74,10 @@ if SERVER then
 	end)
 
 	local function PlayerCanButton( ply, ent )
+		if not ply:Alive() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
+			return false 
+		end
+
 		local mid = ent:MapCreationID()
 		local sid = ply:SteamID()
 
