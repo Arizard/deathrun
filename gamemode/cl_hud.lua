@@ -348,6 +348,7 @@ function DR:DrawPlayerHUDAmmo( x, y )
 	end
 
 	local wepdata = GetWeaponHUDData( ply )
+	if wepdata.HoldType == "melee" or wepdata.HoldType == "knife" then return end
 
 	local tcol = team.GetColor( ply:Team() )
 	local dx, dy = x, y
@@ -766,6 +767,7 @@ function GetWeaponHUDData( ply )
 		data.Clip2Max = 1
 		data.Remaining1 = ply:GetAmmoCount( wep:GetPrimaryAmmoType()  ) or wep:Ammo1() or 0
 		data.Remaining2 = ply:GetAmmoCount( wep:GetSecondaryAmmoType()  ) or wep:Ammo2() or 0
+		data.HoldType = weptable.HoldType or "melee"
 		if weptable.Primary then
 			data.Clip1Max = weptable.Primary.ClipSize or data.Clip2Max
 		end
