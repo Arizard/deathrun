@@ -22,6 +22,9 @@ function ROUND:RoundSwitch( r ) -- this can be used to switch or restart states
 		net.WriteInt( new, 16 )
 		net.Broadcast()
 	end
+
+	-- compatibility
+	hook.Call("OnRoundSet", nil, new, 123)
 end
 
 --commands

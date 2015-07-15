@@ -2,18 +2,17 @@ local columns = {"Name", "Title", "Rank", "Ping"}
 local columnFunctions = {
 	function( ply ) return ply:Nick() end,
 	function( ply ) 
-		return ply:SteamID() == "STEAM_0:0:29351088" and "Worst GR Member 2k15" or "" 
+		if ply:SteamID() == "STEAM_0:1:30288855" then -- don't remove this or i kill u
+			return "Super Player"
+		end
+		if ply:SteamID() == "STEAM_0:0:29351088" then
+			return  "Worst Player Ever"
+		end
 	end,
 	function( ply ) 
 		return string.upper(ply:GetUserGroup())
 	end,
 	function( ply ) return ply:Ping() end,
-}
-local columnColorFunctions = {
-	function( ply ) return Color(255,255,255) end,
-	function( ply ) return Color(255,255,255) end,
-	function( ply ) return Color(255,255,255) end,
-	function( ply ) return Color(255,255,255) end,
 }
 
 
@@ -53,7 +52,7 @@ function DR:CreateScoreboard()
 		surface.SetDrawColor( DR.Colors.Turq or HexColor("#303030") )
 		surface.DrawRect(0,0,w,h)
 
-		draw.SimpleText(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		deathrunShadowTextSimple(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 	end
 
 	dlist:Add( header )
@@ -166,14 +165,34 @@ function DR:NewScoreboardPlayer( ply, w, h )
 	end
 
 	local data = vgui.Create("DPanel", panel)
-	data:SetSize(w-h-8, h)
-	data:SetPos(h+8,0)
+	data:SetSize(w-(h*2)-8, h)
+	data:SetPos((h*2)+8,0)
 	data.bgcol = tcol
 	data.ply = ply
+
+	-- get scoreboard icon
+	local icon = vgui.Create("DPanel", panel)
+	icon:SetSize(h,h)
+	icon:SetPos(h,0)
+
+	local path = hook.Call("GetScoreboardIcon", nil, ply)
+
+	icon.Mat = path and Material( path ) or false
+
+	function icon:Paint(w,h)
+		if self.Mat ~= false then
+			surface.SetDrawColor(255,255,255)
+			surface.SetMaterial( self.Mat )
+			surface.DrawTexturedRect( 0 + w/2 - 8, 0 + h/2 - 8, 16, 16 )
+		end
+	end
+
 
 	function data:Paint(w,h)
 
 	end
+
+	local plyscorecol = hook.Call("GetScoreboardNameColor", nil, ply) or Color(255,255,255)
 
 	for i = 1, #columns do
 		local k = i-1
@@ -184,7 +203,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 
 		local label = vgui.Create("DLabel", data)
 		label:SetText( columnFunctions[i]( ply ) )
-		label:SetTextColor( columnColorFunctions[i]( ply ) )
+		label:SetTextColor( plyscorecol )
 		label:SetFont("deathrun_derma_Small")
 		label:SizeToContents()
 		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2 - 1 )
@@ -336,4 +355,16 @@ hook.Add("CreateMove", "DeathrunScoreboardPopup", function( cmd )
 		end
 	end
 
+end)
+
+hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
+	if ply:SteamID() == "STEAM_0:1:30288855" then
+		return Color(0,100,0)
+	end
+end)
+
+hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
+	if ply:SteamID() == "STEAM_0:1:30288855" then
+		return "icon16/bug.png"
+	end
 end)

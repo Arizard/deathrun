@@ -108,7 +108,13 @@ end)
 
 function GM:PlayerSpawn( ply )
 	ply:AllowFlashlight( true )
-	ply:SetModel( table.Random( playermodels ) )
+
+	local mdl = hook.Call("ChangePlayerModel", nil, ply)
+	if mdl then
+		ply:SetModel( mdl )
+	else
+		ply:SetModel( table.Random( playermodels ) )
+	end
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then

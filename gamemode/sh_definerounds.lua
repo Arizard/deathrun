@@ -1,7 +1,9 @@
 ROUND_WAITING = 3
 ROUND_PREP = 4
+ROUND_PREPARING  = ROUND_PREP
 ROUND_ACTIVE = 5
 ROUND_OVER = 6
+ROUND_ENDING = ROUND_OVER
 
 -- win constants
 WIN_STALEMATE = 1
@@ -323,6 +325,9 @@ if SERVER then
 		net.Broadcast()
 
 		hook.Call("DeathrunRoundWin", nil, winteam)
+
+		-- compatibility
+		hook.Call("OnRoundSet", nil, ROUND_OVER, winteam ~= WIN_STALEMATE and winteam or 123)
 	end
 
 	--initial round
