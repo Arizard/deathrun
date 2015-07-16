@@ -85,12 +85,14 @@ function PLAYER:ChangeSpectate()
 		if not target then
 			local tidx = math.random(#pool)
 			self:SpectateEntity( pool[tidx] ) -- iff they don't then give em one
+			self:SetupHands( pool[tidx] )
 		end
 
 	end
 
 
 	self:SpecModify( 0 )
+	self:SetupHands( self:GetObserverTarget() )
 	
 end
 

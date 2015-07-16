@@ -206,6 +206,7 @@ function GM:PlayerDeath( ply )
 			if #pool > 0 then
 				local randplay = table.Random(pool)
 				ply:SpectateEntity( randplay )
+				ply:SetupHands( randplay )
 				ply:SetObserverMode( OBS_MODE_IN_EYE )
 				ply:SetPos( randplay:GetPos() )
 			end

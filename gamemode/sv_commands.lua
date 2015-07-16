@@ -54,7 +54,7 @@ concommand.Add("deathrun_respawn",function(ply, cmd, args)
 			local players = ""
 			if #targets > 0 then
 				for k, targ in ipairs( targets ) do
-					if targ:GetSpectate() then
+					if ( ply:Team() == TEAM_SPECTATOR ) then
 						table.remove( targets, k )
 					end
 				end
@@ -73,7 +73,7 @@ concommand.Add("deathrun_respawn",function(ply, cmd, args)
 		end
 	
 	elseif not args[1] then
-		if (AdminAccess( ply ) or ROUND:GetCurrent() == ROUND_WAITING) and (not ply:GetSpectate()) then
+		if (AdminAccess( ply ) or ROUND:GetCurrent() == ROUND_WAITING) and ( ply:Team() ~= TEAM_SPECTATOR ) then
 			ply:KillSilent()
 			ply:Spawn()
 
