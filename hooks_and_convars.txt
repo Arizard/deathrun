@@ -46,6 +46,12 @@ SERVER CONVARS:
 	deathrun_pointshop_win_reward <0-999>
 		Reward for winning the round. Checks for pointshop and pointshop2 installation.
 
+	deathrun_death_avoid_punishment <0-99>
+		How many rounds of Death should the player have to serve after he attempts to death avoid.
+
+	deathrun_max_deaths <0-100>
+		The maximum amount of Deaths at any given time.
+
 
 CLIENT CONVARS:
 
