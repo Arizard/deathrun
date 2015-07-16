@@ -445,7 +445,7 @@ end
 function DR:GetOnlineBarredPlayers()
 	local plys = {}
 	for k,v in ipairs(player.GetAll()) do
-		if DR:GetDeathAvoid( v ) > 0 then
+		if DR:GetDeathAvoid( v ) > 0 and v:ShouldStaySpectating() == false then
 			table.insert( plys, v )
 		end
 	end

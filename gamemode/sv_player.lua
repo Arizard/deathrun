@@ -1,6 +1,14 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:BeginSpectate()
+
+	local avoided = (self:Team() == TEAM_DEATH and self.VoluntarySpec == true) and true or false
+	print( "checking death avoid...", avoided)
+	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 1 then
+		DR:PunishDeathAvoid( self, DR.DeathAvoidPunishment:GetInt() )
+		DR:ChatBroadcast("Player "..self:Nick().." will be punished for attempting to avoid being on the Death team!")
+	end
+
 	self:StripWeapons()
 	self:StripAmmo()
 
@@ -13,6 +21,8 @@ function PLAYER:BeginSpectate()
 	self:SetMoveType(MOVETYPE_OBSERVER)
 
 	self:SetupHands( nil )
+
+	self.VoluntarySpec = false
 
 end
 function PLAYER:EndSpectate() -- when you want to end spectating when he respawns
@@ -73,9 +83,9 @@ function PLAYER:ChangeSpectate()
 		--this means we are spectating a player
 
 		local pool = {}
-		for k,ply in ipairs(player.GetAll()) do
-			if ply:Alive() and not ply:GetSpectate() then
-				table.insert(pool, ply)
+		for k,self in ipairs(player.GetAll()) do
+			if self:Alive() and not self:GetSpectate() then
+				table.insert(pool, self)
 			end
 		end
 
@@ -101,9 +111,9 @@ function PLAYER:SpecModify( n )
 	self.SpecEntIdx = self.SpecEntIdx or 1
 
 	local pool = {}
-	for k,ply in ipairs(player.GetAll()) do
-		if ply:Alive() and not ply:GetSpectate() then
-			table.insert(pool, ply)
+	for k,self in ipairs(player.GetAll()) do
+		if self:Alive() and not self:GetSpectate() then
+			table.insert(pool, self)
 		end
 	end
 
@@ -133,44 +143,45 @@ function PLAYER:SpecPrev()
 	self:SpecModify( -1 )
 end
 
-hook.Add("KeyPress", "DeathrunSpectateChangeObserverMode", function(ply, key)
-	if ply:GetSpectate() then
+hook.Add("KeyPress", "DeathrunSpectateChangeObserverMode", function(self, key)
+	if self:GetSpectate() then
 		if key == IN_JUMP then
-			ply:ChangeSpectate()
+			self:ChangeSpectate()
 		end
 		if key == IN_ATTACK then
 			-- cycle players forward
-			ply:SpecNext()
+			self:SpecNext()
 		end
 		if key == IN_ATTACK2 then
 			-- cycle players bacwards
-			ply:SpecPrev()
+			self:SpecPrev()
 		end
 	end
 end)
 
-concommand.Add("deathrun_toggle_spectate", function(ply)
-	if ply:GetSpectate() == false then
-		ply:BeginSpectate()
-		ply:SetShouldStaySpectating( true )
+concommand.Add("deathrun_toggle_spectate", function(self)
+	if self:GetSpectate() == false then
+		self:BeginSpectate()
+		self:SetShouldStaySpectating( true )
 	else
-		ply:EndSpectate()
-		ply:SetShouldStaySpectating( false )
+		self:EndSpectate()
+		self:SetShouldStaySpectating( false )
 	end
 end)
 
-concommand.Add("deathrun_set_spectate", function(ply, cmd, args)
+concommand.Add("deathrun_set_spectate", function(self, cmd, args)
 	if tonumber(args[1]) == 1 then
-		ply:KillSilent()
-		ply:BeginSpectate()
-		ply:SetShouldStaySpectating( true )
+		self:KillSilent()
+		self.VoluntarySpec = true
+		self:BeginSpectate()
+		self:SetShouldStaySpectating( true )
 	else
-		ply:EndSpectate()
-		ply:SetShouldStaySpectating( false )
+		self:EndSpectate()
+		self:SetShouldStaySpectating( false )
 
 		if ROUND:GetCurrent() == ROUND_WAITING then
-			ply:SetTeam( TEAM_RUNNER )
-			ply:Spawn()
+			self:SetTeam( TEAM_RUNNER )
+			self:Spawn()
 		end
 	end
 end)

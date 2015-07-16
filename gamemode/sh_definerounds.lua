@@ -19,6 +19,7 @@ RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many
 DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 3, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
 DeathMax = CreateConVar("deathrun_max_deaths", 64, FCVAR_REPLICATED, "Maximum amount of players on the Death team at any given time.")
 
+DR.DeathAvoidPunishment = DeathAvoidPunishment
 
 -- for the round timer
 -- have a shared ROUND_TIMER variable which continuously counts down each 0.2 second
@@ -58,14 +59,16 @@ local rounds_played = 0
 local DeathTeamStreaks = {}
 
 -- handle death avoidance here, using the functions defined in init.lua
-hook.Add("PlayerDisconnected", "DeathrunWatchDeathAvoid", function( ply )
+
+local function checkdeathavoid( ply )
 	print("checking for death avoid...")
 	local avoided = (ply:Team() == TEAM_DEATH and ply:Alive()) and true or false
-	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) then
+	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 2 then
 		DR:PunishDeathAvoid( ply, DeathAvoidPunishment:GetInt() )
 		DR:ChatBroadcast("Player "..ply:Nick().." will be punished for attempting to avoid being on the Death team!")
 	end
-end)
+end
+hook.Add("PlayerDisconnected", "DeathrunWatchDeathAvoid", checkdeathavoid)
 
 
 hook.Add("PlayerInitialSpawn", "DeathrunCleanupSinglePlayer", function( ply )
@@ -166,6 +169,7 @@ ROUND:AddState( ROUND_PREP,
 
 				if #punishmentpool > 0 then
 					local ply = punishmentpool[#punishmentpool]
+					
 					DR:PardonDeathAvoid( ply, 1 )
 
 					DR:ChatBroadcast( "Player "..ply:Nick().." is being punished for death avoidance! They have "..tostring(DR:GetDeathAvoid( ply )).." Death rounds remaining." )
@@ -173,6 +177,7 @@ ROUND:AddState( ROUND_PREP,
 					table.insert( deaths, punishmentpool[#punishmentpool] ) -- add players to the deaths if they are being punishd for death avoid
 					table.RemoveByValue( pool, punishmentpool[#punishmentpool] )
 					table.remove( punishmentpool, #punishmentpool )
+
 				else
 					local randnum = math.random(#pool)
 					if pool[randnum] then
@@ -180,6 +185,8 @@ ROUND:AddState( ROUND_PREP,
 						table.remove( pool, randnum )
 					end
 				end
+
+				timesLooped = timesLooped + 1
 			end
 
 			if timesLooped >= 100 then

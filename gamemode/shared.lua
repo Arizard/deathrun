@@ -26,7 +26,7 @@ function player.GetAllPlaying()
 	local pool = {}
 	for k,ply in ipairs(player.GetAll()) do
 		if ply then
-			if ( not ply:ShouldStaySpectating() ) then
+			if ( ply:ShouldStaySpectating() == false ) then
 				table.insert(pool, ply)
 			end
 		end
