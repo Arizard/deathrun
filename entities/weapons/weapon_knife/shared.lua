@@ -102,7 +102,7 @@ function SWEP:PrimaryAttack()
 			if SERVER then
 				local keyvalues = tr.Entity:GetKeyValues()
 				if keyvalues.classname == "func_breakable" then
-					tr.Entity:Input("RemoveHealth", self.Owner, self.Weapon, self.Primary.Damage)
+					--tr.Entity:Input("RemoveHealth", self.Owner, self.Weapon, self.Primary.Damage)
 				end
 			end
 		end
