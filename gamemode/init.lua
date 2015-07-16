@@ -109,6 +109,8 @@ end)
 function GM:PlayerSpawn( ply )
 	ply:AllowFlashlight( true )
 
+	ply:SetMoveType(MOVETYPE_WALK)
+
 	local mdl = hook.Call("ChangePlayerModel", nil, ply)
 	if mdl then
 		ply:SetModel( mdl )
@@ -119,24 +121,18 @@ function GM:PlayerSpawn( ply )
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
-			--ply:KillSilent()
 			GAMEMODE:PlayerSpawnAsSpectator( ply )
 		else
 			ply:SetTeam( TEAM_RUNNER )
 		end
-		ply:SetupHands()
 		hook.Call("PlayerLoadout", self, ply)
 		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	elseif ply:ShouldStaySpectating() then
-		--ply:KillSilent()
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	else
 		ply:StopSpectate()
-
-		ply:SetupHands( ply )
-
 		hook.Call("PlayerLoadout", self, ply)
 	end
 
@@ -172,6 +168,8 @@ function GM:PlayerLoadout( ply )
 	ply:SetJumpPower( 200 )
 
 	ply:DrawViewModel( true )
+
+	ply:SetupHands( ply )
 
 	hook.Call("DeathrunPlayerLoadout", self, ply)
 	

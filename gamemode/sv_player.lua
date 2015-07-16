@@ -10,6 +10,9 @@ function PLAYER:BeginSpectate()
 
 	self:Spectate( OBS_MODE_ROAMING )
 	self:SetObserverMode( OBS_MODE_ROAMING )
+	self:SetMoveType(MOVETYPE_OBSERVER)
+
+	self:SetupHands( nil )
 
 end
 function PLAYER:EndSpectate() -- when you want to end spectating when he respawns
@@ -21,8 +24,6 @@ function PLAYER:StopSpectate() -- when you want to end spectating immediately
 
 	self.Spectating = false
 	self.StaySpectating = false
-
-	--self:SetTeam( TEAM_UNASSIGNED )
 
 	self:UnSpectate()
 	self:SetObserverMode( OBS_MODE_NONE )
@@ -153,6 +154,22 @@ concommand.Add("deathrun_toggle_spectate", function(ply)
 	else
 		ply:EndSpectate()
 		ply:SetShouldStaySpectating( false )
+	end
+end)
+
+concommand.Add("deathrun_set_spectate", function(ply, cmd, args)
+	if tonumber(args[1]) == 1 then
+		ply:KillSilent()
+		ply:BeginSpectate()
+		ply:SetShouldStaySpectating( true )
+	else
+		ply:EndSpectate()
+		ply:SetShouldStaySpectating( false )
+
+		if ROUND:GetCurrent() == ROUND_WAITING then
+			ply:SetTeam( TEAM_RUNNER )
+			ply:Spawn()
+		end
 	end
 end)
 

@@ -143,7 +143,8 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 			{"deathrun_enable_announcements", "Help messages"},
 			{"deathrun_thirdperson_enabled", "Thirdperson mode"},
 			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
-			{"deathrun_info_on_join", "Show the info menu when joining the server"}
+			{"deathrun_info_on_join", "Show the info menu when joining the server"},
+			{"deathrun_spectate_only", "Spectate-only mode"}
 		},
 		["number"] = {
 			{"deathrun_hud_theme",0,2,"HUD Theme"},

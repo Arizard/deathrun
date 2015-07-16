@@ -72,8 +72,6 @@ function InverseLerp( pos, p1, p2 )
 
 end
 
-
-
 local function intToBool( i )
 	if tonumber(i) == 0 then
 		return false
@@ -101,6 +99,13 @@ if CLIENT then
 	RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt())
 	timer.Create("DeathrunAutojumpSendToServer", 5, 0, function()
 		RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt()) -- in case some trickery happens on the client we'll sync this right up. They can probably destroy the timer but whatever
+	end)
+end
+
+if CLIENT then
+	CreateClientConVar("deathrun_spectate_only", 0, false, false)
+	cvars.AddChangeCallback( "deathrun_spectate_only", function( name, old, new )
+		RunConsoleCommand( "deathrun_set_spectate", new )
 	end)
 end
 
