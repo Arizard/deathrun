@@ -1,31 +1,32 @@
-local fontstandard = "Franklin Gothic"
+local fontstandard = "Roboto Bold"
+local fontstandard2 = "Tahoma"
 
 -- modified version of my derma thingzzzz
 
 surface.CreateFont("deathrun_derma_Large", {
 	font = fontstandard,
-	size = 32,
+	size = 45,
 	antialias = true,
-	weight = 800
+	weight = 1000
 })
 surface.CreateFont("deathrun_derma_Medium", {
-	font = fontstandard,
-	size = 28,
+	font = fontstandard2,
+	size = 34,
 	antialias = true,
-	weight = 800
+	weight = 200
 })
 
 surface.CreateFont("deathrun_derma_Small", {
-	font = fontstandard,
-	size = 20,
+	font = "Roboto Medium",
+	size = 24,
 	antialias = true,
-	weight = 800
+	weight = 200
 })
 surface.CreateFont("deathrun_derma_Tiny", {
-	font = fontstandard,
-	size = 14,
+	font = "Roboto Medium",
+	size = 18,
 	antialias = true,
-	weight = 800
+	weight = 200
 })
 
 local COLORS = {}
@@ -143,7 +144,7 @@ function MAIN:Paint(w,h)
 	surface.DrawRect(0,h-8,w,4)
 
 	--title
-	deathrunShadowText( self.title ,"deathrun_derma_Small",w/2,4, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 0)
+	deathrunShadowText( self.title ,"deathrun_derma_Small",w/2,1, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1)
 end
 
 function MAIN:SetPrimaryColor( col )

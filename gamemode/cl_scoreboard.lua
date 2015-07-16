@@ -1,6 +1,7 @@
-local columns = {"Name", "Title", "Rank", "Ping"}
+local columns = {"Name", "blank","Title", "Rank", "Ping"}
 local columnFunctions = {
 	function( ply ) return ply:Nick() end,
+	function() return "" end,
 	function( ply ) 
 		if ply:SteamID() == "STEAM_0:1:30288855" then -- don't remove this or i kill u
 			return "Super Player"
@@ -17,10 +18,44 @@ local columnFunctions = {
 }
 
 
+if IsValid(DR.ScoreboardPanel) then -- remove the scoreboard on autorefresh
+	DR.ScoreboardPanel:Remove()
+end
+
 function DR:CreateScoreboard()
-	local scoreboard = vgui.Create("DPanel")
-	scoreboard:SetSize(ScrW()/2, ScrH()-100)
-	scoreboard:Center()
+
+	local scoreboard = DR.ScoreboardPanel
+
+	if not IsValid(DR.ScoreboardPanel) then
+
+		local scoreboard = vgui.Create("DPanel")
+		scoreboard:SetSize(ScrW()/2, ScrH()-100)
+		scoreboard:SetPos( 0, ScrH() + 50 )
+
+		scoreboard:CenterHorizontal()
+
+		scoreboard.dt = 0
+		scoreboard.lastthink = CurTime()
+		function scoreboard:Think()
+			local dt = CurTime() - self.lastthink
+			self.lastthink = CurTime()
+
+			local x, y = self:GetPos()
+			local lerpspeed = 0.0005
+			local dur = 0.2 -- 2 seconds
+
+			self.dt = math.Clamp(self.dt + ( DR.ScoreboardIsOpen and dt or -dt ), 0, dur)
+
+			self:SetPos( x, QuadLerp( math.Clamp( InverseLerp( self.dt,0,dur ), 0, 1), ScrH()+50, 128) )
+
+			if DR.ScoreboardIsOpen == false and y > ScrH() then self:Remove() end
+		end
+
+		DR.ScoreboardPanel = scoreboard
+
+	end
+
+	scoreboard = DR.ScoreboardPanel
 
 	--scoreboard:MakePopup()
 
@@ -47,13 +82,19 @@ function DR:CreateScoreboard()
 	dlist:SetSpaceY(4)
 
 	local header = vgui.Create("DPanel")
-	header:SetSize( dlist:GetWide(), 44 )
+	header:SetSize( dlist:GetWide(), 48 )
 
 	function header:Paint(w,h)
 		surface.SetDrawColor( DR.Colors.Turq or HexColor("#303030") )
 		surface.DrawRect(0,0,w,h)
 
-		deathrunShadowTextSimple(GetHostName(), "deathrun_derma_Large", w/2, h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+		surface.SetDrawColor(255,255,255, 155*(1-math.pow( ( ( (math.sin(CurTime())+1)/2 ) ), 0.1))  )
+		surface.DrawRect(0,0,w,h)
+
+		surface.SetDrawColor(0,0,0,100)
+		surface.DrawRect(0,h-3,w,3)
+
+		deathrunShadowTextSimple(GetHostName(), "deathrun_derma_Large", w/2, h/2-2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 	end
 
 	dlist:Add( header )
@@ -137,6 +178,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				surface.DrawRect(0,0,w,h)
 			end
 		end
+
 	end
 
 	local av = vgui.Create("AvatarImage", panel)
@@ -206,8 +248,9 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		label:SetText( columnFunctions[i]( ply ) )
 		label:SetTextColor( plyscorecol )
 		label:SetFont("deathrun_derma_Small")
+		label:SetExpensiveShadow( 1 )
 		label:SizeToContents()
-		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2 - 1 )
+		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2  )
 
 		--draw.SimpleText( , "deathrun_derma_Small", k * (w/(#columns-1)),h/2, , align , TEXT_ALIGN_CENTER )
 	end
@@ -333,19 +376,23 @@ end
 
 function DR:DestroyScoreboard()
 	if IsValid( DR.ScoreboardPanel ) then
-		DR.ScoreboardPanel:Remove()
-		DR.ScoreboardIsOpen = false
+		
+		
 	end
+	DR.ScoreboardIsOpen = false
+	
 end
 
 DR:DestroyScoreboard()
 
 function GM:ScoreboardHide()
 	DR:DestroyScoreboard()
+	DR.ScoreboardCloseTime = CurTime()
 end
 
 function GM:ScoreboardShow()
 	DR:CreateScoreboard()
+	DR.ScoreboardOpenTime = CurTime()
 end
 
 hook.Add("CreateMove", "DeathrunScoreboardPopup", function( cmd )
@@ -360,7 +407,7 @@ end)
 
 hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
 	if ply:SteamID() == "STEAM_0:1:30288855" then
-		return Color(0,100,0)
+		return Color(0,200,0)
 	end
 end)
 

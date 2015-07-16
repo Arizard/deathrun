@@ -88,8 +88,8 @@ if SERVER then
 		end
 	end)
 end
+CreateConVar("deathrun_autojump_velocity_cap", 450, FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 
-CreateConVar("deathrun_autojump_velocity_cap", 450, FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 
 if CLIENT then
 	CreateClientConVar("deathrun_autojump", 1, true, false)

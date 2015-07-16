@@ -63,6 +63,20 @@ function DR:OpenCrosshairCreator()
 	scr:SetSize( controls:GetWide()-16, controls:GetTall()-16 )
 	scr:SetPos(8,8)
 
+	local vbar = scr:GetVBar()
+	vbar:SetWide(4)
+
+	function vbar:Paint(w,h)
+		surface.SetDrawColor(0,0,0,100) 
+		surface.DrawRect(0,0,w,h)
+	end
+	function vbar.btnUp:Paint() end
+	function vbar.btnDown:Paint() end
+	function vbar.btnGrip:Paint(w, h)
+		surface.SetDrawColor(0,0,0,200)
+		surface.DrawRect(0,0,w,h)
+	end
+
 	local dlist = vgui.Create("DIconLayout", scr)
 	dlist:SetSize( scr:GetSize() )
 	dlist:SetPos(0,0)
@@ -139,7 +153,7 @@ local deathrun_settings = {}
 timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 	deathrun_settings = {
 		["boolean"] = {
-			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetFloat()).." u/s)"},
+			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVarNumber("deathrun_autojump_velocity_cap")).." u/s)"},
 			{"deathrun_enable_announcements", "Help messages"},
 			{"deathrun_thirdperson_enabled", "Thirdperson mode"},
 			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
@@ -512,3 +526,5 @@ hook.Add("HUDPaint", "openquickinfo", function()
 	end
 	infoOpened = true -- only check once, then leave it
 end)
+
+
