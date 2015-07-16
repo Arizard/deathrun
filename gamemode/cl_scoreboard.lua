@@ -367,5 +367,7 @@ end)
 hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
 	if ply:SteamID() == "STEAM_0:1:30288855" then
 		return "icon16/bug.png"
+	elseif ply:SteamID() == "STEAM_0:0:29351088" then
+		return "icon16/box.png"
 	end
 end)
