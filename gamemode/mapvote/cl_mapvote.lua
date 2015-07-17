@@ -110,7 +110,7 @@ function MV:OpenFullMapList( maps )
 end
 
 function MV:RepopulateMapList()
-	if MV.AllMapsListList then
+	if IsValid(MV.AllMapsListList) then
 		local dlist = MV.AllMapsListList
 		local maps = dlist.maps
 		dlist:Clear()
@@ -181,7 +181,7 @@ end
 MV.VotingMapsNoVotes = {}
 
 function MV:RefreshVotingPanel()
-	if MV.VotingPanelDermaList then
+	if IsValid( MV.VotingPanelDermaList ) then
 		local dlist = MV.VotingPanelDermaList
 		dlist:Clear()
 

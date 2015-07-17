@@ -139,6 +139,13 @@ if SERVER then
 		
 		--if self.KickBack < 0 then self.KickBack = 0 end	-- do this serverside
 		self.Reloading = false
+
+		if GetConVarNumber("deathrun_infinite_ammo") == 1 then
+			local remaining = self.Owner:GetAmmoCount( self:GetPrimaryAmmoType() ) or self:Ammo1() or 0
+			if remaining < self.Primary.ClipSize then
+				self.Owner:GiveAmmo( self.Primary.ClipSize, self:GetPrimaryAmmoType(), true )
+			end
+		end
 	end
 else
 	function SWEP:Think() -- clientside think

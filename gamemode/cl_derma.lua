@@ -4,10 +4,9 @@ local fontstandard2 = "Tahoma"
 -- modified version of my derma thingzzzz
 
 surface.CreateFont("deathrun_derma_Large", {
-	font = fontstandard,
+	font = "Roboto Black",
 	size = 45,
 	antialias = true,
-	weight = 1000
 })
 surface.CreateFont("deathrun_derma_Medium", {
 	font = fontstandard2,
@@ -49,8 +48,10 @@ function deathrunShadowText( text, font, x, y, col, ax, ay , d)
 end
 
 function deathrunShadowTextSimple( text, font, x, y, col, ax, ay , d)
+	d = d or 1
 	if d ~= 0 and d ~= nil then
-		draw.SimpleText( text, font, x+d, y+d, Color(0,0,0,col.a/1.2), ax, ay )
+		draw.SimpleText( text, font, x+d*2, y+d*2, Color(0,0,0,col.a/4), ax, ay )
+		draw.SimpleText( text, font, x+d, y+d, Color(0,0,0,col.a/2), ax, ay )
 	end
 	draw.SimpleText( text, font, x, y, col, ax, ay)
 end

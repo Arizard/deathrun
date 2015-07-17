@@ -80,6 +80,8 @@ local function intToBool( i )
 	end
 end
 
+CreateConVar("deathrun_infinite_ammo", "1", FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Should ammo automatically replenish.")
+
 if SERVER then
 	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)
 		if args[1] then
@@ -167,7 +169,7 @@ function GM:Move( ply, data )
 	end
 
 	
-	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap then
+	if ply.SpeedCap and vel:Length2D() > ply.SpeedCap and SERVER then
 		local diff = vel:Length2D() - ply.SpeedCap
 		vel:Sub( Vector( vel.x > 0 and diff or -diff, vel.y > 0 and diff or -diff, 0 ) )
 	end

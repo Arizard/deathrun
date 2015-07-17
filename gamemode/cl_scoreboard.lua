@@ -83,7 +83,7 @@ function DR:CreateScoreboard()
 
 	local header = vgui.Create("DPanel")
 	header:SetSize( dlist:GetWide(), 48 )
-
+	header.counter = 0.5
 	function header:Paint(w,h)
 		surface.SetDrawColor( DR.Colors.Turq or HexColor("#303030") )
 		surface.DrawRect(0,0,w,h)
@@ -94,7 +94,25 @@ function DR:CreateScoreboard()
 		surface.SetDrawColor(0,0,0,100)
 		surface.DrawRect(0,h-3,w,3)
 
-		deathrunShadowTextSimple(GetHostName(), "deathrun_derma_Large", w/2, h/2-2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+		-- make the hostname scroll left and right
+		surface.SetFont("deathrun_derma_Large")
+
+		local cycle = 12
+
+		self.counter = self.counter + FrameTime()/cycle
+
+		local fw, fh = surface.GetTextSize( GetHostName() )
+		fw = fw + 64 -- 64 pixel gap
+
+
+
+		if self.counter > 1 then self.counter = 0 end
+		if fw > self:GetWide() then
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 + fw - self.counter * fw , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 - self.counter * fw , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
+		else
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", w/2 , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+		end
 	end
 
 	dlist:Add( header )
@@ -193,7 +211,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				surface.SetDrawColor(Color(255,255,255,100))
 				surface.DrawRect(0,0,w,h)
 
-				draw.SimpleText("✖", "deathrun_derma_Medium", 2,-1,DR.Colors.Alizarin )
+				draw.SimpleText("✖", "deathrun_derma_Medium", 0,-4,DR.Colors.Alizarin )
 			end
 		end
 		if self.ply:IsValid() then
@@ -250,7 +268,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		label:SetFont("deathrun_derma_Small")
 		label:SetExpensiveShadow( 1 )
 		label:SizeToContents()
-		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2  )
+		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2 - 1  )
 
 		--draw.SimpleText( , "deathrun_derma_Small", k * (w/(#columns-1)),h/2, , align , TEXT_ALIGN_CENTER )
 	end
