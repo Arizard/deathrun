@@ -135,17 +135,21 @@ hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 		ply:SetRenderMode( RENDERMODE_TRANSALPHA )
 	end
 
-	local fadedistance = 75
+	local fadedistance = 55
 
 	local eyedist = LocalPlayer():EyePos():Distance( ply:EyePos() )
+	local col = ply:GetColor()
 
 	if eyedist < fadedistance then
 		local frac = InverseLerp( eyedist, 5, fadedistance )
-		local col = ply:GetColor()
-		col.a = Lerp( frac, 5, 255 )
+		
+		col.a = Lerp( frac, 20, 255 )
 
 		if ply:Team() ~= LocalPlayer():Team() then col.a = 255 end
 
+		ply:SetColor( col )
+	else
+		col.a = 255
 		ply:SetColor( col )
 	end
 
