@@ -490,6 +490,12 @@ function DR:OpenQuickInfo()
 	frame:MakePopup()
 	frame:SetTitle("Deathrun Information")
 
+	function frame:OnClose()
+		if ROUND:GetCurrent() == ROUND_WAITING then
+			DR:OpenWaitingMenu()
+		end
+	end
+
 	local lbl = vgui.Create("DLabel", frame)
 	lbl:SetText("Please wait while page loads...")
 	lbl:SetFont("deathrun_derma_Large")
@@ -527,4 +533,75 @@ hook.Add("HUDPaint", "openquickinfo", function()
 	infoOpened = true -- only check once, then leave it
 end)
 
+function DR:GetWordWrapText( text, w, font )
+	local displaytext = ""
+	local displayline = ""
+	local displayfont = font
+	surface.SetFont( displayfont )
+	
+	text = string.Replace( text, "\n", "")
+	text = string.Replace( text, "\t", "")
 
+	text = string.Replace( text, [[\n]], "\n")
+	text = string.Replace( text, [[\t]], "\t")
+	text = string.Replace( text, [[\b]], "• ")
+
+	local args = string.Split( text, " " )
+
+	for i = 1, #args do
+		local word = args[i]
+		local tw, th = surface.GetTextSize( displayline..word.." " )
+		if tw > w then
+			displaytext = displaytext..displayline.."\n"
+			displayline = word.." "
+		else
+			displayline = displayline..word.." "
+		end
+		if i == #args then
+			displaytext = displaytext..displayline
+		end
+	end
+
+	return displaytext
+end
+
+
+-- waiting menu
+function DR:OpenWaitingMenu()
+
+	local frame = vgui.Create("deathrun_window")
+	frame:SetSize(600,270)
+	frame:Center()
+	frame:MakePopup()
+	frame:SetTitle("Waiting For Players")
+
+	local panel = vgui.Create("panel", frame)
+	panel:SetSize(frame:GetWide()-8, frame:GetTall()-44)
+	panel:SetPos(4,32)
+
+	function panel:Paint(w,h)
+		local x,y = 0, 0
+
+		surface.SetDrawColor(DR.Colors.Clouds)
+		surface.DrawRect(x,y,w,h)
+
+		local ix, iy, iw, ih = x+8, y+8, w-16, h-16
+
+		local info = [[Welcome to the server! Currently there are no players online. 
+		This means that you can explore the map at your own pace 
+		from the safety of godmode, so you can practice 
+		your Bhop and check for auto-traps with ease.\n\n
+		Some useful commands:\n
+		\t\b !respawn - Respawn yourself.\n
+		\t\b !cleanup - Reset all traps on the map.\n
+		\t\b !help - View the help menu.\n\n
+		Enjoy, and have fun!]]
+
+		info = DR:GetWordWrapText( info, iw, "deathrun_hud_Medium_light" )
+		deathrunShadowText(info, "deathrun_hud_Medium_light", ix, iy, HexColor("#303030"), nil, nil, 0 )
+	end
+end
+
+concommand.Add("deathrun_open_waitingmenu", function()
+	DR:OpenWaitingMenu()
+end)

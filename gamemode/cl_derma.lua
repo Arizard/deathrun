@@ -93,7 +93,7 @@ function MAIN:Init()
    
 	self.cb = vgui.Create("DButton", self)      
 	function self.cb:DoClick()
-		self:GetParent():OnClose()
+		--self:GetParent():OnClose()
 		self:GetParent():Close()
 	end
 	function self.cb:PaintOver(w,h)

@@ -59,6 +59,11 @@ surface.CreateFont("deathrun_hud_Medium", {
 	antialias = true,
 	weight = 800
 })
+surface.CreateFont("deathrun_hud_Medium_light", {
+	font = "Roboto Regular",
+	size = 20,
+	antialias = true,
+})
 surface.CreateFont("deathrun_hud_Small", {
 	font = fontstandard,
 	size = 14,
@@ -161,6 +166,7 @@ function GM:HUDPaint()
 	end
 
 end
+
 
 function DR:DrawCrosshair( x, y )
 	local thick = XHairThickness:GetInt()
