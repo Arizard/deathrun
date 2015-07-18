@@ -153,8 +153,15 @@ SHARED:
 		Called when preventing player movement during Prep Time. Return false to allow players to move.
 
 
+CLIENT:
+	GetScoreboardNameColor( PLAYER ply )
+		Return a color in this hook and it will display the player's scoreboard name in that color.
 
+	GetScoreboardIcon( PLAYER ply )
+		Return the path to an icon in this hook and it will show on the player's scoreboard row. e.g. "icon16/heart.png"
 
+	DeathrunOpenScoreboard( )
+		Return false to prevent the scoreboard from opening and replace it with your own.
 
 
 
