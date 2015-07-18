@@ -151,12 +151,15 @@ function GM:PlayerSpawn( ply )
 
 end
 
+CreateConVar("deathrun_death_sprint", "650", defaultFlags, "Sprint speed for Death team.")
+CreateConVar("deathrun_starting_weapon", "weapon_knife", defaultFlags, "Starting weapon for both teams.")
+
 function GM:PlayerLoadout( ply )
 
 	ply:StripWeapons()
 	ply:StripAmmo()
 
-	ply:Give("weapon_knife")
+	ply:Give( GetConVarString("deathrun_starting_weapon") or "weapon_crowbar" )
 
 	local teamcol = team.GetColor( ply:Team() )
 	--print(teamcol)
@@ -168,6 +171,10 @@ function GM:PlayerLoadout( ply )
 	ply:SetRunSpeed( 250 )
 	ply:SetWalkSpeed( 250 )
 	ply:SetJumpPower( 200 )
+
+	if ply:Team() == TEAM_DEATH then
+		ply:SetRunSpeed( 650 )	
+	end
 
 	ply:DrawViewModel( true )
 

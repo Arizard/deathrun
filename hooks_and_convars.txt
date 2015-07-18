@@ -52,6 +52,9 @@ SERVER CONVARS:
 	deathrun_max_deaths <0-100>
 		The maximum amount of Deaths at any given time.
 
+	deathrun_death_sprint <0-1000>
+		The sprint speed for the death (holding shift). Sometimes maps don't give the death a speed boost, so they can hold shift to move at this speed. 
+
 
 CLIENT CONVARS:
 

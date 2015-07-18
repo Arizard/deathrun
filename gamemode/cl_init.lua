@@ -112,3 +112,19 @@ end
 concommand.Add("+menu", function(ply)
 	RunConsoleCommand("deathrun_not_amused")
 end)
+
+concommand.Add("deathrun_toggle_thirdperson", function(ply)
+	if GetConVarNumber("deathrun_thirdperson_enabled") == 0 then
+		ply:ConCommand("deathrun_thirdperson_enabled 1")
+	else
+		ply:ConCommand("deathrun_thirdperson_enabled 0")
+	end
+end)
+
+hook.Add("CreateMove",'CheckClientsideKeyBinds', function()
+	local ply = LocalPlayer()
+	if input.WasKeyPressed(KEY_F8) then
+		ply:ConCommand("deathrun_toggle_thirdperson")
+	end
+
+end)
