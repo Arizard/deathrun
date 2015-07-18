@@ -129,13 +129,14 @@ hook.Add("CreateMove",'CheckClientsideKeyBinds', function()
 
 end)
 
+CreateClientConVar("deathrun_teammate_fade_distance", 75, true, false)
 hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 
 	if ply:GetRenderMode() ~= RENDERMODE_TRANSALPHA then
 		ply:SetRenderMode( RENDERMODE_TRANSALPHA )
 	end
 
-	local fadedistance = 55
+	local fadedistance = GetConVarNumber("deathrun_teammate_fade_distance") or 75
 
 	local eyedist = LocalPlayer():EyePos():Distance( ply:EyePos() )
 	local col = ply:GetColor()

@@ -170,6 +170,7 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 			{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
 			{"deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
 			{"deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
+			{"deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance - teammates closer than this distance will become transparent."}
 		},
 		["string"] = {
 			{"deathrun_sample_string_convar","Sample String ConVar"}
