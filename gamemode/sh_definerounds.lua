@@ -16,7 +16,7 @@ PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "
 FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
 DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
 RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
-DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 3, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
+DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 1, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
 DeathMax = CreateConVar("deathrun_max_deaths", 64, FCVAR_REPLICATED, "Maximum amount of players on the Death team at any given time.")
 
 DR.DeathAvoidPunishment = DeathAvoidPunishment
