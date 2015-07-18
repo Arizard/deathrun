@@ -46,15 +46,23 @@ if SERVER then
 					end
 				end
 
+				local currentClaimPly = nil
+				for _,ply in ipairs(team.GetPlayers(TEAM_DEATH)) do
+						if ply:SteamID() == buttons[ v:MapCreationID() ].claimedPlayer then
+							currentClaimPly = ply
+						end
+				end
+
+				local currentClaimPlyDist = 99999
+				if currentClaimPly then
+					currentClaimPlyDist = currentClaimPly:EyePos():Distance(pos)
+				end
+
 				if closestDist < claim_radius and buttons[ v:MapCreationID() ].claimed == false then -- someone within claiming distance, and the button is unclaimed
 					buttons[ v:MapCreationID() ].claimed = true
 					buttons[ v:MapCreationID() ].claimedPlayer = closestPlayer:SteamID()
 					buttonswerechanged = true
-				elseif closestDist < claim_radius and buttons[ v:MapCreationID() ].claimedPlayer ~= closestPlayer:SteamID() then -- someone within claiming distance, and the button is unclaimed
-					buttons[ v:MapCreationID() ].claimed = true
-					buttons[ v:MapCreationID() ].claimedPlayer = closestPlayer:SteamID()
-					buttonswerechanged = true
-				elseif closestDist > claim_radius and buttons[ v:MapCreationID() ].claimed == true then
+				elseif ( currentClaimPlyDist > claim_radius ) and buttons[ v:MapCreationID() ].claimed == true then
 					buttons[ v:MapCreationID() ].claimed = false -- nobody within claiming distance
 					buttons[ v:MapCreationID() ].claimedPlayer = "null"
 					buttonswerechanged = true
@@ -82,6 +90,8 @@ if SERVER then
 		local sid = ply:SteamID()
 
 		if ply:Team() == TEAM_RUNNER then return true end -- to stop secrets breaking
+
+		if not buttons[ mid ] then return true end -- if that shit doesnt exist then sure, just do it, don't let your dreams be dreams
 
 		if buttons[ mid ].claimedPlayer == sid or buttons[ mid ].claimed == false then -- if they own it, or if it is unclaimed (e.g. they run and press it the moment before it updates on the server, it won't disable and it wont cause them to lose the runner.)
 			return true

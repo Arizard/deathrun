@@ -108,3 +108,7 @@ if CLIENT then
 else
 
 end
+
+concommand.Add("+menu", function(ply)
+	RunConsoleCommand("deathrun_not_amused")
+end)

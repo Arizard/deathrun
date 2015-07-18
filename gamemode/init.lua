@@ -93,6 +93,8 @@ local playermodels = {
 	"models/player/group01/female_06.mdl",
 }
 
+local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
+
 hook.Add("PlayerInitialSpawn", "DeathrunPlayerInitialSpawn", function( ply )
 
 	ply.FirstSpawn = true
@@ -176,6 +178,27 @@ function GM:PlayerLoadout( ply )
 end
 
 function GM:PlayerDeath( ply )
+
+	-- some death sounds
+	local deathsounds = {
+		"vo/npc/male01/myarm01.wav",
+		"vo/npc/male01/myarm02.wav",
+		"vo/npc/male01/mygut02.wav",
+		"vo/npc/male01/myleg01.wav",
+		"vo/npc/male01/myleg02.wav",
+		"vo/npc/male01/no01.wav",
+		"vo/npc/male01/no02.wav",
+		"vo/npc/male01/ohno.wav",
+		"vo/npc/male01/ow01.wav",
+		"vo/npc/male01/ow02.wav",
+		"vo/npc/male01/pain04.wav",
+		"vo/npc/male01/pain07.wav",
+		"vo/npc/male01/pain08.wav",
+		"vo/npc/male01/pain08.wav",
+		"vo/npc/male01/hacks02.wav",
+	}
+
+	ply:EmitSound( table.Random(deathsounds), 400, 100, 1 )
 
 	ply:SetupHands( nil )
 	ply:DrawViewModel( false )
@@ -277,6 +300,7 @@ end
 
 -- damage hooks
 function GM:EntityTakeDamage( target, dmginfo )
+	local ply = target
 	local attacker = dmginfo:GetAttacker()
 
 	if target:IsPlayer() then
@@ -293,6 +317,23 @@ function GM:EntityTakeDamage( target, dmginfo )
 
 			hook.Call( "DeathrunTeamDamage", self, attacker, target, dmginfo, od)
 			
+		end
+	end
+
+	--damage sounds
+	local dmg = dmginfo:GetDamage()
+	if dmg > 0 then
+		if dmginfo:GetDamageType() == DMG_DROWN then -- drowning noisess
+			local drownsounds = {
+				"player/pl_drown1.wav",
+				"player/pl_drown2.wav",
+				"player/pl_drown3.wav",
+			}
+			ply:EmitSound( table.Random( drownsounds ), 400, 100, 1 )
+		else
+			local painsounds = {
+
+			}
 		end
 	end
 end
@@ -462,4 +503,54 @@ end
 
 concommand.Add("test_avoid", function( ply )
 	DR:PunishDeathAvoid( ply, 10 )
+end)
+
+-- drowning compatibility
+-- needs a timer to check for last time not submerged
+-- if it exceeds <drowntime> then start taking 10 damage per second
+
+CreateConVar("deathrun_drown_time","20", defaultFlags, "How long can a player stay submerged before drowning?")
+timer.Create("DeathrunDrowningStuff", 0.5,0,function()
+	for k,ply in ipairs( player.GetAll() ) do
+		ply.LastOxygenTime = ply.LastOxygenTime or CurTime()
+
+		if ply:WaterLevel() == 3 then --they are submerged completely
+			local timeUnder = CurTime() - ply.LastOxygenTime
+			if timeUnder > GetConVarNumber("deathrun_drown_time") then
+				local di = DamageInfo()
+				di:SetDamage( 5 )
+				di:SetDamageType( DMG_DROWN )
+				ply:TakeDamageInfo( di )
+				ply:ViewPunch( Angle( 0,0,math.random(-1,1) ) )
+			end
+		else
+			ply.LastOxygenTime = CurTime()
+		end
+
+		if not ply:Alive() or ply:GetSpectate() then
+			ply.LastOxygenTime = CurTime()
+		end
+	end
+end)
+
+concommand.Add("deathrun_not_amused", function(ply)
+	if not ply:Alive() or ply:GetSpectate() then return end
+
+	ply.LastNotAmused = ply.LastNotAmused or CurTime()
+
+	if CurTime() - ply.LastNotAmused > 3 then
+		local not_amused = {}
+		for i = 1, 40 do
+			local path = "vo/npc/male01/answer"
+			if i < 10 then
+				if i == 6 then i = 5 end -- there is no answer06
+				path = path .. "0" .. tostring(i) .. ".wav"
+			else
+				path = path .. tostring(i) .. ".wav"
+			end
+			table.insert( not_amused, path )
+		end
+		ply:EmitSound( table.Random(not_amused), 300, 100, 1 )
+		ply.LastNotAmused = CurTime()
+	end
 end)
