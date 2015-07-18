@@ -109,6 +109,8 @@ end)
 
 
 function GM:PlayerSpawn( ply )
+	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
+
 	ply:AllowFlashlight( true )
 
 	ply:SetMoveType(MOVETYPE_WALK)

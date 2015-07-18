@@ -46,7 +46,7 @@ function DR:CreateScoreboard()
 
 			self.dt = math.Clamp(self.dt + ( DR.ScoreboardIsOpen and dt or -dt ), 0, dur)
 
-			self:SetPos( x, QuadLerp( math.Clamp( InverseLerp( self.dt,0,dur ), 0, 1), ScrH()+50, 128) )
+			self:SetPos( x, QuadLerp( math.Clamp( InverseLerp( self.dt,0,dur ), 0, 1), ScrH()+50, 50) )
 
 			if DR.ScoreboardIsOpen == false and y > ScrH() then self:Remove() end
 		end
@@ -116,7 +116,7 @@ function DR:CreateScoreboard()
 	end
 
 	dlist:Add( header )
-	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to interact with scoreboard."}, dlist:GetWide(), 32, DR.Colors.Turq ) )
+	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to scroll and interact with scoreboard."}, dlist:GetWide(), 32, DR.Colors.Turq ) )
 
 	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_DEATH)).." players on Death Team"}, dlist:GetWide(), 32, team.GetColor( TEAM_DEATH ) ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_DEATH )) do
@@ -288,6 +288,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		copyID.ply = menu.ply
 		copyID:SetIcon("icon16/page_copy.png")
 		function copyID:DoClick()
+			if not IsValid(self.ply) then return end
 			SetClipboardText( self.ply:SteamID() )
 			DR:ChatMessage( self.ply:Nick().."'s SteamID was copied to the clipboard!" )
 		end
@@ -298,6 +299,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		openprofile.ply = menu.ply
 		openprofile:SetIcon("icon16/page_world.png")
 		function openprofile:DoClick()
+			if not IsValid(self.ply) then return end
 			gui.OpenURL( "http://steamcommunity.com/profiles/"..self.ply:SteamID64() )
 		end
 
@@ -305,6 +307,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		mute.ply = menu.ply
 		mute:SetIcon("icon16/sound.png")
 		function mute:DoClick()
+			if not IsValid(self.ply) then return end
 			RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
 			DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
 		end
@@ -319,6 +322,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/sound.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand( "ulx gag "..[["]]..self.ply:Nick()..[["]] )
 				end
 			
@@ -326,6 +330,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/sound.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand( "ulx ungag "..[["]]..self.ply:Nick()..[["]] )
 				end
 			end
@@ -334,12 +339,14 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/style_delete.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx mute "..[["]]..self.ply:Nick()..[["]] )
 				end
 				local option = menu:AddOption( "Unmute player chat" ) -- gag
 				option.ply = menu.ply
 				option:SetIcon("icon16/style_delete.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx unmute "..[["]]..self.ply:Nick()..[["]] )
 				end
 			end
@@ -348,6 +355,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/newspaper.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx slay "..[["]]..self.ply:Nick()..[["]] )
 				end
 			end
@@ -356,6 +364,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/sport_football.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx kick "..[["]]..self.ply:Nick()..[["]]..' Kicked by server staff.' )
 				end
 			end
@@ -364,30 +373,35 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx banid 30 "..self.ply:SteamID()..' Banned by server staff for half an hour.' )
 				end
 				local option = menu:AddOption( "Ban for 2 hours" ) -- 2hr ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx banid 120 "..self.ply:SteamID()..' Banned by server staff for 2 hours.' )
 				end
 				local option = menu:AddOption( "Ban for 24 hours" ) -- 1d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx banid 1440 "..self.ply:SteamID()..' Banned by server staff for 1 day.' )
 				end
 				local option = menu:AddOption( "Ban for 1 week" ) -- 7d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx banid 10080 "..self.ply:SteamID()..' Banned by server staff for 1 week.' )
 				end
 				local option = menu:AddOption( "Ban permanently" ) -- 7d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock_red.png")
 				function option:DoClick()
+					if not IsValid(self.ply) then return end
 					LocalPlayer():ConCommand("ulx banid 0 "..self.ply:SteamID()..' Banned by server staff forever.' )
 				end
 			end

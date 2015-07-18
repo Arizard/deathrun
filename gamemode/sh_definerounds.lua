@@ -20,6 +20,8 @@ RoundLimit = CreateConVar("deathrun_round_limit", 6, defaultFlags, "How many rou
 DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 1, defaultFlags, "How many round should a player sit out after they attempt to death avoid?")
 DeathMax = CreateConVar("deathrun_max_deaths", 64, defaultFlags, "Maximum amount of players on the Death team at any given time.")
 
+CreateConVar("deathrun_autoslay_delay", 30, defaultFlags, "How long to wait after a start of a round before slaying all the AFKs.")
+
 DR.DeathAvoidPunishment = DeathAvoidPunishment
 
 -- for the round timer
@@ -124,6 +126,7 @@ ROUND:AddState( ROUND_PREP,
 		end
 
 		if SERVER then
+
 			game.CleanUpMap()
 
 			timer.Simple( PrepDuration:GetInt(), function()
@@ -244,6 +247,19 @@ ROUND:AddState( ROUND_ACTIVE,
 		hook.Call("DeathrunBeginActive", nil )
 		if SERVER then
 			ROUND:SetTimer( RoundDuration:GetInt() )
+
+			timer.Create("DeathrunAutoslay", GetConVarNumber("deathrun_autoslay_delay") + 1, 1, function()
+				for k,v in ipairs(player.GetAllPlaying()) do
+					local idletime = DR:CheckIdleTime( v )
+					if idletime > GetConVarNumber("deathrun_autoslay_delay") then
+						DR:ChatBroadcast("Player "..v:Nick().." went AFK during a Death round! They will be punished.")
+						v:Kill()
+						if v:Team() == TEAM_DEATH then
+							DR:PunishDeathAvoid( v, DeathAvoidPunishment:GetInt() )
+						end
+					end
+				end
+			end)
 		end
 	end,
 	function()
@@ -312,6 +328,22 @@ ROUND:AddState( ROUND_OVER,
 )
 
 if SERVER then
+
+	hook.Add("PlayerDeath", "DeathrunMVPs", function(ply, inflictor, attacker)
+		if attacker:IsPlayer() then
+			attacker.KillsThisRound = attacker.KillsThisRound or 0
+			if ply ~= attacker then
+				attacker.KillsThisRound = attacker.KillsThisRound + 1
+			end
+		end
+	end)
+
+	hook.Add("DeathrunBeginActive", "DeathrunMVPs", function()
+		for k,v in ipairs( player.GetAll() ) do
+			v.KillsThisRound = 0
+		end
+	end)
+
 	function ROUND:FinishRound( winteam )
 		ROUND:RoundSwitch( ROUND_OVER )
 		DR:ChatBroadcast("Round over! "..( winteam == WIN_RUNNER and team.GetName( TEAM_RUNNER ).." win!" or winteam == WIN_DEATH and team.GetName( TEAM_DEATH ).." win!" or "Stalemate! Unbelievable!" ) )
@@ -319,11 +351,24 @@ if SERVER then
 		net.Start("DeathrunSendMVPs")
 
 		local mvps = {}
+
+		local mostkills = 0
+		local mostkillsmvp = nil
+
 		for k,v in ipairs( team.GetPlayers(winteam) ) do
 			if v:Alive() then
 				table.insert(mvps,v:Nick().." survived the round!")
 			end
+			if v.KillsThisRound > mostkills then
+				mostkills = v.KillsThisRound
+				mostkillsmvp = v
+			end
 		end
+
+		if mostkillsmvp and winteam == TEAM_RUNNER then
+			table.insert(mvps, mostkillsmvp:Nick().." got ".. (mostkills) ..(mostkills > 1 and " kills!" or " kill!") )
+		end
+
 		local data = {}
 		data.mvps = table.Copy(mvps)
 		data.duration = FinishDuration:GetInt() -- how long we want to show this screen for, in seconds (temporary?)

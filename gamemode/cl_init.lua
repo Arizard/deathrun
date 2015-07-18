@@ -128,3 +128,25 @@ hook.Add("CreateMove",'CheckClientsideKeyBinds', function()
 	end
 
 end)
+
+hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
+
+	if ply:GetRenderMode() ~= RENDERMODE_TRANSALPHA then
+		ply:SetRenderMode( RENDERMODE_TRANSALPHA )
+	end
+
+	local fadedistance = 75
+
+	local eyedist = LocalPlayer():EyePos():Distance( ply:EyePos() )
+
+	if eyedist < fadedistance then
+		local frac = InverseLerp( eyedist, 5, fadedistance )
+		local col = ply:GetColor()
+		col.a = Lerp( frac, 5, 255 )
+
+		if ply:Team() ~= LocalPlayer():Team() then col.a = 255 end
+
+		ply:SetColor( col )
+	end
+
+end)
