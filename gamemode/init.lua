@@ -107,6 +107,12 @@ hook.Add("PlayerDisconnected", "DeathrunPlayerDisconnectMessage", function( ply 
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end)
 
+function GM:PlayerSpawnAsSpectator( ply )
+	ply:KillSilent()
+	ply.VoluntarySpec = true
+	ply:SetTeam( TEAM_SPECTATOR )
+	ply:BeginSpectate()
+end
 
 function GM:PlayerSpawn( ply )
 	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
@@ -119,7 +125,10 @@ function GM:PlayerSpawn( ply )
 	if mdl then
 		ply:SetModel( mdl )
 	else
-		ply:SetModel( table.Random( playermodels ) )
+		if (not ply:GetModel()) or ply:GetModel() == "models/player.mdl" then -- don't override the current set model if there is one
+			print("Player "..tostring(ply:Nick()).." did not have a model - setting them a new one.")
+			ply:SetModel( table.Random( playermodels ) )
+		end
 	end
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
