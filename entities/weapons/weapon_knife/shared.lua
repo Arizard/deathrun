@@ -93,6 +93,18 @@ function SWEP:PrimaryAttack()
 	bullet.Attacker = self.Owner
 	bullet.Damage = self.Primary.Damage
 
+	function bullet.Callback( ply, trace, dmginfo )
+		if SERVER then
+			if trace.Entity then
+				if trace.Entity:IsPlayer() then
+					sound.Play( self[ "FleshHit"..tostring( math.random(1,4) ) ], trace.HitPos, 75, 100, 1 )
+				else
+					sound.Play( self.WallSound, trace.HitPos, 75, 100, 1)
+				end
+			end
+		end
+	end
+
 	self.Weapon:FireBullets( bullet )
 
 	-- break shit???
@@ -105,6 +117,10 @@ function SWEP:PrimaryAttack()
 					--tr.Entity:Input("RemoveHealth", self.Owner, self.Weapon, self.Primary.Damage)
 				end
 			end
+		end
+	else
+		if SERVER then
+			self.Owner:EmitSound(self.MissSound, 100, 100, 1)
 		end
 	end
 
