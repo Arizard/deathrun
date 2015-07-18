@@ -9,6 +9,8 @@ function GM:Initialize()
 	
 end
 
+local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
+
 TEAM_RUNNER = 3
 TEAM_DEATH = 2
 
@@ -80,7 +82,7 @@ local function intToBool( i )
 	end
 end
 
-CreateConVar("deathrun_infinite_ammo", "1", FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Should ammo automatically replenish.")
+CreateConVar("deathrun_infinite_ammo", "1", defaultFlags, "Should ammo automatically replenish.")
 
 if SERVER then
 	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)
@@ -90,7 +92,7 @@ if SERVER then
 		end
 	end)
 end
-CreateConVar("deathrun_autojump_velocity_cap", 450, FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
+CreateConVar("deathrun_autojump_velocity_cap", 450, defaultFlags, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 
 
 if CLIENT then
@@ -178,7 +180,7 @@ function GM:Move( ply, data )
 	return false
 end
 
-CreateConVar("deathrun_allow_autojump", 1, FCVAR_REPLICATED, "Allows players to use autojump.")
+CreateConVar("deathrun_allow_autojump", 1, defaultFlags, "Allows players to use autojump.")
 
 local function AutoHop( ply, data )
 	
@@ -199,4 +201,4 @@ local function AutoHop( ply, data )
 end
 hook.Add( "SetupMove", "AutoHop", AutoHop )
 
-CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", FCVAR_REPLICATED, "The URL to open when the player types !help.")
+CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", defaultFlags, "The URL to open when the player types !help.")

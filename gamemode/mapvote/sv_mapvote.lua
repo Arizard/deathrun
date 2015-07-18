@@ -12,6 +12,8 @@ MV.Nominations = {}
 MV.Active = false
 MV.TimeLeft = MV.VotingTime
 
+local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
+
 --commands
 concommand.Add("mapvote_list_maps", function(ply)
 
@@ -250,7 +252,7 @@ end)
 
 -- RTV Features
 
-local RTVRatio = CreateConVar("mapvote_rtv_ratio", 0.5, FCVAR_REPLICATED, "The ratio between votes and players in order to initiate a mapvote.")
+local RTVRatio = CreateConVar("mapvote_rtv_ratio", 0.5, defaultFlags, "The ratio between votes and players in order to initiate a mapvote.")
 
 function MV:CheckRTV()
 

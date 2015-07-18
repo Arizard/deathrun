@@ -116,7 +116,7 @@ function MV:RepopulateMapList()
 		dlist:Clear()
 		dlist:Add( MV:NewDermaRow({"Click on a map to see options!"}, dlist:GetParent():GetParent():GetWide()-4, 24 ) )
 		for i = 1,#maps do
-			local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "Nominated!" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, DR.Colors.Turq,
+			local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "Nominated!" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, MV:IsMapNominated( maps[i] ) and DR.Colors.Turq or HexColor("#303030"),
 				function( self )
 					local map = self:GetParent().mapname
 

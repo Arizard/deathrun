@@ -10,14 +10,15 @@ WIN_STALEMATE = 1
 WIN_RUNNER = TEAM_RUNNER
 WIN_DEATH = TEAM_DEATH
 
+local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
 
-RoundDuration = CreateConVar("deathrun_round_duration", 60*5, FCVAR_REPLICATED, "How many seconds each round should last, not including preptime.")
-PrepDuration = CreateConVar("deathrun_preptime_duration", 5, FCVAR_REPLICATED, "How many seconds preptime should go for.")
-FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, FCVAR_REPLICATED, "How many seconds to wait before starting a new round.")
-DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, FCVAR_REPLICATED, "What fraction of players are Deaths.")
-RoundLimit = CreateConVar("deathrun_round_limit", 6, FCVAR_REPLICATED, "How many rounds to play before changing the map.")
-DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 1, FCVAR_REPLICATED, "How many round should a player sit out after they attempt to death avoid?")
-DeathMax = CreateConVar("deathrun_max_deaths", 64, FCVAR_REPLICATED, "Maximum amount of players on the Death team at any given time.")
+RoundDuration = CreateConVar("deathrun_round_duration", 60*5, defaultFlags, "How many seconds each round should last, not including preptime.")
+PrepDuration = CreateConVar("deathrun_preptime_duration", 5, defaultFlags, "How many seconds preptime should go for.")
+FinishDuration = CreateConVar("deathrun_finishtime_duration", 10, defaultFlags, "How many seconds to wait before starting a new round.")
+DeathRatio = CreateConVar("deathrun_death_ratio", 0.15, defaultFlags, "What fraction of players are Deaths.")
+RoundLimit = CreateConVar("deathrun_round_limit", 6, defaultFlags, "How many rounds to play before changing the map.")
+DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 1, defaultFlags, "How many round should a player sit out after they attempt to death avoid?")
+DeathMax = CreateConVar("deathrun_max_deaths", 64, defaultFlags, "Maximum amount of players on the Death team at any given time.")
 
 DR.DeathAvoidPunishment = DeathAvoidPunishment
 

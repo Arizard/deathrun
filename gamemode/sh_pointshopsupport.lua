@@ -14,9 +14,11 @@ if Pointshop2 then
 	hasPointshop2 = true
 end
 
-local PointshopFinishReward = CreateConVar("deathrun_pointshop_finish_reward", 10, FCVAR_REPLICATED, "How many points to award the player when he finishes the map." )
-local PointshopKillReward = CreateConVar("deathrun_pointshop_kill_reward", 5, FCVAR_REPLICATED, "How many points to award the player when they kill another player." )
-local PointshopWinReward = CreateConVar("deathrun_pointshop_win_reward", 3, FCVAR_REPLICATED, "How many points to award the player when their team wins." )
+local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
+
+local PointshopFinishReward = CreateConVar("deathrun_pointshop_finish_reward", 10, defaultFlags, "How many points to award the player when he finishes the map." )
+local PointshopKillReward = CreateConVar("deathrun_pointshop_kill_reward", 5, defaultFlags, "How many points to award the player when they kill another player." )
+local PointshopWinReward = CreateConVar("deathrun_pointshop_win_reward", 3, defaultFlags, "How many points to award the player when their team wins." )
 
 if SERVER then
 
