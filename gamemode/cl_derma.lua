@@ -227,7 +227,7 @@ function BUTTN:PaintOver(w,h)
 	end
 	
 
-	deathrunShadowText(self.text,self.font,self:GetWide()/2 + self.offsets[1], self:GetTall()/2 +self.offsets[2], self.textcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0)
+	deathrunShadowTextSimple(self.text,self.font,w/2 + self.offsets[1], h/2 +self.offsets[2], self.textcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0)
 end
 
 function BUTTN:SetTextColor( col )
