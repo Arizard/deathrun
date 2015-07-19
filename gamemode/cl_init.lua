@@ -83,11 +83,11 @@ if CLIENT then
 			view.origin = newpos
 
 			local newang = ang
-			newang:RotateAroundAxis( ang:Right(), ThirdpersonPitch:GetFloat() )
-			newang:RotateAroundAxis( ang:Up(), ThirdpersonYaw:GetFloat() )
-			newang:RotateAroundAxis( ang:Forward(), ThirdpersonRoll:GetFloat() )
+			newang:RotateAroundAxis( ply:EyeAngles():Right(), ThirdpersonPitch:GetFloat() )
+			newang:RotateAroundAxis( ply:EyeAngles():Up(), ThirdpersonYaw:GetFloat() )
+			newang:RotateAroundAxis( ply:EyeAngles():Forward(), ThirdpersonRoll:GetFloat() )
 
-			view.angles = ang
+			view.angles = newang
 			view.fov = fov
 
 			-- test for thirdperson scoped weapons

@@ -166,7 +166,8 @@ function DR:NewScoreboardSpacer( tbl_cols, w, h, customColor ) -- static columns
 		label:SetTextColor( customColor )
 		label:SetFont("deathrun_derma_Small")
 		label:SizeToContents()
-		label:SetPos( #columns > 1 and 4+(k * ((panel:GetWide()-8)/(#columns-1)) - label:GetWide()*align) or (panel:GetWide()-8)/2 - label:GetWide()/2, panel:GetTall()/2 - label:GetTall()/2 - 1 )
+		label:SetPos( #columns > 1 and 4+(k * ((panel:GetWide()-8)/(#columns-1)) - label:GetWide()*align) or (panel:GetWide()-8)/2 - label:GetWide()/2, 0 )
+		label:CenterVertical()
 
 		--draw.SimpleText( , "deathrun_derma_Small", k * (w/(#columns-1)),h/2, , align , TEXT_ALIGN_CENTER )
 	end
@@ -268,7 +269,8 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		label:SetFont("deathrun_derma_Small")
 		label:SetExpensiveShadow( 1 )
 		label:SizeToContents()
-		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, data:GetTall()/2 - label:GetTall()/2 - 1  )
+		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, 0  )
+		label:CenterVertical()
 
 		--draw.SimpleText( , "deathrun_derma_Small", k * (w/(#columns-1)),h/2, , align , TEXT_ALIGN_CENTER )
 	end

@@ -114,13 +114,7 @@ function GM:PlayerSpawnAsSpectator( ply )
 	ply:BeginSpectate()
 end
 
-function GM:PlayerSpawn( ply )
-	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
-
-	ply:AllowFlashlight( true )
-
-	ply:SetMoveType(MOVETYPE_WALK)
-
+hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
 	local mdl = hook.Call("ChangePlayerModel", nil, ply)
 	if mdl then
 		ply:SetModel( mdl )
@@ -130,6 +124,15 @@ function GM:PlayerSpawn( ply )
 			ply:SetModel( table.Random( playermodels ) )
 		end
 	end
+end)
+
+function GM:PlayerSpawn( ply )
+	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
+
+	ply:AllowFlashlight( true )
+
+	ply:SetMoveType(MOVETYPE_WALK)
+
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
@@ -160,6 +163,7 @@ function GM:PlayerSpawn( ply )
 		GAMEMODE:PlayerSpawnAsSpectator( ply )
 	end
 
+	return self.BaseClass:PlayerSpawn( ply )
 end
 
 CreateConVar("deathrun_death_sprint", "650", defaultFlags, "Sprint speed for Death team.")
@@ -192,6 +196,8 @@ function GM:PlayerLoadout( ply )
 	ply:SetupHands( ply )
 
 	hook.Call("DeathrunPlayerLoadout", self, ply)
+
+	return self.BaseClass:PlayerLoadout( ply )
 	
 end
 
