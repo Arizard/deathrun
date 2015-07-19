@@ -71,6 +71,28 @@ surface.CreateFont("deathrun_hud_Small", {
 })
 
 
+DR.HUDDrawFunctions = {}
+DR.HUDDrawFunctions[0] = { function(x,y) DR:DrawPlayerHUD( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmo( x, y ) end }
+
+-- make it easy to add new HUDs
+function DR:AddCustomHUD( index, leftfunc, rightfunc ) -- leftfunc e.g. health and velocity, rightfunc e.g. ammo, points
+	DR.HUDDrawFunctions[ index ] = { leftfunc, rightfunc }
+end
+
+--sasshud
+DR:AddCustomHUD( 1, function(x,y) DR:DrawPlayerHUDSass( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoSass( x, y ) end )
+--classichud
+DR:AddCustomHUD( 2, function(x,y) DR:DrawPlayerHUDClassic( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoClassic( x, y ) end )
+
+-- NOTE:
+-- For those who want to add custom HUDs to the gamemode: 
+-- For index, choose a number between 0 and 12 inclusive. Choosing the numbers 0, 1 or 2 will overwrite one of the default HUDs.
+-- Two huds with the same index will overwrite eachother.
+-- Create a function to draw your left-side hud (e.g. health, velocity, avatar) and substitute it for leftfunc.
+-- Create a function to draw your righ-side hud (e.g. ammo, points) and substitute it for rightfunc.
+-- leftfunc and rightfunc are both passed the parameters x and y, designating the position of their top-left corner
+-- width and height should be within the values 228 and 108 respectively, e.g. 228 wide and 108 high, otherwise some clipping may occur with the edges of the screen.
+
 
 local RoundNames = {}
 RoundNames[ROUND_WAITING] = "Waiting for players"
@@ -145,17 +167,15 @@ function GM:HUDPaint()
 	local ax = hud_positions[ HudAmmoPos:GetInt() +1 ][1] or 8
 	local ay = hud_positions[ HudAmmoPos:GetInt() +1 ][2] or 8
 
-	if HudTheme:GetInt() == 0 then
-		DR:DrawPlayerHUD( hx, hy )
-		DR:DrawPlayerHUDAmmo( ax, ay )
-	end
-	if HudTheme:GetInt() == 1 then
-		DR:DrawPlayerHUDSass( hx, hy )
-		DR:DrawPlayerHUDAmmoSass( ax, ay )
-	end
-	if HudTheme:GetInt() == 2 then
-		DR:DrawPlayerHUDClassic( hx, hy )
-		DR:DrawPlayerHUDAmmoClassic( ax, ay )
+	local hudnum = HudTheme:GetInt()
+
+	if DR.HUDDrawFunctions[ hudnum ] then
+		if DR.HUDDrawFunctions[ hudnum ][1] then
+			DR.HUDDrawFunctions[ hudnum ][1](hx, hy)
+		end
+		if DR.HUDDrawFunctions[ hudnum ][2] then
+			DR.HUDDrawFunctions[ hudnum ][2](ax, ay)
+		end
 	end
 
 	if RoundEndData.Active then -- check if it's stalemate, and don't do the thing, zhu li!

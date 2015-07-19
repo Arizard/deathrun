@@ -274,7 +274,7 @@ function MV:CheckRTV()
 		DR:ChatBroadcast("RTV limit reached. Initiating mapvote.")
 	else
 
-		local needed = math.ceil(RTVRatio:GetFloat() * numplayers) - votes
+		local needed = math.ceil(RTVRatio:GetFloat() * numplayers) - votes + 1
 
 		DR:ChatBroadcast(tostring(needed).." more votes needed in order to change the map. Type !rtv to vote.")
 	end
