@@ -2,7 +2,7 @@
 
 1. Create a clientside lua file (e.g. lua/autorun/client/custom_hud.lua)
 2. Inside that lua file, create two functions which take an X and a Y value as the first 2 arguments.
-3. The first function should draw the HUD elements on the LEFT side of the screen. The second function should draw the HUD elements on the right side of the screen.
+3. The first function should draw the HUD elements on the LEFT side of the screen. The second function should draw the HUD elements on the RIGHT side of the screen.
 4. Now, after you have defined these functions, call the function: <pre>DR:AddCustomHUD( index, leftfunction, rightfunction )</pre>
 *(Where index is an integer for the HUD's index (for use in the F2 menu, leftfunction is your left-hand function, rightfunction is your right-hand function)*
 
