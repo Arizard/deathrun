@@ -1,5 +1,5 @@
 local fontstandard = "Roboto Bold"
-local fontstandard2 = "Tahoma"
+local fontstandard2 = "Roboto Medium"
 
 -- modified version of my derma thingzzzz
 
@@ -19,14 +19,18 @@ surface.CreateFont("deathrun_derma_Small", {
 	font = "Roboto Medium",
 	size = 24,
 	antialias = true,
-	weight = 200
 })
 surface.CreateFont("deathrun_derma_Tiny", {
-	font = "Roboto Medium",
+	font = "Roboto Regular",
 	size = 18,
 	antialias = true,
-	weight = 200
+	weight = 500
 })
+surface.CreateFont("deathrun_derma_WindowTitle", {
+	font = "Roboto Black",
+	size = 18,
+	antialias = true,
+	})
 
 local COLORS = {}
 COLORS.Bad = HexColor("#e74c3c")
@@ -145,7 +149,7 @@ function MAIN:Paint(w,h)
 	surface.DrawRect(0,h-8,w,4)
 
 	--title
-	deathrunShadowText( self.title ,"deathrun_derma_Small",w/2,1, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1)
+	deathrunShadowTextSimple( self.title ,"deathrun_derma_WindowTitle",w/2,14, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 end
 
 function MAIN:SetPrimaryColor( col )
@@ -166,7 +170,7 @@ function MAIN:GetSecondaryColor( )
 end
 
 function MAIN:SetTitle( str )
-	self.title = str
+	self.title = string.upper( str )
 end
 
 vgui.Register("deathrun_window", MAIN, "DFrame")

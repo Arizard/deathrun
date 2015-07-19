@@ -1,13 +1,16 @@
 print("Loaded cl_menus.lua...")
 
 local crosshair_convars = {
-	{"deathrun_crosshair_thickness",0,16, "Stroke Thickness"},
-	{"deathrun_crosshair_gap",0,32, "Inner Gap"},
-	{"deathrun_crosshair_size",0,32, "Stroke Length"},
-	{"deathrun_crosshair_red",0,255, "Red"},
-	{"deathrun_crosshair_green",0,255, "Green"},
-	{"deathrun_crosshair_blue",0,255, "Blue"},
-	{"deathrun_crosshair_alpha",0,255, "Transparency"},
+	{"header", "Crosshair Dimensions"},
+	{"number", "deathrun_crosshair_thickness",0,16, "Stroke Thickness"},
+	{"number", "deathrun_crosshair_gap",0,32, "Inner Gap"},
+	{"number", "deathrun_crosshair_size",0,32, "Stroke Length"},
+
+	{"header", "Crosshair Color"},
+	{"number", "deathrun_crosshair_red",0,255, "Red"},
+	{"number", "deathrun_crosshair_green",0,255, "Green"},
+	{"number", "deathrun_crosshair_blue",0,255, "Blue"},
+	{"number", "deathrun_crosshair_alpha",0,255, "Transparency"},
 }
 
 function DR:OpenCrosshairCreator()
@@ -84,37 +87,71 @@ function DR:OpenCrosshairCreator()
 	dlist:SetSpaceY(4)
 
 	local lbl = vgui.Create("DLabel")
-	lbl:SetFont("deathrun_derma_Small")
+	lbl:SetFont("deathrun_derma_Medium")
 	lbl:SetTextColor(DR.Colors.Turq)
 	lbl:SetText("Crosshair Options")
 	lbl:SizeToContents()
 	lbl:SetWide( dlist:GetWide() )
 	dlist:Add(lbl)
 
-	for i = 1, #crosshair_convars do
-		local cv = crosshair_convars[i]
-		local lbl = vgui.Create("DLabel")
-		lbl:SetFont("deathrun_derma_Tiny")
-		lbl:SetTextColor( HexColor("#333") )
-		lbl:SetText(cv[4] or cv[1])
-		lbl:SizeToContents()
-		lbl:SetWide( dlist:GetWide() )
-		dlist:Add(lbl)
+	for k,v in pairs( crosshair_convars ) do
+		local ty = v[1] -- convar type
 
-		-- slider
-		local sl = vgui.Create("Slider")
-		sl:SetMin( cv[2] )
-		sl:SetMax( cv[3] )
-		sl:SetWide(dlist:GetWide())
-		sl:SetValue( GetConVar( cv[1] ):GetFloat() )
+		if ty == "header" then
+			local pnl = vgui.Create("DPanel") -- spacer
+			pnl:SetWide( dlist:GetWide() )
+			pnl:SetTall( 24 )
+			function pnl:Paint() end
+			dlist:Add( pnl )
 
-		sl.convarname = cv[1]
+			local lbl = vgui.Create("DLabel")
+			lbl:SetFont("deathrun_derma_Small")
+			lbl:SetTextColor(DR.Colors.Turq)
+			lbl:SetText(v[2])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
+		elseif ty == "boolean" then
+			local lbl = vgui.Create("DLabel") -- label
+			lbl:SetFont("deathrun_derma_Tiny")
+			lbl:SetTextColor( HexColor("#333") )
+			lbl:SetText(v[3])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
 
-		function sl:OnValueChanged()
-			RunConsoleCommand(self.convarname, self:GetValue())
+			local check = vgui.Create("DCheckBoxLabel")
+			check:SetValue( GetConVar(v[2]):GetInt() )
+			check:SetText("Enabled")
+			check:SetTextColor( HexColor("#333") )
+			check:SizeToContents()
+			check:SetConVar(v[2])
+			dlist:Add( check )
+
+		elseif ty == "number" then
+			local lbl = vgui.Create("DLabel") -- label
+			lbl:SetFont("deathrun_derma_Tiny")
+			lbl:SetTextColor( HexColor("#333") )
+			lbl:SetText(v[5])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
+
+			-- slider
+			local sl = vgui.Create("Slider")
+			sl:SetMin( v[3] )
+			sl:SetMax( v[4] )
+			sl:SetWide(dlist:GetWide())
+			sl:SetValue( GetConVar( v[2] ):GetFloat() )
+
+			sl.convarname = v[2]
+
+			function sl:OnValueChanged()
+				RunConsoleCommand(self.convarname, self:GetValue())
+			end
+
+			dlist:Add(sl)	
 		end
-
-		dlist:Add(sl)
 	end
 
 end
@@ -151,37 +188,75 @@ end)
 local deathrun_settings = {}
 
 timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
+	-- deathrun_settings = {
+	-- 	["boolean"] = {
+	-- 		{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVarNumber("deathrun_autojump_velocity_cap")).." u/s)"},
+	-- 		{"deathrun_enable_announcements", "Help messages"},
+	-- 		{"deathrun_thirdperson_enabled", "Thirdperson mode"},
+	-- 		{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
+	-- 		{"deathrun_info_on_join", "Show the info menu when joining the server"},
+	-- 		{"deathrun_spectate_only", "Spectate-only mode"}
+	-- 	},
+	-- 	["HUD Settings"] = {
+	-- 		{"deathrun_hud_theme",0,2,"HUD Theme"},
+	-- 		{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
+	-- 		{"deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
+	-- 		{"deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
+	-- 		{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
+	-- 		{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
+	-- 		{"deathrun_thirdperson_opacity", 5,255, "Transparency of your playermodel in Thirdperson mode"},
+	-- 		{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
+	-- 		{"deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
+	-- 		{"deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
+	-- 		{"deathrun_thirdperson_offset_pitch", -75, 75, "Thirdperson camera Pitch offset"},
+	-- 		{"deathrun_thirdperson_offset_yaw", -75, 75, "Thirdperson camera Yaw offset"},
+	-- 		{"deathrun_thirdperson_offset_roll", -75, 75, "Thirdperson camera Roll offset"},
+	-- 		{"deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance - teammates closer than this distance will become transparent."}
+	-- 	},
+	-- 	["string"] = {
+	-- 		{"deathrun_sample_string_convar","Sample String ConVar"}
+	-- 	}
+	-- }
+
 	deathrun_settings = {
-		["boolean"] = {
-			{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVarNumber("deathrun_autojump_velocity_cap")).." u/s)"},
-			{"deathrun_enable_announcements", "Help messages"},
-			{"deathrun_thirdperson_enabled", "Thirdperson mode"},
-			{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
-			{"deathrun_info_on_join", "Show the info menu when joining the server"},
-			{"deathrun_spectate_only", "Spectate-only mode"}
-		},
-		["number"] = {
-			{"deathrun_hud_theme",0,2,"HUD Theme"},
-			{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
-			{"deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
-			{"deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
-			{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
-			{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
-			{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
-			{"deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
-			{"deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
-			{"deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance - teammates closer than this distance will become transparent."}
-		},
-		["string"] = {
-			{"deathrun_sample_string_convar","Sample String ConVar"}
-		}
+		{"header","HUD Settings"},
+
+		{"number", "deathrun_hud_theme",0,2,"HUD Theme"},
+		{"number", "deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
+		{"number", "deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
+		{"number", "deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
+		{"number", "deathrun_targetid_fade_duration",0,10,"TargetID fade duration"},
+	
+		{"header", "Spectator Settings"},
+
+		{"boolean", "deathrun_spectate_only", "Spectate-only mode"},
+
+		{"header", "Thirdperson Settings"},
+
+		{"boolean", "deathrun_thirdperson_enabled", "Thirdperson mode"},
+		{"number", "deathrun_thirdperson_opacity", 5,255, "Transparency of your playermodel in Thirdperson mode"},
+		{"number", "deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
+		{"number", "deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
+		{"number", "deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
+		{"number", "deathrun_thirdperson_offset_pitch", -75, 75, "Thirdperson camera Pitch offset"},
+		{"number", "deathrun_thirdperson_offset_yaw", -75, 75, "Thirdperson camera Yaw offset"},
+		{"number", "deathrun_thirdperson_offset_roll", -75, 75, "Thirdperson camera Roll offset"},
+
+		{"header", "Other Settings"},
+
+		{"boolean", "deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
+		{"boolean", "deathrun_info_on_join", "Show the info menu when joining the server"},
+		{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings."},
+		{"boolean", "deathrun_enable_announcements", "Enable help messages"},
+		{"number", "deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
+		{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."}
 	}
 end)
 
 
 function DR:OpenSettings()
 	local frame = vgui.Create("deathrun_window")
-	frame:SetSize(640,480)
+	frame:SetSize(480,640)
 	frame:Center()
 	frame:MakePopup()
 	frame:SetTitle("Deathrun Settings")
@@ -220,59 +295,86 @@ function DR:OpenSettings()
 	dlist:SetSpaceY(8)
 
 	local lbl = vgui.Create("DLabel")
-	lbl:SetFont("deathrun_derma_Small")
+	lbl:SetFont("deathrun_derma_Medium")
 	lbl:SetTextColor(DR.Colors.Turq)
-	lbl:SetText("Settings")
+	lbl:SetText("Local Settings")
 	lbl:SizeToContents()
 	lbl:SetWide( dlist:GetWide() )
 	dlist:Add(lbl)
 
 	for k, v in pairs( deathrun_settings ) do
-		if k == "boolean" then
-			for _,cv in ipairs(v) do
-				local lbl = vgui.Create("DLabel") -- label
-				lbl:SetFont("deathrun_derma_Tiny")
-				lbl:SetTextColor( HexColor("#333") )
-				lbl:SetText(cv[2])
-				lbl:SizeToContents()
-				lbl:SetWide( dlist:GetWide() )
-				dlist:Add(lbl)
 
-				local check = vgui.Create("DCheckBoxLabel")
-				check:SetValue( GetConVar(cv[1]):GetInt() )
-				check:SetText("Enabled")
-				check:SetTextColor( HexColor("#333") )
-				check:SizeToContents()
-				check:SetConVar(cv[1])
-				dlist:Add( check )
+		local ty = v[1] -- convar type
+
+		if ty == "header" then
+			local pnl = vgui.Create("DPanel") -- spacer
+			pnl:SetWide( dlist:GetWide() )
+			pnl:SetTall( 24 )
+			function pnl:Paint() end
+			dlist:Add( pnl )
+
+			local lbl = vgui.Create("DLabel")
+			lbl:SetFont("deathrun_derma_Small")
+			lbl:SetTextColor(DR.Colors.Turq)
+			lbl:SetText(v[2])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
+		elseif ty == "boolean" then
+			local pnl = vgui.Create("DPanel") -- spacer
+			pnl:SetWide( dlist:GetWide() )
+			pnl:SetTall( 4 )
+			function pnl:Paint() end
+			dlist:Add( pnl )
+
+			local lbl = vgui.Create("DLabel") -- label
+			lbl:SetFont("deathrun_derma_Tiny")
+			lbl:SetTextColor( HexColor("#333") )
+			lbl:SetText(v[3])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
+
+			local check = vgui.Create("DCheckBoxLabel")
+			check:SetValue( GetConVar(v[2]):GetInt() )
+			check:SetText("Enabled")
+			check:SetTextColor( HexColor("#333") )
+			check:SizeToContents()
+			check:SetConVar(v[2])
+			dlist:Add( check )
+
+		elseif ty == "number" then
+			local pnl = vgui.Create("DPanel") -- spacer
+			pnl:SetWide( dlist:GetWide() )
+			pnl:SetTall( 4 )
+			function pnl:Paint() end
+			dlist:Add( pnl )
+
+			local lbl = vgui.Create("DLabel") -- label
+			lbl:SetFont("deathrun_derma_Tiny")
+			lbl:SetTextColor( HexColor("#333") )
+			lbl:SetText(v[5])
+			lbl:SizeToContents()
+			lbl:SetWide( dlist:GetWide() )
+			dlist:Add(lbl)
+
+			-- slider
+			local sl = vgui.Create("Slider")
+			sl:SetMin( v[3] )
+			sl:SetMax( v[4] )
+			sl:SetWide(dlist:GetWide())
+			sl:SetTall(12)
+			sl:SetValue( GetConVar( v[2] ):GetFloat() )
+
+			sl.convarname = v[2]
+
+			function sl:OnValueChanged()
+				RunConsoleCommand(self.convarname, self:GetValue())
 			end
+
+			dlist:Add(sl)	
 		end
-		if k == "number" then
-			for _,cv in ipairs(v) do
-				local lbl = vgui.Create("DLabel") -- label
-				lbl:SetFont("deathrun_derma_Tiny")
-				lbl:SetTextColor( HexColor("#333") )
-				lbl:SetText(cv[4])
-				lbl:SizeToContents()
-				lbl:SetWide( dlist:GetWide() )
-				dlist:Add(lbl)
 
-				-- slider
-				local sl = vgui.Create("Slider")
-				sl:SetMin( cv[2] )
-				sl:SetMax( cv[3] )
-				sl:SetWide(dlist:GetWide())
-				sl:SetValue( GetConVar( cv[1] ):GetFloat() )
-
-				sl.convarname = cv[1]
-
-				function sl:OnValueChanged()
-					RunConsoleCommand(self.convarname, self:GetValue())
-				end
-
-				dlist:Add(sl)
-			end
-		end
 	end
 end
 concommand.Add("deathrun_open_settings", function()

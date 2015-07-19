@@ -56,6 +56,10 @@ if CLIENT then
 	local ThirdpersonY = CreateClientConVar("deathrun_thirdperson_offset_y", 0, true, false)
 	local ThirdpersonZ = CreateClientConVar("deathrun_thirdperson_offset_z", 0, true, false)
 
+	local ThirdpersonPitch = CreateClientConVar("deathrun_thirdperson_offset_pitch", 0, true, false)
+	local ThirdpersonYaw = CreateClientConVar("deathrun_thirdperson_offset_yaw", 0, true, false)
+	local ThirdpersonRoll = CreateClientConVar("deathrun_thirdperson_offset_roll", 0, true, false)
+
 	local function CalcViewThirdPerson( ply, pos, ang, fov, nearz, farz )
 
 		if ThirdpersonOn:GetBool() == true and ply:Alive() and (ply:Team() ~= TEAM_SPECTATOR) then
@@ -77,6 +81,12 @@ if CLIENT then
 
 			newpos = tr.HitPos
 			view.origin = newpos
+
+			local newang = ang
+			newang:RotateAroundAxis( ang:Right(), ThirdpersonPitch:GetFloat() )
+			newang:RotateAroundAxis( ang:Up(), ThirdpersonYaw:GetFloat() )
+			newang:RotateAroundAxis( ang:Forward(), ThirdpersonRoll:GetFloat() )
+
 			view.angles = ang
 			view.fov = fov
 
@@ -130,6 +140,8 @@ hook.Add("CreateMove",'CheckClientsideKeyBinds', function()
 end)
 
 CreateClientConVar("deathrun_teammate_fade_distance", 75, true, false)
+CreateClientConVar("deathrun_thirdperson_opacity", 255, true, false)
+
 hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 
 	if ply:GetRenderMode() ~= RENDERMODE_TRANSALPHA then
@@ -141,13 +153,16 @@ hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 	local eyedist = LocalPlayer():EyePos():Distance( ply:EyePos() )
 	local col = ply:GetColor()
 
-	if eyedist < fadedistance then
+	if eyedist < fadedistance and LocalPlayer() ~= ply then
 		local frac = InverseLerp( eyedist, 5, fadedistance )
 		
 		col.a = Lerp( frac, 20, 255 )
 
 		if ply:Team() ~= LocalPlayer():Team() then col.a = 255 end
 
+		ply:SetColor( col )
+	elseif LocalPlayer() == ply then
+		col.a = GetConVarNumber("deathrun_thirdperson_opacity") or 255
 		ply:SetColor( col )
 	else
 		col.a = 255
