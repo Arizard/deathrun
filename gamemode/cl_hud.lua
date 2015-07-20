@@ -283,7 +283,12 @@ function DR:DrawPlayerHUD( x, y )
 	surface.SetDrawColor(0,0,0,100)
 	surface.DrawRect(dx,dy+14,228,2)
 
-	deathrunShadowTextSimple( string.upper( team.GetName( ply:Team() ) ), "deathrun_hud_Small", dx + 228/2,  dy + 16/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1) -- team name
+	local teamtext = string.upper( team.GetName( ply:Team() ) )
+	if ply ~= LocalPlayer() then
+		teamtext = string.upper( ply:Nick() )
+	end
+
+	deathrunShadowTextSimple( teamtext , "deathrun_hud_Small", dx + 228/2,  dy + 16/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1) -- team name
 
 	dy = dy + 16 + 4
 
@@ -681,7 +686,13 @@ function DR:DrawPlayerHUDSass( x, y )
 	deathrunShadowTextSimple(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
 
 	-- team text
-	deathrunShadowTextSimple(team.GetName(ply:Team()).." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
+	local teamtext = team.GetName(ply:Team())
+
+	if ply ~= LocalPlayer() then -- must be spectating
+		teamtext = ply:Nick()
+	end
+
+	deathrunShadowTextSimple(teamtext.." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
 
 
 	-- position avatar
@@ -773,6 +784,12 @@ function DR:DrawPlayerHUDClassic(x,y)
 	local tx, ty = x + w/2 - tw/2, y + h - hh - 4 - th 
 	draw.RoundedBox( 4, tx, ty, tw, th, Color(44,44,44,175*amul) )
 	deathrunShadowText( timetext, "Deathrun_SmoothBig", tx + tw/2, ty + 4, Color(255,255,255), TEXT_ALIGN_CENTER, nil, 1 )
+
+	local spectext = ""
+	if ply ~= LocalPlayer() then
+		spectext = ply:Nick()
+	end
+	deathrunShadowTextSimple( spectext, "Deathrun_Smooth", tx + tw/2, ty, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 
 end
 
