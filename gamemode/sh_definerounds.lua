@@ -317,11 +317,11 @@ ROUND:AddState( ROUND_ACTIVE,
 					if idletime > GetConVarNumber("deathrun_autoslay_delay") then
 						net.Start("DeathrunSpectatorNotification")
 						net.Send( v )
-						v:ConCommand("deathrun_set_spectate 1")
 						if v:Team() == TEAM_DEATH then
 							DR:ChatBroadcast("Player "..v:Nick().." went AFK during a Death round! They will be punished.")
 							DR:PunishDeathAvoid( v, DeathAvoidPunishment:GetInt() )
 						end
+						v:ConCommand("deathrun_set_spectate 1")
 					end
 				end
 			end)
