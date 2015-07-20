@@ -145,13 +145,13 @@ function GM:PlayerSpawn( ply )
 	ply:SetNoCollideWithTeammates( true ) -- so we don't block eachother's bhopes
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
+		ply.FirstSpawn = false
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
 			return SpawnSpectator( ply )
 		else
 			ply:SetTeam( TEAM_RUNNER )
 		end
 		hook.Call("PlayerLoadout", self, ply)
-		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
 		ply:BeginSpectate()
 	elseif ply:ShouldStaySpectating() then
