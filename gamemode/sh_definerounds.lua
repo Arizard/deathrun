@@ -45,11 +45,19 @@ end)
 if SERVER then
 	util.AddNetworkString("DeathrunSyncRoundTimer")
 	util.AddNetworkString("DeathrunSendMVPs")
+	function ROUND:SyncTimer()
+		net.Start("DeathrunSyncRoundTimer")
+		net.WriteInt( ROUND:GetTimer(), 16 )
+		net.Broadcast()
+	end
+	function ROUND:SyncTimerPlayer( ply )
+		net.Start("DeathrunSyncRoundTimer")
+		net.WriteInt( ROUND:GetTimer(), 16 )
+		net.Send( ply )
+	end
 	function ROUND:SetTimer( s )
 		ROUND_TIMER = s
-		net.Start("DeathrunSyncRoundTimer")
-		net.WriteInt( s, 16 )
-		net.Broadcast()
+		ROUND:SyncTimer()
 	end
 else
 	net.Receive("DeathrunSyncRoundTimer", function( len, ply )
@@ -76,6 +84,7 @@ hook.Add("PlayerDisconnected", "DeathrunWatchDeathAvoid", checkdeathavoid)
 
 
 hook.Add("PlayerInitialSpawn", "DeathrunCleanupSinglePlayer", function( ply )
+	ROUND:SyncTimerPlayer( ply )
 	if #player.GetAll() <= 1 then
 		game.CleanUpMap()
 		DR:ChatBroadcast("Cleaned up the map.")
