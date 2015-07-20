@@ -70,6 +70,8 @@ AddCSLuaFile( "sh_pointshopsupport.lua" )
 util.AddNetworkString("DeathrunChatMessage")
 util.AddNetworkString("DeathrunSyncMutelist")
 util.AddNetworkString("DeathrunNotification")
+util.AddNetworkString("DeathrunSpectatorNotification")
+util.AddNetworkString("DeathrunForceSpectator")
 
 -- required configz
 RunConsoleCommand("sv_friction", 8)
@@ -432,21 +434,15 @@ hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
 
 	ply.LastActiveTime = ply.LastActiveTime or CurTime()
 
-	ply.LastAngles = ply.LastAngles or ply:EyeAngles()
-	local dang = ply.LastAngles - ply:EyeAngles() -- use dang:IsZero() to check if it's changed
-
-
 	-- when the player stands still, mv:GetButtons() == 0, at least in binary
 	-- so we can check when no keys are being pressed, or when they keys haven't changed for a while
 	ply.LastButtons = ply.LastButtons or mv:GetButtons()
 
-	if (mv:GetButtons() ~= ply.LastButtons) or (not dang:IsZero()) then
-		-- if there's a change in angle or a change in buttons, then they must not be afk.
+	if (mv:GetButtons() ~= ply.LastButtons) then
+		-- if there's a change in buttons, then they must not be afk.
 		-- sometimes they can type +forward, but we know they are afk because it's constant +forward and no other keys
 		ply.LastActiveTime = CurTime()
 	end
-
-	ply.LastAngles = ply:EyeAngles()
 	ply.LastButtons = mv:GetButtons()
 
 end)
@@ -455,9 +451,10 @@ function DR:CheckIdleTime( ply ) -- return how long the player has been idle for
 	ply.LastActiveTime = ply.LastActiveTime or CurTime()
 	return CurTime() - ply.LastActiveTime
 end
-local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*4.5, defaultFlags, "How many seconds each to wait before kicking idle players.")
+local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*5, defaultFlags, "How many seconds each to wait before kicking idle players.")
 timer.Create("CheckIdlePlayers", 0.95, 0, function()
 	for k, ply in ipairs(player.GetAllPlaying()) do -- don't kick afk spectators or bots
+		print( ply:Nick(), DR:CheckIdleTime( ply ) )
 		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
 			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be kicked from the server due to being idle.")
 		end
@@ -576,5 +573,23 @@ concommand.Add("deathrun_not_amused", function(ply)
 		end
 		ply:EmitSound( table.Random(not_amused), 300, 100, 1 )
 		ply.LastNotAmused = CurTime()
+	end
+end)
+
+net.Receive("DeathrunForceSpectator", function(len, ply)
+	if ply:IsAdmin() then
+		local targID = net.ReadString()
+		local targ = nil
+
+		for _, v in ipairs(player.GetAll()) do
+			if targID == v:SteamID() then
+				targ = v
+			end
+		end
+
+		if targ ~= nil then
+			targ:ConCommand("deathrun_set_spectate 1")
+			DR:ChatMessage( "Forced "..self.ply:Nick().." to the spectator team!" )
+		end
 	end
 end)

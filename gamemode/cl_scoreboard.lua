@@ -313,6 +313,16 @@ function DR:NewScoreboardPlayer( ply, w, h )
 			RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
 			DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
 		end
+
+		local specop = menu:AddOption( "Force to Spectator" ) -- spectator options... SPEC OPS!
+		specop.ply = menu.ply
+		specop:SetIcon("icon16/status_offline.png")
+		function specop:DoClick()
+			if not IsValid(self.ply) then return end
+			net.Start("DeathrunForceSpectator")
+			net.WriteString( self.ply:SteamID() )
+			net.SendToServer()
+		end
 		
 		menu:AddSpacer()
 

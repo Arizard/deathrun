@@ -176,3 +176,4 @@ end)
 DR:AddChatCommand("thirdperson", function(ply)
 	ply:ConCommand("deathrun_toggle_thirdperson")
 end)
+

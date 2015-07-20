@@ -708,3 +708,9 @@ end
 concommand.Add("deathrun_open_waitingmenu", function()
 	DR:OpenWaitingMenu()
 end)
+
+function DR:OpenForcedSpectatorMenu()
+
+	local frame = vgui.Create( "deathrun_window" )
+
+end
