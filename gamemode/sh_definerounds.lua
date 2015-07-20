@@ -454,3 +454,38 @@ if SERVER then
 		ROUND:RoundSwitch( ROUND_WAITING )
 	end)
 end
+
+CreateConVar("deathrun_finish_balloons", "12", defaultFlags, "How many balloons to spawn when the player finishes the map?")
+
+hook.Add("DeathrunPlayerFinishMap", "Balloons", function( ply )
+	if GetConVarNumber("deathrun_finish_balloons") > 0 then
+		for i = 1, GetConVarNumber("deathrun_finish_balloons") do
+
+			local dir = Vector( math.random(-100,100),math.random(-100,100),math.random(-100,100) )
+			dir:Normalize()
+
+			local balloon = ents.Create("ent_deathrun_balloon")
+			balloon:Spawn()
+			balloon:SetAngles( Angle(0, math.random(-180,180), 0 ) )
+
+			local td = {
+				start = ply:GetShootPos(),
+				endpos = ply:GetShootPos() + dir * 92,
+				filter = ply,
+				mins = balloon:OBBMins(),
+				maxs = balloon:OBBMaxs(),
+			}
+
+			local tr = util.TraceHull( td )
+
+			if tr.HitPos:Distance( td.start ) > 30 then
+				balloon:SetPos( tr.HitPos )
+				balloon:GetPhysicsObject():ApplyForceCenter( dir * 2.5 )
+			else
+				balloon:Remove()
+			end
+
+		end
+	end
+
+end)

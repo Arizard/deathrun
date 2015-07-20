@@ -55,6 +55,9 @@ SERVER CONVARS:
 	deathrun_death_sprint <0-1000>
 		The sprint speed for the death (holding shift). Sometimes maps don't give the death a speed boost, so they can hold shift to move at this speed. 
 
+	deathrun_finish_balloons <0-25>
+		The amount of balloons to spawn when the player finishes the map. :)
+
 
 CLIENT CONVARS:
 
