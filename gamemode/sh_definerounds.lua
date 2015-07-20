@@ -322,7 +322,7 @@ ROUND:AddState( ROUND_ACTIVE,
 							DR:ChatBroadcast("Player "..v:Nick().." went AFK during a Death round! They will be punished.")
 							DR:PunishDeathAvoid( v, DeathAvoidPunishment:GetInt() )
 						end
-						v:ConCommand("deathrun_set_spectate 1")
+						v:ConCommand("deathrun_spectate_only 1")
 					end
 				end
 			end)
