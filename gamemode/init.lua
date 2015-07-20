@@ -443,7 +443,6 @@ end)
 hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
 
 	ply.LastActiveTime = ply.LastActiveTime or CurTime()
-	ply.LastActiveTime = CurTime() -- rip
 
 	-- when the player stands still, mv:GetButtons() == 0, at least in binary
 	-- so we can check when no keys are being pressed, or when they keys haven't changed for a while

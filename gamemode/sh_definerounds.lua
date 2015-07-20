@@ -311,9 +311,10 @@ ROUND:AddState( ROUND_ACTIVE,
 		if SERVER then
 			ROUND:SetTimer( RoundDuration:GetInt() )
 
-			timer.Create("DeathrunAutoslay", GetConVarNumber("deathrun_autoslay_delay") + 1, 1, function()
+			timer.Create("DeathrunAutoslay", GetConVarNumber("deathrun_autoslay_delay") + 5, 1, function()
 				for k,v in ipairs(player.GetAllPlaying()) do
 					local idletime = DR:CheckIdleTime( v )
+					print( v, idletime )
 					if idletime > GetConVarNumber("deathrun_autoslay_delay") then
 						net.Start("DeathrunSpectatorNotification")
 						net.Send( v )
