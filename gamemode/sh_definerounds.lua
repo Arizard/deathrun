@@ -65,7 +65,7 @@ local DeathTimes = {}
 -- handle death avoidance here, using the functions defined in init.lua
 
 local function checkdeathavoid( ply )
-	print("checking for death avoid...")
+	print("checking for death avoid... "..ply:Nick())
 	local avoided = (ply:Team() == TEAM_DEATH and ply:Alive()) and true or false
 	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 2 then
 		DR:PunishDeathAvoid( ply, DeathAvoidPunishment:GetInt() )
@@ -307,7 +307,7 @@ ROUND:AddState( ROUND_ACTIVE,
 					local idletime = DR:CheckIdleTime( v )
 					if idletime > GetConVarNumber("deathrun_autoslay_delay") then
 						net.Start("DeathrunSpectatorNotification")
-						net.Send( ply )
+						net.Send( v )
 						v:ConCommand("deathrun_set_spectate 1")
 						if v:Team() == TEAM_DEATH then
 							DR:ChatBroadcast("Player "..v:Nick().." went AFK during a Death round! They will be punished.")

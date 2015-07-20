@@ -170,3 +170,7 @@ hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 	end
 
 end)
+
+hook.Add("PreDrawViewModel", "DeathrunFixSpectatorViewmodels", function( vm, ply, wep )
+	return false
+end)

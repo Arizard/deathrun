@@ -109,13 +109,6 @@ hook.Add("PlayerDisconnected", "DeathrunPlayerDisconnectMessage", function( ply 
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end)
 
-function GM:PlayerSpawnAsSpectator( ply )
-	ply:KillSilent()
-	ply.VoluntarySpec = true
-	ply:SetTeam( TEAM_SPECTATOR )
-	ply:BeginSpectate()
-end
-
 hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
 	local mdl = hook.Call("ChangePlayerModel", nil, ply)
 	if mdl then
@@ -128,7 +121,21 @@ hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
 	end
 end)
 
+local function SpawnSpectator( ply )
+	ply:KillSilent()
+	ply:SetTeam( TEAM_SPECTATOR )
+	ply:BeginSpectate()
+
+	return GAMEMODE:PlayerSpawnAsSpectator( ply )
+end
+
 function GM:PlayerSpawn( ply )
+	print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
+
+	if ply:ShouldStaySpectating() then
+		return SpawnSpectator( ply )
+	end
+
 	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
 
 	ply:AllowFlashlight( true )
@@ -139,16 +146,16 @@ function GM:PlayerSpawn( ply )
 	ply:SetLagCompensated( true )
 	if ply.FirstSpawn == true then
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
-			GAMEMODE:PlayerSpawnAsSpectator( ply )
+			return SpawnSpectator( ply )
 		else
 			ply:SetTeam( TEAM_RUNNER )
 		end
 		hook.Call("PlayerLoadout", self, ply)
 		ply.FirstSpawn = false
 	elseif ply.JustDied == true then
-		GAMEMODE:PlayerSpawnAsSpectator( ply )
+		ply:BeginSpectate()
 	elseif ply:ShouldStaySpectating() then
-		GAMEMODE:PlayerSpawnAsSpectator( ply )
+		return SpawnSpectator( ply )
 	else
 		ply:StopSpectate()
 		hook.Call("PlayerLoadout", self, ply)
@@ -161,9 +168,9 @@ function GM:PlayerSpawn( ply )
 		ply:SetPos( table.Random(spawns):GetPos() )
 	end
 
-	if ply:GetSpectate() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
-		GAMEMODE:PlayerSpawnAsSpectator( ply )
-	end
+	-- if ply:GetSpectate() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
+	-- 	return SpawnSpectator( ply )
+	-- end
 
 	return self.BaseClass:PlayerSpawn( ply )
 end
@@ -433,6 +440,7 @@ end)
 hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
 
 	ply.LastActiveTime = ply.LastActiveTime or CurTime()
+	ply.LastActiveTime = CurTime() -- rip
 
 	-- when the player stands still, mv:GetButtons() == 0, at least in binary
 	-- so we can check when no keys are being pressed, or when they keys haven't changed for a while
@@ -454,7 +462,7 @@ end
 local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*5, defaultFlags, "How many seconds each to wait before kicking idle players.")
 timer.Create("CheckIdlePlayers", 0.95, 0, function()
 	for k, ply in ipairs(player.GetAllPlaying()) do -- don't kick afk spectators or bots
-		print( ply:Nick(), DR:CheckIdleTime( ply ) )
+		--print( ply:Nick(), DR:CheckIdleTime( ply ) )
 		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
 			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be kicked from the server due to being idle.")
 		end
@@ -588,8 +596,8 @@ net.Receive("DeathrunForceSpectator", function(len, ply)
 		end
 
 		if targ ~= nil then
-			targ:ConCommand("deathrun_set_spectate 1")
-			DR:ChatMessage( "Forced "..self.ply:Nick().." to the spectator team!" )
+			targ:ConCommand("deathrun_spectate_only 1")
+			ply:DeathrunChatPrint( "Forced "..targ:Nick().." to the spectator team!" )
 		end
 	end
 end)
