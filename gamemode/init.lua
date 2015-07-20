@@ -346,7 +346,7 @@ function GM:EntityTakeDamage( target, dmginfo )
 		end
 	end
 	if target:IsPlayer() and attacker:IsPlayer() then
-		if target:Team() == attacker:Team() then
+		if target:Team() == attacker:Team() and target ~= ply then
 			--print("Attacked teammate")
 			local od = dmginfo:GetDamage()
 			dmginfo:SetDamage(0)

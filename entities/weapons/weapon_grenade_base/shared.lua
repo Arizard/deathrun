@@ -89,7 +89,6 @@ function SWEP:Think()
 						if(SERVER) then
 							self.Owner:EmitSound("radio/ct_fireinhole.wav")
 						end
-                        BroadcastLua("chat.AddText(Player("..self.Owner:UserID().."),Color(220,220,220,255),\": fire in the hole!\")")
 
 						if self.ThrowFar then
 							self:ThrowFar()
@@ -104,7 +103,6 @@ function SWEP:Think()
                         self.Weapon:SendWeaponAnim(ACT_VM_THROW)
                         self.Owner:SetAnimation(PLAYER_ATTACK1)
                         self.Owner:EmitSound("radio/ct_fireinhole.wav")
-                        BroadcastLua("chat.AddText(Player("..self.Owner:UserID().."),Color(220,220,220,255),\": fire in the hole!\")")
 
 						if self.ThrowShort then
 							self:ThrowShort()
@@ -169,19 +167,18 @@ function SWEP:ThrowFar()
         local ent = ents.Create (self.NadeClass)
 
                         local v = self.Owner:GetShootPos()
-                                v = v + self.Owner:GetForward() * 1
-                                v = v + self.Owner:GetRight() * 3
-                                v = v + self.Owner:GetUp() * 1
+                                v = v + self.Owner:GetForward() * 2
                         ent:SetPos( v )
 
         ent:SetAngles ((Vector(math.random(1,100),math.random(1,100),math.random(1,100))):Angle())
+        ent:SetOwner( self.Owner )
         ent.GrenadeOwner = self.Owner
         ent:Spawn()
 
         local phys = ent:GetPhysicsObject()
 
-        ent:SetVelocity(self.Owner:GetVelocity())
-        phys:ApplyForceCenter(self.Owner:GetAimVector() *2000 *1.2 + Vector(0,0,400) )
+        phys:ApplyForceCenter( self.Owner:GetVelocity() )
+        phys:ApplyForceCenter(self.Owner:GetAimVector() *700 *1.2 )
         phys:AddAngleVelocity(Vector(math.random(-200,200),math.random(-200,200),math.random(-200,200)))
 
         self.Owner:StripWeapon(self.Owner:GetActiveWeapon():GetClass())
@@ -203,18 +200,17 @@ function SWEP:ThrowShort()
 
                         local v = self.Owner:GetShootPos()
                                 v = v + self.Owner:GetForward() * 2
-                                v = v + self.Owner:GetRight() * 3
-                                v = v + self.Owner:GetUp() * -3
                         ent:SetPos( v )
 
         ent:SetAngles ((Vector(math.random(1,100),math.random(1,100),math.random(1,100))):Angle())
+        ent:SetOwner( self.Owner )
         ent.GrenadeOwner = self.Owner
         ent:Spawn()
 
         local phys = ent:GetPhysicsObject()
 
-        ent:SetVelocity(self.Owner:GetVelocity())
-        phys:ApplyForceCenter(self.Owner:GetAimVector() *700*2 + Vector(0,0,200) )
+        phys:ApplyForceCenter( self.Owner:GetVelocity() )
+        phys:ApplyForceCenter(self.Owner:GetAimVector() *80 *1.2 )
         phys:AddAngleVelocity(Vector(math.random(-200,200),math.random(-200,200),math.random(-200,200)))
 
         self.Owner:StripWeapon(self.Owner:GetActiveWeapon():GetClass())
