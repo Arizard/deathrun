@@ -7,7 +7,7 @@ timer.Create("UpdateDeathrunAnnouncements", 1,0, function() -- when convars chan
 		"Don't hesitate to ask the staff any questions, they are here to help.",
 		"Using Autojump will result in your velocity being capped at "..tostring(GetConVar("deathrun_autojump_velocity_cap"):GetInt()).." u/s. Disable Autojump through the !settings menu.",
 		"Round limit is currently "..tostring(GetConVar("deathrun_round_limit"):GetInt()).." rounds.",
-		"Zelpa has the best memes.",
+		--"Zelpa has the best memes.", -- ya fuk u
 		"Type !rtv to force a mapchange.",
 		"Type !crosshair to customize your crosshair settings and achieve different designs.",
 		"Type !help or press F1 for help and information about the gamemode.",
