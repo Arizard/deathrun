@@ -1,10 +1,15 @@
 local PLAYER = FindMetaTable("Player")
 
-function PLAYER:BeginSpectate()
+hook.Add("PlayerSpawn", "test", function( ply )
+	--print(ply, ply.Spectating)
+end)
 
+function PLAYER:BeginSpectate()
+	print(self:Nick(),"deathteam",self:Team(), TEAM_DEATH, "voluntary", self.VoluntarySpec)
 	local avoided = (self:Team() == TEAM_DEATH and self.VoluntarySpec == true) and true or false
 	print( "checking death avoid...", self:Nick(), avoided)
-	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 1 then
+	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and (#player.GetAllPlaying()) > 1 then
+		print("Punish death avoider..")
 		DR:PunishDeathAvoid( self, DR.DeathAvoidPunishment:GetInt() )
 		DR:ChatBroadcast("Player "..self:Nick().." will be punished for attempting to avoid being on the Death team!")
 	end
@@ -23,6 +28,11 @@ function PLAYER:BeginSpectate()
 
 	self.VoluntarySpec = false
 
+	-- pointshop - unequip all the trails and shit when they go into spectator
+	if PS then
+		self:PS_PlayerDeath()
+	end
+
 end
 function PLAYER:EndSpectate() -- when you want to end spectating when he respawns
 	--self.StaySpectating = false
@@ -38,11 +48,11 @@ function PLAYER:StopSpectate() -- when you want to end spectating immediately
 
 end
 
-function PLAYER:SetShouldStaySpectating( bool ) -- set whether they should stay in spectator even when the round starts
+function PLAYER:SetShouldStaySpectating( bool, noswitch ) -- set whether they should stay in spectator even when the round starts
 	print( bool == true and (self:Nick().." will stay as spectator.") or (self:Nick().." will not stay as spectator."))
 	self.StaySpectating = bool
 	--print( self.StaySpectating )
-	if bool == true then 
+	if bool == true and noswitch ~= true then 
 		self:SetTeam( TEAM_SPECTATOR ) 
 	end
 end
@@ -184,7 +194,7 @@ end)
 concommand.Add("deathrun_set_spectate", function(self, cmd, args)
 	if tonumber(args[1]) == 1 then
 		self:KillSilent()
-		self:SetShouldStaySpectating( true )
+		self:SetShouldStaySpectating( true, true )
 		self.VoluntarySpec = true
 		self:BeginSpectate()
 	else
@@ -192,6 +202,7 @@ concommand.Add("deathrun_set_spectate", function(self, cmd, args)
 		self:EndSpectate()
 
 		if ROUND:GetCurrent() == ROUND_WAITING then
+			self:KillSilent()
 			self:SetTeam( TEAM_RUNNER )
 			self:Spawn()
 		end

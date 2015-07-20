@@ -129,7 +129,7 @@ local function SpawnSpectator( ply )
 	return GAMEMODE:PlayerSpawnAsSpectator( ply )
 end
 
-function GM:PlayerSpawn( ply )
+hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 	print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
 
 	if ply:ShouldStaySpectating() then
@@ -171,6 +171,9 @@ function GM:PlayerSpawn( ply )
 	-- if ply:GetSpectate() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
 	-- 	return SpawnSpectator( ply )
 	-- end
+end)
+
+function GM:PlayerSpawn( ply )
 
 	return self.BaseClass:PlayerSpawn( ply )
 end
