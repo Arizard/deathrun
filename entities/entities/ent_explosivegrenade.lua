@@ -61,6 +61,7 @@ if SERVER then
 		if self.popped == true then return end
 		self.popped = true
 
+
 		local effectdata = EffectData()
 		effectdata:SetOrigin( self:GetPos() )
 		util.Effect( "Explosion", effectdata )
@@ -73,7 +74,7 @@ if SERVER then
 				filter = {self, e}
 			}
 			local tr = util.TraceLine( td )
-			PrintTable( tr )
+			--PrintTable( tr )
 			if not tr.HitWorld then
 				local dist = td.start:Distance( self:GetPos() )
 				local frac = InverseLerp( dist, 300, 0 )
