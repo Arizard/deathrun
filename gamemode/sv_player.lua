@@ -21,8 +21,7 @@ function PLAYER:BeginSpectate()
 	--self.StaySpectating = false
 	self.ObsMode = 0
 
-	self:Spectate( OBS_MODE_ROAMING )
-	self:SetObserverMode( OBS_MODE_ROAMING )
+	self:Spectate( OBS_MODE_IN_EYE )
 
 	self:SetupHands( nil )
 
@@ -44,7 +43,7 @@ function PLAYER:StopSpectate() -- when you want to end spectating immediately
 	--self.StaySpectating = false
 
 	self:UnSpectate()
-	self:SetObserverMode( OBS_MODE_NONE )
+	--self:Spectate( OBS_MODE_NONE )
 
 end
 
@@ -83,14 +82,14 @@ function PLAYER:ChangeSpectate()
 
 
 	if self.ObsMode2 == 0 then 
-		self:SetObserverMode( OBS_MODE_ROAMING )
+		self:Spectate( OBS_MODE_ROAMING )
 		--because it's nicer
 		if self:GetObserverTarget() then
 			self:SetPos( self:GetObserverTarget():EyePos() or self:GetObserverTarget():OBBCenter() + self:GetObserverTarget():GetPos() )
 		end 
 	end
-	if self.ObsMode2 == 1 then self:SetObserverMode( OBS_MODE_CHASE ) end
-	if self.ObsMode2 == 2 then self:SetObserverMode( OBS_MODE_IN_EYE ) end
+	if self.ObsMode2 == 1 then self:Spectate( OBS_MODE_CHASE ) end
+	if self.ObsMode2 == 2 then self:Spectate( OBS_MODE_IN_EYE ) end
 
 	if self.ObsMode2 > 0 then
 		--this means we are spectating a player
@@ -194,7 +193,7 @@ end)
 concommand.Add("deathrun_set_spectate", function(self, cmd, args)
 	if tonumber(args[1]) == 1 then
 		self:KillSilent()
-		self:SetShouldStaySpectating( true, true )
+		self:SetShouldStaySpectating( true, false )
 		self.VoluntarySpec = true
 		self:BeginSpectate()
 	else

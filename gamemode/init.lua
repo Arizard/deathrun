@@ -100,7 +100,8 @@ local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY 
 hook.Add("PlayerInitialSpawn", "DeathrunPlayerInitialSpawn", function( ply )
 
 	ply.FirstSpawn = true
-
+	ply:SetTeam( TEAM_SPECTATOR )
+	--ply:Spawn()
 	DR:ChatBroadcast(ply:Nick().." has joined the server.")
 
 end)
@@ -129,6 +130,8 @@ local function SpawnSpectator( ply )
 	return GAMEMODE:PlayerSpawnAsSpectator( ply )
 end
 
+DR.SpecBuffer = {}
+
 hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 	print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
 
@@ -147,6 +150,16 @@ hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 	if ply.FirstSpawn == true then
 		ply.FirstSpawn = false
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
+			print("firstspawn, spawning as spectator.")
+			table.insert(DR.SpecBuffer, ply)
+			timer.Simple(0, function() -- SUDDENTLY SPECTATOR IS MAGICALLY FIXED
+				for k, ply in pairs( DR.SpecBuffer ) do
+					if IsValid( ply ) then
+						SpawnSpectator( ply )
+						table.remove(DR.SpecBuffer, k)
+					end
+				end
+			end)
 			return SpawnSpectator( ply )
 		else
 			ply:SetTeam( TEAM_RUNNER )
@@ -346,7 +359,7 @@ function GM:EntityTakeDamage( target, dmginfo )
 		end
 	end
 	if target:IsPlayer() and attacker:IsPlayer() then
-		if target:Team() == attacker:Team() and target ~= ply then
+		if target:Team() == attacker:Team() and target ~= attacker then
 			--print("Attacked teammate")
 			local od = dmginfo:GetDamage()
 			dmginfo:SetDamage(0)

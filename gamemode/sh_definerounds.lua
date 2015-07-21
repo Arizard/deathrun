@@ -76,7 +76,7 @@ local function checkdeathavoid( ply )
 	print("checking for death avoid... "..ply:Nick())
 	local avoided = (ply:Team() == TEAM_DEATH and ply:Alive()) and true or false
 	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 2 then
-		DR:PunishDeathAvoid( ply, DeathAvoidPunishment:GetInt() )
+		DR:PunishDeathAvoid( ply, GetConVarNumber("deathrun_death_avoid_punishment") )
 		DR:ChatBroadcast("Player "..ply:Nick().." will be punished for attempting to avoid being on the Death team!")
 	end
 end
@@ -309,7 +309,7 @@ ROUND:AddState( ROUND_ACTIVE,
 		print("Round State: ACTIVE")
 		hook.Call("DeathrunBeginActive", nil )
 		if SERVER then
-			ROUND:SetTimer( RoundDuration:GetInt() )
+			ROUND:SetTimer( GetConVarNumber("deathrun_round_duration") )
 
 			timer.Create("DeathrunAutoslay", GetConVarNumber("deathrun_autoslay_delay") + 5, 1, function()
 				for k,v in ipairs(player.GetAllPlaying()) do
@@ -320,7 +320,7 @@ ROUND:AddState( ROUND_ACTIVE,
 						net.Send( v )
 						if v:Team() == TEAM_DEATH then
 							DR:ChatBroadcast("Player "..v:Nick().." went AFK during a Death round! They will be punished.")
-							DR:PunishDeathAvoid( v, DeathAvoidPunishment:GetInt() )
+							DR:PunishDeathAvoid( v, GetConVarNumber("deathrun_death_avoid_punishment") )
 						end
 						v:ConCommand("deathrun_spectate_only 1")
 					end
@@ -367,10 +367,10 @@ ROUND:AddState( ROUND_OVER,
 		hook.Call("DeathrunBeginOver", nil )
 		rounds_played = rounds_played + 1
 		if SERVER then
-			if rounds_played < RoundLimit:GetInt() then
-				DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(RoundLimit:GetInt() - rounds_played).." rounds to go!")
-				ROUND:SetTimer(FinishDuration:GetInt())
-				timer.Simple(FinishDuration:GetInt(), function()
+			if rounds_played < GetConVarNumber("deathrun_round_limit") then
+				DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(GetConVarNumber("deathrun_round_limit") - rounds_played).." rounds to go!")
+				ROUND:SetTimer(GetConVarNumber("deathrun_finishtime_duration") )
+				timer.Simple(GetConVarNumber("deathrun_finishtime_duration") , function()
 					ROUND:RoundSwitch( ROUND_PREP )
 				end)
 			else
@@ -437,7 +437,7 @@ if SERVER then
 
 		local data = {}
 		data.mvps = table.Copy(mvps)
-		data.duration = FinishDuration:GetInt() -- how long we want to show this screen for, in seconds (temporary?)
+		data.duration = GetConVarNumber("deathrun_finishtime_duration")  -- how long we want to show this screen for, in seconds (temporary?)
 		data.winteam = winteam
 
 		net.WriteTable( data )

@@ -712,5 +712,55 @@ end)
 function DR:OpenForcedSpectatorMenu()
 
 	local frame = vgui.Create( "deathrun_window" )
+	frame:SetSize( 640, 200 )
+	frame:Center()
+	frame:SetTitle("Moved to Spectator")
+	frame:MakePopup()
 
+	local panel = vgui.Create("panel", frame)
+	panel:SetSize(frame:GetWide()-8, frame:GetTall()-44)
+	panel:SetPos(4,32)
+
+	function panel:Paint(w,h)
+		local x,y = 0, 0
+
+		surface.SetDrawColor(DR.Colors.Clouds)
+		surface.DrawRect(x,y,w,h)
+
+		local ix, iy, iw, ih = x+8, y+8, w-16, h-16
+
+		local info = [[You have been moved to the Spectator team for being AFK. 
+		To move back, either click on one of the buttons below or visit the 
+		Spectator section of the F2 menu.
+		\n\nWould you like to move back into to the game?]]
+
+		info = DR:GetWordWrapText( info, iw, "deathrun_hud_Medium_light" )
+		deathrunShadowText(info, "deathrun_hud_Medium_light", ix, iy, HexColor("#303030"), nil, nil, 0 )
+	end
+
+	local cont = vgui.Create("deathrun_button", panel)
+	cont:SetSize((panel:GetWide() - 3*4)/2, 32 )
+	cont:SetPos(4, panel:GetTall()-32 -4)
+	cont:SetText("No, I'm okay with this.")
+
+	function cont:DoClick()
+		self:GetParent():GetParent():Close()
+	end
+
+	local back = vgui.Create("deathrun_button", panel)
+	back:SetSize((panel:GetWide() - 3*4)/2, 32 )
+	back:SetPos(8+(panel:GetWide() - 3*4)/2, panel:GetTall()-32 -4)
+	back:SetText("Yes, please move be back.")
+	function back:DoClick()
+		LocalPlayer():ConCommand("deathrun_spectate_only 0")
+		self:GetParent():GetParent():Close()
+	end
 end
+
+concommand.Add("deathrun_open_forcespectatormenu", function()
+	DR:OpenForcedSpectatorMenu()
+end)
+
+net.Receive("DeathrunSpectatorNotification", function()
+	DR:OpenForcedSpectatorMenu()
+end)

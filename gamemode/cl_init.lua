@@ -171,6 +171,14 @@ hook.Add("PrePlayerDraw", "TransparencyPlayers", function( ply )
 
 end)
 
-hook.Add("PreDrawViewModel", "DeathrunFixSpectatorViewmodels", function( vm, ply, wep )
-	return false
-end)
+function GM:PreDrawViewModel( vm, ply, wep )
+	local ply = LocalPlayer()
+	if ply:GetObserverMode() == OBS_MODE_CHASE or ply:GetObserverMode() == OBS_MODE_ROAMING then
+		return true
+	end
+end
+function GM:PreDrawPlayerHands( hands, vm, ply, wep )
+	if ply:GetObserverMode() == OBS_MODE_CHASE or ply:GetObserverMode() == OBS_MODE_ROAMING then
+		return true
+	end
+end

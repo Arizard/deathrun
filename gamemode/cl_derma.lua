@@ -189,7 +189,7 @@ function BUTTN:Init()
 	self.active = false
 
 	self.font = "deathrun_derma_Small"
-	self.offsets = {0,-11}
+	self.offsets = {0,0}
 
 	self.text = "Label"
 
