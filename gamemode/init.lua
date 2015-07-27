@@ -192,7 +192,7 @@ function GM:PlayerSpawn( ply )
 end
 
 CreateConVar("deathrun_death_sprint", "650", defaultFlags, "Sprint speed for Death team.")
-CreateConVar("deathrun_starting_weapon", "weapon_knife", defaultFlags, "Starting weapon for both teams.")
+CreateConVar("deathrun_starting_weapon", "weapon_crowbar", defaultFlags, "Starting weapon for both teams.")
 
 function GM:PlayerLoadout( ply )
 
