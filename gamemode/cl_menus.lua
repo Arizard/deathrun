@@ -505,19 +505,21 @@ function DR:OpenZoneEditor()
 	pnl.dd = dd
 	function pnl:Paint( w, h )
 		local zone = ZONE.zones[ self.dd:GetValue() ] or nil
-		if zone then
-			local col = zone.color
-			local info = {
-				"Zone Name: "..self.dd:GetValue(),
-				"Zone Type: "..zone.type,
-				"Pos1: "..tostring(zone.pos1),
-				"Pos2: "..tostring(zone.pos2),
-				"Color:".." "..tostring(col.r).." "..tostring(col.g).." "..tostring(col.b).." "..tostring(col.a),
-			}
+		if zone ~= nil then
+			if zone.type then
+				local col = zone.color
+				local info = {
+					"Zone Name: "..self.dd:GetValue(),
+					"Zone Type: "..zone.type,
+					"Pos1: "..tostring(zone.pos1),
+					"Pos2: "..tostring(zone.pos2),
+					"Color:".." "..tostring(col.r).." "..tostring(col.g).." "..tostring(col.b).." "..tostring(col.a),
+				}
 
-			for i = 1, #info do
-				local k = i-1
-				draw.SimpleText(info[i], "deathrun_derma_Tiny", 0, 14*k, HexColor("#303030"))
+				for i = 1, #info do
+					local k = i-1
+					draw.SimpleText(info[i], "deathrun_derma_Tiny", 0, 14*k, HexColor("#303030"))
+				end
 			end
 		end
 	end
