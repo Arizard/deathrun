@@ -246,7 +246,7 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 
 		{"boolean", "deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
 		{"boolean", "deathrun_info_on_join", "Show the info menu when joining the server"},
-		{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings."},
+		{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings.)"},
 		{"boolean", "deathrun_enable_announcements", "Enable help messages"},
 		{"number", "deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
 		{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."}

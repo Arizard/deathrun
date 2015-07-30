@@ -5,7 +5,7 @@ hook.Add("PlayerSpawn", "test", function( ply )
 end)
 
 function PLAYER:BeginSpectate()
-	print(self:Nick(),"deathteam",self:Team(), TEAM_DEATH, "voluntary", self.VoluntarySpec)
+	print(self:Nick(),"deathteam",self:Team(), TEAM_DEATH, "voluntary:", self.VoluntarySpec)
 	local avoided = (self:Team() == TEAM_DEATH and self.VoluntarySpec == true) and true or false
 	print( "checking death avoid...", self:Nick(), avoided)
 	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and (#player.GetAllPlaying()) > 1 then
