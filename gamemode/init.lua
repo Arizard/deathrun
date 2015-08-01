@@ -508,6 +508,11 @@ DR.BarredPlayers = util.JSONToTable( file.Read("deathrun/deathbarred.txt", "DATA
 PrintTable( DR.BarredPlayers )
 
 function DR:SaveDeathAvoid()
+	for k,v in pairs( DR.BarredPlayers ) do -- remove all players with 0 rounds left
+		if v == 0 then
+			DR.BarredPlayers[k] = nil
+		end
+	end
 	file.Write("deathrun/deathbarred.txt",util.TableToJSON( DR.BarredPlayers ) )
 	PrintTable( DR.BarredPlayers )
 end
