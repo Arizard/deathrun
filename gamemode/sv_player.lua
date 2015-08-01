@@ -193,7 +193,7 @@ end)
 concommand.Add("deathrun_set_spectate", function(self, cmd, args)
 	if tonumber(args[1]) == 1 then
 		self:KillSilent()
-		self:SetShouldStaySpectating( true, false )
+		self:SetShouldStaySpectating( true, self:Team() == TEAM_DEATH and true or false )
 		self.VoluntarySpec = true
 		self:BeginSpectate()
 	else
