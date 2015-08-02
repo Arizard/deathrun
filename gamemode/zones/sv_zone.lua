@@ -209,7 +209,7 @@ resetFinishers()
 hook.Add("DeathrunBeginPrep", "DeathrunResetFinishers", resetFinishers)
 
 hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, name, z)
-	if ply:GetSpectate() or (not ply:Alive()) or ROUND:GetCurrent() == ROUND_WAITING then return end
+	if (ply:Team() ~= TEAM_RUNNER) or ply:GetSpectate() or (not ply:Alive()) or ROUND:GetCurrent() == ROUND_WAITING then return end
 	if z.type == "end" and ply.HasFinishedMap ~= true then
 		table.insert( finishorder, ply )
 
