@@ -97,6 +97,7 @@ local playermodels = {
 
 local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
 
+
 hook.Add("PlayerInitialSpawn", "DeathrunPlayerInitialSpawn", function( ply )
 
 	ply.FirstSpawn = true

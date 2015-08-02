@@ -91,7 +91,7 @@ function ZONE:BroadcastZones()
 	net.Broadcast()
 end
 
-hook.Add("PlayerInitialSpawn", "ZoneSendZonesInitialSpawn", function( ply )
+hook.Add("PlayerSpawn", "ZoneSendZonesSpawn", function( ply )
 	ZONE:SendZones( ply )
 	print("Sent zones to player "..ply:Nick())
 end)
