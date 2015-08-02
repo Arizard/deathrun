@@ -110,6 +110,9 @@ CLIENT CONVARS:
 	deathrun_thirdperson_offset_roll
 		Offsets for thirdperson mode.
 
+	deathrun_zones_visibility <0-1>
+		Enables zone visibility, defaults to 1.
+
 
 -----------
 -- HOOKS --
