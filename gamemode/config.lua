@@ -29,6 +29,9 @@ DR.AirAccelerate = 1000
 
 	DR:SetAnnouncerName( STRING name ) -- sets the name, default is "HELP"
 	DR:SetAnnouncerColor( COLOR col ) -- sets the color of the announcer name, default is DR.Colors.Alizarin
+	DR:SetAnnouncerTable( TABLE tbl ) -- sets the table of messages that the announcer broadcasts into player's chats.
+	DR:GetAnnouncerTable( ) -- returns the table of messages that gets broadcasted so that you can make changes to it.
+	DR:AddAnnouncement( STRING announcement ) -- Adds an announcement to the table of announcements that are broadcast by the announcer.
 
 ]]
 
