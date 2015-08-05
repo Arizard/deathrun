@@ -1,3 +1,7 @@
+##check if ghostmode installed
+* GhostMode ~= nil
+* if it's not installed then GhostMode == nil
+
 ##meta functions
 ply:IsGhostMode() returns boolean isGhost
 ply:SetGhostMode( boolean ghost ) returns nil

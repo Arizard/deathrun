@@ -136,6 +136,13 @@ DR.SpecBuffer = {}
 hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 	print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
 
+	if GhostMode then -- GhostMode compatibility
+		if ply:Team() == TEAM_GHOST then
+			ply:StopSpectate()
+			return
+		end
+	end
+
 	if ply:ShouldStaySpectating() then
 		return SpawnSpectator( ply )
 	end
