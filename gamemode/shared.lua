@@ -115,6 +115,12 @@ if CLIENT then
 
 	hook.Add("HUDPaint", "SendSpectateConVarInfo", function()
 		RunConsoleCommand( "deathrun_set_spectate", GetConVarNumber( "deathrun_spectate_only" ) )
+		if GetConVarNumber( "deathrun_spectate_only" ) == 1 then
+			DR:OpenForcedSpectatorMenu( [[You are currently in spectator mode. 
+				To play, click on one of the buttons below, 
+				or visit the spectator section of the settings menu by pressing F2.
+				\n\nWould you like to move back into the game?]] )
+		end
 		hook.Remove( "HUDPaint", "SendSpectateConVarInfo" )
 	end)
 end

@@ -712,7 +712,7 @@ concommand.Add("deathrun_open_waitingmenu", function()
 	DR:OpenWaitingMenu()
 end)
 
-function DR:OpenForcedSpectatorMenu()
+function DR:OpenForcedSpectatorMenu( msg )
 
 	local frame = vgui.Create( "deathrun_window" )
 	frame:SetSize( 640, 200 )
@@ -736,6 +736,8 @@ function DR:OpenForcedSpectatorMenu()
 		To move back, either click on one of the buttons below or visit the 
 		Spectator section of the F2 menu.
 		\n\nWould you like to move back into to the game?]]
+
+		if msg then info = msg end
 
 		info = DR:GetWordWrapText( info, iw, "deathrun_hud_Medium_light" )
 		deathrunShadowText(info, "deathrun_hud_Medium_light", ix, iy, HexColor("#303030"), nil, nil, 0 )
