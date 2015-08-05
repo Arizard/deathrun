@@ -83,6 +83,9 @@ When a team wins, a victory screen is displayed on the HUD, listing the winning 
 ######Sound Cues
 There are sound cues at the start and end of each round. These can be disabled in the settings menu.
 
+######Customization
+You can add custom HUDs which work with the HUD configs in the F2 menu! Please refer to [THIS DOCUMENT](https://github.com/Arizard/deathrun/blob/master/how_to_add_huds.md).
+
 ###Mapvote
 The gamemode features a native mapvote with an included nomination system. The mapvote can be configured to display any number of maps to be voted for, though it is recommended to choose a value between 5 and 10.
 
@@ -141,6 +144,23 @@ Players using autojump will see AUTO in capital letters displayed on their veloc
 
 ###Helpful Announcements
 Help messages are regularly printed to each player's chat. The frequency and visibility of these messages can be customised through the settings menu.
+
+######Customization
+You can change the announcer's name and the color of the announcer's name using the following two CLIENTSIDE functions: <code>DR:SetAnnouncerName( STRING name )</code> and <code>DR:SetAnnouncerColor( COLOR col )</code>.
+
+###MOTD
+This gamemode includes a simple MOTD by default. To customise it's behaviour, use the following CLIENTSIDE functions:
+<pre>
+	DR:SetMOTDEnabled( BOOLEAN enabled ) -- False to disable globally, True to enable globally (clients can still disable for themselves using F2 menu )
+	DR:SetMOTDTitle( STRING title ) -- Title of the MOTD Window
+	DR:SetMOTDSize( NUMBER w, NUMBER h ) -- Size of the MOTD window
+	DR:SetMOTDPage( STRING url ) -- the URL to open in the MOTD window, e.h. http://www.MyCommunityIsCool.com
+</pre>
+
+###AFK Timers
+If a player has been AFK for at least 35 seconds since the start of the round, they will be forced to spectator. This will open a menu for them which provides information on why they were moved to spectator, and how to get out of spectator.
+
+
 
 ##Images
 Help Menu

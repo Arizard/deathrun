@@ -20,3 +20,27 @@ DR.Colors = {
 }
 
 DR.AirAccelerate = 1000
+
+--[[
+
+	ANNOUNCER
+
+	To change the appearance of the announcer ( [HELP] Messages ) use the following two functions ON THE CLIENT:
+
+	DR:SetAnnouncerName( STRING name ) -- sets the name, default is "HELP"
+	DR:SetAnnouncerColor( COLOR col ) -- sets the color of the announcer name, default is DR.Colors.Alizarin
+
+]]
+
+--[[
+	
+	MOTD
+
+	To change the MOTD behaviour, use the following functions ON THE CLIENT:
+
+	DR:SetMOTDEnabled( BOOLEAN enabled ) -- False to disable globally, True to enable globally (clients can still disable for themselves using F2 menu )
+	DR:SetMOTDTitle( STRING title ) -- Title of the MOTD Window
+	DR:SetMOTDSize( NUMBER w, NUMBER h ) -- Size of the MOTD window
+	DR:SetMOTDPage( STRING url ) -- the URL to open in the MOTD window, e.h. http://www.MyCommunityIsCool.com
+	
+]]

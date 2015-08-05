@@ -588,13 +588,33 @@ concommand.Add("deathrun_open_zone_editor", function()
 	DR:OpenZoneEditor()
 end)
 
+DR.MOTDEnabled = DR.MOTDEnabled or true
+DR.MOTDTitle = DR.MOTDTitle or "Deathrun Information"
+DR.MOTDWidth = DR.MOTDWidth or ScrW()-320
+DR.MOTDHeight = DR.MOTDHeight or ScrH()-240
+DR.MOTDPage = DR.MOTDPage or "http://arizard.github.io/deathruninfo.html"
+
+function DR:SetMOTDEnabled( enabled )
+	DR.MOTDEnabled = enabled
+end
+function DR:SetMOTDTitle( title )
+	DR.MOTDTitle = title
+end
+function DR:SetMOTDSize( w, h )
+	DR.MOTDWidth = w
+	DR.MOTDHeight = h
+end
+function DR:SetMOTDPage( url )
+	DR.MOTDPage = url
+end
+
 function DR:OpenQuickInfo()
 
 	local frame = vgui.Create("deathrun_window")
-	frame:SetSize(640, 480)
+	frame:SetSize( DR.MOTDWidth, DR.MOTDHeight )
 	frame:Center()
 	frame:MakePopup()
-	frame:SetTitle("Deathrun Information")
+	frame:SetTitle( DR.MOTDTitle )
 
 	function frame:OnClose()
 		if ROUND:GetCurrent() == ROUND_WAITING then
@@ -611,7 +631,7 @@ function DR:OpenQuickInfo()
 	local html = vgui.Create("DHTML", frame)
 	html:SetSize( frame:GetWide()-8, frame:GetTall() - 44 )
 	html:SetPos(4, 32)
-	html:OpenURL( "http://arizard.github.io/deathruninfo.html" )
+	html:OpenURL( DR.MOTDPage )
 	html:SetAllowLua( true )
 
 	DR.QuickInfoFrame = frame
@@ -629,11 +649,15 @@ concommand.Add("deathrun_open_quickinfo", function()
 	DR:OpenQuickInfo()
 end)
 
+concommand.Add("deathrun_open_motd", function()
+	DR:OpenQuickInfo()
+end)
+
 infoOpened = infoOpened ~= nil and infoOpened or false -- needs to be global
 local ShowInfo = CreateClientConVar("deathrun_info_on_join", 1, true, false) -- whether we see info on join
 
 hook.Add("HUDPaint", "openquickinfo", function()
-	if infoOpened == false and ShowInfo:GetBool() == true then
+	if infoOpened == false and ShowInfo:GetBool() == true and DR.MOTDEnabled == true then
 		DR:OpenQuickInfo()
 	end
 	infoOpened = true -- only check once, then leave it
