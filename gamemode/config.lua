@@ -18,3 +18,9 @@ DR.Colors = {
 }
 
 DR.AirAccelerate = 1000
+
+DR.AnnouncerName = "HELP"
+
+function DR:SetAnnouncerName( name )
+	DR.AnnouncerName = name
+end

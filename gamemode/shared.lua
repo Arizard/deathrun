@@ -108,9 +108,14 @@ if CLIENT then
 		RunConsoleCommand("deathrun_internal_set_autojump", GetConVar("deathrun_autojump"):GetInt()) -- in case some trickery happens on the client we'll sync this right up. They can probably destroy the timer but whatever
 	end)
 
-	CreateClientConVar("deathrun_spectate_only", 0, false, false)
+	CreateClientConVar("deathrun_spectate_only", 0, true, false)
 	cvars.AddChangeCallback( "deathrun_spectate_only", function( name, old, new )
 		RunConsoleCommand( "deathrun_set_spectate", new )
+	end)
+
+	hook.Add("HUDPaint", "SendSpectateConVarInfo", function()
+		RunConsoleCommand( "deathrun_set_spectate", GetConVarNumber( "deathrun_spectate_only" ) )
+		hook.Remove( "HUDPaint", "SendSpectateConVarInfo" )
 	end)
 end
 
