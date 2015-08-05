@@ -1,3 +1,14 @@
+DR.AnnouncerName = DR.AnnouncerName or "HELP" -- incase the file refreshes
+DR.AnnouncerColor = DR.AnnouncerColor or DR.Colors.Alizarin
+
+function DR:SetAnnouncerName( name )
+	DR.AnnouncerName = name
+end
+
+function DR:SetAnnouncerColor( col )
+	DR.AnnouncerColor = col
+end
+
 local msgs = {}
 
 timer.Create("UpdateDeathrunAnnouncements", 1,0, function() -- when convars change
@@ -29,7 +40,7 @@ local idx = 1
 local function DoAnnouncements()
 	if AnnouncementEnabled:GetBool() == false then return end
 
-	chat.AddText(DR.Colors.Clouds, "[", DR.Colors.Alizarin, "HELP", DR.Colors.Clouds, "] "..(msgs[idx]))
+	chat.AddText(DR.Colors.Clouds, "[", DR.AnnouncerColor, DR.AnnouncerName, DR.Colors.Clouds, "] "..(msgs[idx]))
 	idx = idx + 1
 	if idx > #msgs then idx = 1 end
 end

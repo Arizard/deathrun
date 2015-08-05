@@ -1,6 +1,8 @@
 print("Loading Config...")
 
-DR = {}; print("Creating global table DR...");
+DR = DR or {}
+
+print("Creating global table DR...")
 
 DR.Colors = {
 	DeathTeam = HexColor( "#F26C4F" ),
@@ -18,9 +20,3 @@ DR.Colors = {
 }
 
 DR.AirAccelerate = 1000
-
-DR.AnnouncerName = "HELP"
-
-function DR:SetAnnouncerName( name )
-	DR.AnnouncerName = name
-end
