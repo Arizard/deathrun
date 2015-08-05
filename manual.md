@@ -146,7 +146,14 @@ Players using autojump will see AUTO in capital letters displayed on their veloc
 Help messages are regularly printed to each player's chat. The frequency and visibility of these messages can be customised through the settings menu.
 
 ######Customization
-You can change the announcer's name and the color of the announcer's name using the following two CLIENTSIDE functions: <code>DR:SetAnnouncerName( STRING name )</code> and <code>DR:SetAnnouncerColor( COLOR col )</code>.
+You can change the announcer's name and the color of the announcer's name using the following two CLIENTSIDE functions:
+<pre>
+	DR:SetAnnouncerName( STRING name ) -- sets the name, default is "HELP"
+	DR:SetAnnouncerColor( COLOR col ) -- sets the color of the announcer name, default is DR.Colors.Alizarin
+	DR:SetAnnouncerTable( TABLE tbl ) -- sets the table of messages that the announcer broadcasts into player's chats.
+	DR:GetAnnouncerTable( ) -- returns the table of messages that gets broadcasted so that you can make changes to it.
+	DR:AddAnnouncement( STRING announcement ) -- Adds an announcement to the table of announcements that are broadcast by the announcer.
+</pre>
 
 ###MOTD
 This gamemode includes a simple MOTD by default. To customise it's behaviour, use the following CLIENTSIDE functions:

@@ -37,3 +37,22 @@
 * ULX Support on Scoreboard.
 
 <video style="min-width: 20px; min-height: 20px; border: 1px solid #fff; box-shadow: 0 0 4px rgba( 0, 0, 0, 0.4 );" src="https://d.maxfile.ro/ipmzgxrrom.webm" controls="controls">Your browser doesn't support HTML 5 videos!</video>
+
+#Grenade stuff from george
+<pre>
+george.: self:PhysicsInit( SOLID_VPHYSICS )
+self:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE )
+self:SetMoveType( MOVETYPE_VPHYSICS )
+self:SetSolid( SOLID_VPHYSICS )
+self:DrawShadow( false )
+self:SetGravity( 0.4 )
+self:SetElasticity( 0.45 )
+self:SetFriction(0.2)
+
+george.: for far throws im using
+george.: phys:ApplyForceCenter(self.Owner:GetAimVector() * 750 + Vector(0,0,500))
+george.: mainly from testing
+george.: i was trying to get it to throw like css
+george.: phys:ApplyForceCenter(self.Owner:GetAimVector() * 50)
+george.: for shorter throws
+</pre>
