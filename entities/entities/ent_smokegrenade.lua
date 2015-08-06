@@ -19,7 +19,7 @@ function ENT:Initialize()
 	self:SetMoveType( MOVETYPE_VPHYSICS )	
 	self:SetSolid( SOLID_VPHYSICS )	
  	
-	if ( SERVER ) then self:PhysicsInit( SOLID_VPHYSICS ) end
+	if ( SERVER ) then self:PhysicsInitSphere( 1, "grenade" ) end
 
 	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
@@ -30,7 +30,7 @@ function ENT:Initialize()
 	self.phys = phys
 
 	self.born = CurTime()
-	self.lifespan = 3.4-- second trigger
+	self.lifespan = 4.4-- second trigger
 
 	self.popped = false
 
