@@ -199,8 +199,7 @@ function SWEP:PrimaryAttack()
 	
 	if ( self.Owner:IsNPC() ) then return end
 	
-	-- Punch the player's view
-	self.Owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) *self.Primary.Recoil, 0 ) )
+	
 	
 	-- In singleplayer this function doesn't get called on the client, so we use a networked float
 	-- to send the last shoot time. In multiplayer this is predicted clientside so we don't need to 
@@ -237,7 +236,7 @@ function SWEP:GetRecoilShiftAmount()
 	local maxshift = 30
 	local minshift = 0
 
-	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
+	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/17000
 	return shiftamt
 end
 -----------------------------------------------------------
@@ -249,10 +248,10 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	--local accfrac = (1 + self.Owner.CurAccel/5) -- double the cone when walking at full pace
 
-	accfrac = ( self.Owner:GetVelocity():Length()/self.Owner:GetWalkSpeed() )*0.2
+	accfrac = ( self.Owner:GetVelocity():Length()/self.Owner:GetWalkSpeed() )*0.075
 
 	if not self.Owner:IsOnGround() then
-		accfrac = accfrac + (1 + self.Owner.CurAccel/50)
+		accfrac = accfrac * 10 + (1 + self.Owner.CurAccel/50)
 	else
 		accfrac = accfrac * 10
 	end
@@ -261,6 +260,8 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 	numbul 	= numbul 	or 1
 	cone 	= cone 		or 0.01
+
+	--print( accfrac )
 
 	local bullet = {}
 	bullet.Num 		= numbul
@@ -279,11 +280,18 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	local up = shootAng:Up()
 	local shiftamt = self:GetRecoilShiftAmount()
 	shootAng:RotateAroundAxis( right, shiftamt )
-	shootAng:RotateAroundAxis( up, math.random(-shiftamt*100/4, shiftamt*100/8)/100 )
+	shootAng:RotateAroundAxis( up, math.random(-shiftamt*100/2, shiftamt*100/4)/100 )
 
 	-- add spread cone
 	shootAng:RotateAroundAxis( up, math.random( -cone*1000, cone*1000 )/40 )
 	shootAng:RotateAroundAxis( right, math.random( -cone*1000, cone*1000 )/40 )
+
+	-- Punch the player's view
+	local punchang = ( shootAng - self.Owner:EyeAngles() )
+	local mod = 0.2
+	punchang.pitch = punchang.pitch * mod
+	punchang.yaw = punchang.yaw * mod * 4
+	self.Owner:ViewPunch( punchang )
 
 	bullet.Dir = shootAng:Forward()
 
