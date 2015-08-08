@@ -236,7 +236,7 @@ function SWEP:GetRecoilShiftAmount()
 	local maxshift = 30
 	local minshift = 0
 
-	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/17000
+	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
 	return shiftamt
 end
 -----------------------------------------------------------
@@ -287,10 +287,10 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	shootAng:RotateAroundAxis( right, math.random( -cone*1000, cone*1000 )/40 )
 
 	-- Punch the player's view
-	local punchang = ( shootAng - self.Owner:EyeAngles() )
+	local punchang = ( Angle( math.random(-1,1), math.random( -1, 1), 0 ) )
 	local mod = 0.2
 	punchang.pitch = punchang.pitch * mod
-	punchang.yaw = punchang.yaw * mod * 4
+	punchang.yaw = punchang.yaw * mod
 	self.Owner:ViewPunch( punchang )
 
 	bullet.Dir = shootAng:Forward()
@@ -336,7 +336,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	-- Remove 1 bullet from our clip
 	self:TakePrimaryAmmo( 1 )
 	-- simulate recoil????
-	self.KickBack = self.KickBack + 1 + (accfrac*10)
+	self.KickBack = self.KickBack + 0.5 + (accfrac*10)
 
 	if ( self.Owner:IsNPC() ) then return end
 
@@ -498,7 +498,7 @@ if CLIENT then
 
 		local right = ang:Right();
 		local shiftamt = self:GetRecoilShiftAmount()
-		ang:RotateAroundAxis(right, shiftamt/2)
+		ang:RotateAroundAxis(right, shiftamt/3)
 
 		if self:GetIronsights() then
 			if self.Scope == true then

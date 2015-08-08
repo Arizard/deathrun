@@ -450,6 +450,9 @@ hook.Add("ShowHelp", "DeathrunHelpBind", function( ply ) ply:ConCommand("deathru
 
 -- stop people whoring the weapons
 hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( ply, wep )
+
+	if ply:Team() == TEAM_GHOST then return false end
+
 	local class = wep:GetClass()
 	local weps = ply:GetWeapons()
 	local wepsclasses = {}

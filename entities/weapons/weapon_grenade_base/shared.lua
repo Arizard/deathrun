@@ -178,7 +178,7 @@ function SWEP:ThrowFar()
         local phys = ent:GetPhysicsObject()
 
         phys:ApplyForceCenter( self.Owner:GetVelocity() )
-        phys:ApplyForceCenter(self.Owner:GetAimVector() *750 + Vector(0,0,50) )
+        phys:ApplyForceCenter(self.Owner:GetAimVector() *750 + Vector(0,0,70) )
         phys:AddAngleVelocity(Vector(math.random(-200,200),math.random(-200,200),math.random(-200,200)))
 
         self.Owner:StripWeapon(self.Owner:GetActiveWeapon():GetClass())

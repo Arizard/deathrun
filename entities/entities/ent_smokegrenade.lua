@@ -44,7 +44,7 @@ end
 
 function ENT:PhysicsCollide(data,phys)
 	local reflectionDir = self:ReflectVector( data.OurOldVelocity, data.HitNormal )
-	local efficiency = 0.75
+	local efficiency = 0.65
 	phys:SetVelocityInstantaneous( reflectionDir*efficiency )
 	if data.Speed > 50 then
 			self.Entity:EmitSound(Sound("weapons/smokegrenade/grenade_hit1.wav"))
