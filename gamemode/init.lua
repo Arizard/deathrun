@@ -76,6 +76,7 @@ util.AddNetworkString("DeathrunForceSpectator")
 -- required configz
 RunConsoleCommand("sv_friction", 8)
 RunConsoleCommand("sv_sticktoground", 0)
+RunConsoleCommand("sv_airaccelerate", 0)
 
 local playermodels = {
 	"models/player/group01/male_01.mdl",

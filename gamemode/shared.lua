@@ -83,7 +83,7 @@ local function intToBool( i )
 end
 
 CreateConVar("deathrun_infinite_ammo", "1", defaultFlags, "Should ammo automatically replenish.")
-CreateConVar("deathrun_autojump_velocity_cap", 450, defaultFlags, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
+CreateConVar("deathrun_autojump_velocity_cap", 650, defaultFlags, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 CreateConVar("deathrun_allow_autojump", 1, defaultFlags, "Allows players to use autojump.")
 CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", defaultFlags, "The URL to open when the player types !help.")
 
@@ -125,11 +125,61 @@ if CLIENT then
 	end)
 end
 
+-- hull sizes
+
+DR.Hulls = {
+	HullMin = Vector( -16, -16, 0 ),
+	HullDuck = Vector( 16, 16, 45 ),
+	HullStand = Vector( 16, 16, 62 ),
+	ViewDuck = Vector( 0, 0, 47 ),
+	ViewStand = Vector( 0, 0, 64 )
+}
+
+if CLIENT then
+	concommand.Add("deathrun_reload_hull_client", function()
+		DR:SetClientHullSizes()
+	end)
+	function DR:SetClientHullSizes()
+		LocalPlayer():SetHull( DR.Hulls.HullMin, DR.Hulls.HullStand )
+		LocalPlayer():SetHullDuck( DR.Hulls.HullMin, DR.Hulls.HullDuck ) -- quack quack
+		LocalPlayer():SetViewOffset( DR.Hulls.ViewStand )
+		LocalPlayer():SetViewOffsetDucked( DR.Hulls.ViewDuck ) -- quack
+	end
+end
+
+hook.Add("PlayerSpawn", "HullSizes", function( ply )
+	ply:SetHull( DR.Hulls.HullMin, DR.Hulls.HullStand )
+	ply:SetHullDuck( DR.Hulls.HullMin, DR.Hulls.HullDuck ) -- quack quack
+	ply:SetViewOffset( DR.Hulls.ViewStand )
+	ply:SetViewOffsetDucked( DR.Hulls.ViewDuck ) -- quack
+
+	ply:ConCommand( "deathrun_reload_hull_client" )
+end)
+
+
 -- I uh... "borrowed" this from Gravious. I need it but I don't know why.
 
 local lp, ft, ct, cap = LocalPlayer, FrameTime, CurTime
-local mc, mr, bn, ba, bo = math.Clamp, math.Round, bit.bnot, bit.band, bit.bor
+local mc, mr, bn, ba, bo, gf = math.Clamp, math.Round, bit.bnot, bit.band, bit.bor, {}
 function GM:Move( ply, data )
+
+	-- fixes jump and duck stop
+	local og = ply:IsFlagSet( FL_ONGROUND )
+	if og and not gf[ ply ] then
+		gf[ ply ] = 0
+	elseif og and gf[ ply ] then
+		gf[ ply ] = gf[ ply ] + 1
+		if gf[ ply ] > 4 then
+			ply:SetDuckSpeed( 0.4 )
+			ply:SetUnDuckSpeed( 0.2 )
+		end
+	end
+
+	if og or not ply:Alive() then return end
+	
+	gf[ ply ] = 0
+	ply:SetDuckSpeed(0)
+	ply:SetUnDuckSpeed(0)
 
 	if not IsValid( ply ) then return end
 	if lp and ply ~= lp() then return end
