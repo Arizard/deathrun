@@ -1,7 +1,7 @@
 local columns = {"Name", "blank","Title", "Rank", "Ping"}
 local columnFunctions = {
 	function( ply ) return ply:Nick() end,
-	function() return "" end,
+	function() return "" end, -- empty space to even the spacings out
 	function( ply ) 
 		if ply:SteamID() == "STEAM_0:1:30288855" then -- don't remove this or i kill u
 			return "Super Player"

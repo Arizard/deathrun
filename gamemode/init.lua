@@ -77,6 +77,7 @@ util.AddNetworkString("DeathrunForceSpectator")
 RunConsoleCommand("sv_friction", 8)
 RunConsoleCommand("sv_sticktoground", 0)
 RunConsoleCommand("sv_airaccelerate", 0)
+RunConsoleCommand("sv_gravity", 800)
 
 local playermodels = {
 	"models/player/group01/male_01.mdl",
@@ -219,7 +220,7 @@ function GM:PlayerLoadout( ply )
 	-- run speeds and jump powah
 	ply:SetRunSpeed( 250 )
 	ply:SetWalkSpeed( 250 )
-	ply:SetJumpPower( 200 )
+	ply:SetJumpPower( 290 )
 
 	if ply:Team() == TEAM_DEATH then
 		ply:SetRunSpeed( 650 )	

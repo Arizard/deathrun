@@ -4,7 +4,7 @@
 -- Also allows for scoped weapons, it draws a scope (however with no crosshair because it's not needed for this deathrun gamemode)
 -- Despite this being a modified version of another base i'd appreciate it if you credited the following people if you use this in your own project:
 -- * Arizard - Custom weapon recoil, scopes, and headshot damage buffs
--- * Gravious - Original weapon base
+-- * Gravious + George + Original gmod lua cs weapons - Original weapon base
 
 if (SERVER) then
 	SWEP.Weight				= 5

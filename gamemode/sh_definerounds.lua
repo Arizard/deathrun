@@ -38,8 +38,6 @@ end
 timer.Create("DeathrunRoundTimerCalculate", 0.2, 0, function()
 	ROUND_TIMER = ROUND_TIMER - 0.2
 	if ROUND_TIMER < 0 then ROUND_TIMER = 0 end
-
-	--print( ROUND_TIMER )
 end)
 
 if SERVER then
@@ -100,16 +98,11 @@ ROUND:AddState( ROUND_WAITING,
 			for k,ply in ipairs(player.GetAllPlaying()) do
 				ply:StripWeapons()
 				ply:StripAmmo()
-
 				ply:SetTeam( TEAM_RUNNER )
 				ply:Spawn()
-
-
 			end
 
-			
 			timer.Create("DeathrunWaitingStateCheck", 5, 0, function()
-				--print("Waiting for players...", #player.GetAllPlaying() )
 				if #player.GetAllPlaying() >= 2 then
 					ROUND:RoundSwitch( ROUND_PREP )
 					timer.Destroy( "DeathrunWaitingStateCheck" )

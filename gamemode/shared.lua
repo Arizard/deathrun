@@ -129,9 +129,9 @@ end
 
 DR.Hulls = {
 	HullMin = Vector( -16, -16, 0 ),
-	HullDuck = Vector( 16, 16, 45 ),
-	HullStand = Vector( 16, 16, 62 ),
-	ViewDuck = Vector( 0, 0, 47 ),
+	HullDuck = Vector( 16, 16, 43 ),
+	HullStand = Vector( 16, 16, 66 ),
+	ViewDuck = Vector( 0, 0, 41 ),
 	ViewStand = Vector( 0, 0, 64 )
 }
 
