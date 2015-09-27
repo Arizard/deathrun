@@ -242,14 +242,51 @@ function DR:DrawTargetID()
 
 	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - ( 1/( (TargetIDFadeTime:GetFloat()) * 100) ) * 255 * fmul, 0, 255 )
 
+	-- draw floating names if you're on the Death team
+	-- draw them for Runners as well, but not thru walls
+	for _, ply in ipairs(player.GetAll()) do
+
+		local data = ply:EyePos():ToScreen()
+		local draw = false
+
+		if ply:Alive() and ply:Team() ~= TEAM_SPECTATOR and ply ~= LocalPlayer() then
+			if LocalPlayer():Team() == ply:Team() and LocalPlayer():Alive() then
+				draw = true
+			end
+			if (LocalPlayer():Team() ~= TEAM_RUNNER) or LocalPlayer():Alive() == false then
+				if (ply ~= LocalPlayer():GetObserverTarget()) or (LocalPlayer():GetObserverMode() ~= OBS_MODE_IN_EYE) then
+					draw = true
+				end
+			end
+		end
+
+		if draw then
+			local a = 0
+			local dist = LocalPlayer():EyePos():Distance( ply:EyePos() )
+			if dist > 750 then
+				a = 0
+			elseif dist < 200 then
+				a = 255
+			else
+				a = InverseLerp( dist, 750, 200 )*255
+			end
+
+			local tcol = team.GetColor( ply:Team() )
+			tcol.a = a
+
+			deathrunShadowTextSimple( ply:Nick(), "deathrun_hud_Medium", data.x, data.y-32, Color(255,255,255, a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			deathrunShadowTextSimple( team.GetName( ply:Team() ), "deathrun_hud_Small", data.x, data.y-16, tcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
+	end
+
 end
 
 local clouds = table.Copy(DR.Colors.Clouds)
 local aliz = table.Copy(DR.Colors.Alizarin)
-local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
+--local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
 
 function DR:DrawPlayerHUD( x, y )
-
+	turq = table.Copy(DR.Colors.Turq)
 	local alpha = HudAlpha:GetInt()
 
 	-- 228x16 text size 12
@@ -288,7 +325,7 @@ function DR:DrawPlayerHUD( x, y )
 		teamtext = string.upper( ply:Nick() )
 	end
 
-	deathrunShadowTextSimple( teamtext , "deathrun_hud_Small", dx + 228/2,  dy + 16/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1) -- team name
+	deathrunShadowTextSimple( teamtext , "deathrun_hud_Small", dx + 228/2,  dy + 16/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1) -- team name
 
 	dy = dy + 16 + 4
 
@@ -320,8 +357,8 @@ function DR:DrawPlayerHUD( x, y )
 	surface.DrawRect( dx + 32 + 4, dy, 192*hpfrac, 32 )
 
 	-- hp text
-	deathrunShadowTextSimple( "HP", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
-	deathrunShadowTextSimple( tostring( curhp ), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2-1, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( "HP", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( tostring( curhp ), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2-1, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 
 	dy = dy + 32 + 4
 
@@ -346,8 +383,8 @@ function DR:DrawPlayerHUD( x, y )
 	surface.DrawRect( dx + 32 + 4, dy, 192*velfrac, 32 )
 
 	-- hp text
-	deathrunShadowTextSimple( "VL", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
-	deathrunShadowTextSimple( tostring( curvel )..((ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true) and " AUTO" or ""), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2 -1, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( "VL", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( tostring( curvel )..((ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true) and " AUTO" or ""), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 
 end
 local orange = table.Copy(DR.Colors.Orange) 
@@ -407,7 +444,7 @@ function DR:DrawPlayerHUDAmmo( x, y )
 
 
 	if IsValid( wep ) then
-		deathrunShadowTextSimple( tostring( wepdata.Name ), "deathrun_hud_Large", dx + 224, dy + 32/2 -1, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1 )
+		deathrunShadowTextSimple( tostring( wepdata.Name ), "deathrun_hud_Large", dx + 224, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1 )
 	else
 		return
 	end
@@ -433,10 +470,10 @@ function DR:DrawPlayerHUDAmmo( x, y )
 		surface.SetDrawColor( orange )
 		surface.DrawRect( dx + 32 + 4, dy, 192*frac, 32 )
 
-		deathrunShadowTextSimple( "AM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+		deathrunShadowTextSimple( "AM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 
 		if wepdata.ShouldDrawHUD then
-			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "deathrun_hud_Large", dx + 32 + 192, dy + 32/2 -1, DR.Colors.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1)
+			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "deathrun_hud_Large", dx + 32 + 192, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1)
 		end
 	end
 
@@ -545,12 +582,12 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 			local name = tbl_mvps[i]
 			if name then
 				surface.DrawRect(x, y+h+(gap+mh)*i + gap, mw, mh)
-				deathrunShadowTextSimple( name, "deathrun_hud_Medium", x + w/2, y + h +(gap+mh)*i + gap +mh/2 - 1, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+				deathrunShadowTextSimple( name, "deathrun_hud_Medium", x + w/2, y + h +(gap+mh)*i + gap +mh/2 - 1, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
 			end
 		end
 	end
 
-	deathrunShadowTextSimple( stalemate == false and string.upper(team.GetName( winteam ).." win the round!") or "STALEMATE!", "deathrun_hud_Xlarge", x + w/2, y + h/2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( stalemate == false and string.upper(team.GetName( winteam ).." win the round!") or "STALEMATE!", "deathrun_hud_Xlarge", x + w/2, y + h/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
 	surface.SetDrawColor( DR.Colors.Clouds )
 	surface.DrawRect(x, y + h + gap, mw, mh)
 	deathrunShadowTextSimple( stalemate and "YOU'RE ALL TERRIBLE!" or "MOST VALUABLE PLAYERS", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0 )

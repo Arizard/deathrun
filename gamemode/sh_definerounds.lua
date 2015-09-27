@@ -71,7 +71,7 @@ local DeathTimes = {}
 -- handle death avoidance here, using the functions defined in init.lua
 
 local function checkdeathavoid( ply )
-	print("checking for death avoid... "..ply:Nick())
+	print("Checking for death avoid... "..ply:Nick())
 	local avoided = (ply:Team() == TEAM_DEATH and ply:Alive()) and true or false
 	if avoided == true and (ROUND:GetCurrent() == ROUND_PREP or ROUND:GetCurrent() == ROUND_ACTIVE) and #player.GetAllPlaying() > 2 then
 		DR:PunishDeathAvoid( ply, GetConVarNumber("deathrun_death_avoid_punishment") )

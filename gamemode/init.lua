@@ -136,7 +136,7 @@ end
 DR.SpecBuffer = {}
 
 hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
-	print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
+	--print( ply:Nick(), "spectator only: "..tostring( ply:ShouldStaySpectating() ) )
 
 	if GhostMode then -- GhostMode compatibility
 		if ply:Team() == TEAM_GHOST then
@@ -160,7 +160,7 @@ hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 	if ply.FirstSpawn == true then
 		ply.FirstSpawn = false
 		if ROUND:GetCurrent() == ROUND_ACTIVE or ROUND:GetCurrent() == ROUND_OVER then
-			print("firstspawn, spawning as spectator.")
+			--print("firstspawn, spawning as spectator.")
 			table.insert(DR.SpecBuffer, ply)
 			timer.Simple(0, function() -- SUDDENTLY SPECTATOR IS MAGICALLY FIXED
 				for k, ply in pairs( DR.SpecBuffer ) do

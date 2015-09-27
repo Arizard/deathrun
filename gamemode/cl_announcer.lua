@@ -1,5 +1,5 @@
 DR.AnnouncerName = DR.AnnouncerName or "HELP" -- incase the file refreshes
-DR.AnnouncerColor = DR.AnnouncerColor or DR.Colors.Alizarin
+DR.AnnouncerColor = DR.AnnouncerColor or DR.Colors.Text.Alizarin
 
 function DR:SetAnnouncerName( name )
 	DR.AnnouncerName = name
@@ -48,7 +48,7 @@ local idx = 1
 local function DoAnnouncements()
 	if AnnouncementEnabled:GetBool() == false then return end
 
-	chat.AddText(DR.Colors.Clouds, "[", DR.AnnouncerColor, DR.AnnouncerName, DR.Colors.Clouds, "] "..(msgs[idx]))
+	chat.AddText(DR.Colors.Text.Clouds, "[", DR.AnnouncerColor, DR.AnnouncerName, DR.Colors.Text.Clouds, "] "..(msgs[idx]))
 	idx = idx + 1
 	if idx > #msgs then idx = 1 end
 end

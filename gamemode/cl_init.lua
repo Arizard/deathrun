@@ -36,7 +36,7 @@ concommand.Add("dr_test_menu", function()
 end)
 
 function DR:ChatMessage( msg )
-	chat.AddText(DR.Colors.Clouds, "[", DR.Colors.Turq, "DEATHRUN", DR.Colors.Clouds, "] ",msg)
+	chat.AddText(DR.Colors.Text.Clouds, "[", DR.Colors.Text.Turq, "DEATHRUN", DR.Colors.Text.Clouds, "] ",msg)
 end
 
 net.Receive("DeathrunChatMessage", function(len, ply)
@@ -181,4 +181,12 @@ function GM:PreDrawPlayerHands( hands, vm, ply, wep )
 	if ply:GetObserverMode() == OBS_MODE_CHASE or ply:GetObserverMode() == OBS_MODE_ROAMING then
 		return true
 	end
+end
+
+function DR:SetMainColor( col )
+	DR.Colors.Turq = col
+end
+
+function DR:SetMainTextColor( col )
+	DR.Colors.Text.Turq = col
 end

@@ -32,17 +32,19 @@ surface.CreateFont("deathrun_derma_WindowTitle", {
 	antialias = true,
 	})
 
-local COLORS = {}
-COLORS.Bad = HexColor("#e74c3c")
-COLORS.BadDark = HexColor("#c0392b")
-COLORS.Good = HexColor("#2ecc71")
-COLORS.GoodDark = HexColor("#27ae60")
-COLORS.NeutralHigh = HexColor("#ecf0f1")
-COLORS.NeutralMed = HexColor("#bdc3c7")
-COLORS.NeutralLow = HexColor("#95a5a6")
-COLORS.NeutralDark = HexColor("#7f8c8d")
-COLORS.Turq = DR.Colors.Turq
-COLORS.TurqDark = HexColor("#d35400")
+
+DR.DermaColors.Bad = HexColor("#e74c3c")
+DR.DermaColors.BadDark = HexColor("#c0392b")
+DR.DermaColors.Good = HexColor("#2ecc71")
+DR.DermaColors.GoodDark = HexColor("#27ae60")
+DR.DermaColors.NeutralHigh = HexColor("#ecf0f1")
+DR.DermaColors.NeutralMed = HexColor("#bdc3c7")
+DR.DermaColors.NeutralLow = HexColor("#95a5a6")
+DR.DermaColors.NeutralDark = HexColor("#7f8c8d")
+DR.DermaColors.Turq = DR.Colors.Turq
+DR.DermaColors.TurqDark = HexColor("#d35400")
+
+
 
 function deathrunShadowText( text, font, x, y, col, ax, ay , d)
 	if d ~= 0 and d ~= nil then
@@ -91,7 +93,7 @@ function MAIN:OnClose() end-- stub
 function MAIN:Init()  
 	
 	self.bgalpha = 25
-	self.bgcolor = HexColor("#ecf0f1", 50)
+	self.bgcolor = DR.Colors.Clouds
 	self.fgcolor = DR.Colors.Turq
 	self.title = "deathrun Window"
    
@@ -101,8 +103,8 @@ function MAIN:Init()
 		self:GetParent():Close()
 	end
 	function self.cb:PaintOver(w,h)
-		draw.RoundedBox(0,0,0,w,h, COLORS.Bad)
-		--draw.DrawText("✖","deathrun_derma_Medium",w/2,-3,COLORS.NeutralHigh, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.RoundedBox(0,0,0,w,h, DR.DermaColors.Bad)
+		--draw.DrawText("✖","deathrun_derma_Medium",w/2,-3,DR.DermaColors.NeutralHigh, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end	
 
 	self.inner = vgui.Create("DPanel", self)
@@ -132,7 +134,7 @@ end
 function MAIN:Paint(w,h)
 	local inner = {x = 0,y = 28, w = self:GetWide(), h = self:GetTall() - 28 - 8}
 
-	surface.SetDrawColor(COLORS.NeutralHigh)
+	surface.SetDrawColor(DR.DermaColors.NeutralHigh)
 	deathrunDrawBlur(self, 4)
 
 	local bgcol = self:GetSecondaryColor()
@@ -183,8 +185,8 @@ function BUTTN:Init()
 	self.textcol = Color(255,255,255)
 
 	self.color = {}
-	self.color.up = COLORS.NeutralDark
-	self.color.hover = COLORS.NeutralLow
+	self.color.up = DR.DermaColors.NeutralDark
+	self.color.hover = DR.DermaColors.NeutralLow
 	self.hover = false
 	self.active = false
 
@@ -324,7 +326,7 @@ function MPANEL:Init()
 	self.spacer = vgui.Create("DPanel",self)
 
 	function self.spacer:Paint()
-		surface.SetDrawColor(COLORS.NeutralLow)
+		surface.SetDrawColor(DR.DermaColors.NeutralLow)
 		surface.DrawRect(0,0,self:GetWide(),self:GetTall())
 	end
 	self.spacer:SetPos(0,24)
@@ -400,7 +402,7 @@ function MPANEL:AddTab(str_name)
 	self.buttons[str_name] = vgui.Create("deathrun_button", self)
 	self.buttons[str_name]:SetSize(92,24)
 	self.buttons[str_name]:SetText(str_name)
-	self.buttons[str_name]:SetColors(COLORS.GoodDark, COLORS.Good)
+	self.buttons[str_name]:SetColors(DR.DermaColors.GoodDark, DR.DermaColors.Good)
 
 	self.tabs[#self.tabs+1] = str_name
 

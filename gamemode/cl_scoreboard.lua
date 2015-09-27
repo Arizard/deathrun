@@ -108,10 +108,10 @@ function DR:CreateScoreboard()
 
 		if self.counter > 1 then self.counter = 0 end
 		if fw > self:GetWide() then
-			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 + fw - self.counter * fw , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
-			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 - self.counter * fw , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 + fw - self.counter * fw , h/2-2, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", 4 - self.counter * fw , h/2-2, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
 		else
-			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", w/2 , h/2-2, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+			deathrunShadowTextSimple( GetHostName(), "deathrun_derma_Large", w/2 , h/2-2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
 		end
 	end
 

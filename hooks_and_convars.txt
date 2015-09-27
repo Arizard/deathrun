@@ -175,6 +175,24 @@ CLIENT:
 	DeathrunOpenScoreboard( )
 		Return false to prevent the scoreboard from opening and replace it with your own.
 
+	DeathrunChangeColors( )
+		Call the following functions inside this hook to make sure they are applied at the right time:
+
+			DR:SetMainColor( COLOR col )
+			DR:SetMainTextColor( COLOR col )
+			DR:SetAnnouncerColor( COLOR col )
 
 
 
+
+hook.Add("DeathrunBeginPreptime", "FreezePlayers", function()
+	for k,v in ipairs(player.GetAll()) do
+		v:Freeze(true)
+	end
+end)
+
+hook.Add("DeathrunBeginActive", "FreezePlayers", function()
+	for k,v in ipairs(player.GetAll()) do
+		v:Freeze(false)
+	end
+end)
