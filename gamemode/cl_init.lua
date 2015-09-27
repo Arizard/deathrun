@@ -27,6 +27,8 @@ include( "cl_announcer.lua" )
 
 include( "sh_pointshopsupport.lua" )
 
+include( "sh_statistics.lua" )
+
 concommand.Add("dr_test_menu", function()
 	local frame = vgui.Create("arizard_window")
 	frame:SetSize(640,480)

@@ -100,7 +100,33 @@ concommand.Add("deathrun_cleanup",function(ply, cmd, args)
 
 end, nil, nil, FCVAR_SERVER_CAN_EXECUTE )
 
+concommand.Add("deathrun_get_stats", function( ply, cmd, args )
 
+	if args[1] then
+		local targets = FindPlayersByName( args[1] )
+		local cont = false
+
+		if #targets == 1 then
+			net.Start("deathrun_send_stats")
+			--net.WriteString( targets[1]:SteamID() )
+			net.WriteTable( sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..targets[1]:SteamID().."'") )
+			net.Send( ply )
+		elseif #targets > 1 then
+			DeathrunSafeChatPrint( ply, "One player at a time, please." )
+		else
+			DeathrunSafeChatPrint( ply, "No targets found with that name.")
+		end
+
+	elseif not args[1] then
+		net.Start("deathrun_send_stats")
+		--net.WriteString( ply:SteamID() )
+		net.WriteTable( sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'") )
+		net.Send( ply )
+		--print('meme')
+	else
+		DeathrunSafeChatPrint( ply, "Could not execute command.")
+	end
+end)
 
 -- chat commands
 
@@ -175,5 +201,9 @@ end)
 
 DR:AddChatCommand("thirdperson", function(ply)
 	ply:ConCommand("deathrun_toggle_thirdperson")
+end)
+
+DR:AddChatCommand("stats", function( ply, args )
+	ply:ConCommand( "deathrun_get_stats "..(args[1] or "") )
 end)
 
