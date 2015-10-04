@@ -58,6 +58,9 @@ SERVER CONVARS:
 	deathrun_finish_balloons <0-25>
 		The amount of balloons to spawn when the player finishes the map. :)
 
+	deathrun_autoslay_delay <0-999>
+		How long to wait after a round starts to slay the AFK players. Measured in seconds. (Thanks Omega for reminding me to add this here.)
+
 
 CLIENT CONVARS:
 
