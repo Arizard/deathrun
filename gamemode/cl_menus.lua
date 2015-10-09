@@ -227,6 +227,7 @@ timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
 		{"number", "deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
 		{"number", "deathrun_targetid_fade_duration",0,10,"TargetID fade duration"},
 		{"boolean", "deathrun_zones_visibility", "Toggle Zone Visibility"},
+		{"boolean", "deathrun_stats_visibility", "Toggle the YOUR STATS popup"},
 	
 		{"header", "Spectator Settings"},
 

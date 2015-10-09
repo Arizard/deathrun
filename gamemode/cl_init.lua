@@ -192,3 +192,4 @@ end
 function DR:SetMainTextColor( col )
 	DR.Colors.Text.Turq = col
 end
+

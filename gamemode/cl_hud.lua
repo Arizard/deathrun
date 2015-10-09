@@ -286,6 +286,9 @@ local aliz = table.Copy(DR.Colors.Alizarin)
 --local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
 
 function DR:DrawPlayerHUD( x, y )
+	
+	
+
 	turq = table.Copy(DR.Colors.Turq)
 	local alpha = HudAlpha:GetInt()
 
@@ -385,6 +388,7 @@ function DR:DrawPlayerHUD( x, y )
 	-- hp text
 	deathrunShadowTextSimple( "VL", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
 	deathrunShadowTextSimple( tostring( curvel )..((ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true) and " AUTO" or ""), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+
 
 end
 local orange = table.Copy(DR.Colors.Orange) 
@@ -524,6 +528,18 @@ function DR:AddNotification( msg, x, y, dx, dy, ddx, ddy, dur )
 	table.insert(notifications, new)
 end
 
+concommand.Add("deathrun_test_notification", function(ply, cmd, args)
+
+	local msg = ""
+	for i = 1, #args do
+		msg = msg .. args[i].." "
+	end
+
+	DR:AddNotification( msg, ScrW()/2, ScrH()/2, 0, 0, 0, 0, 10 )
+
+end)
+
+
 local lastCycle = CurTime()
 function DR:UpdateNotifications( )
 	local dt = CurTime() - lastCycle
@@ -536,9 +552,13 @@ function DR:UpdateNotifications( )
 		
 		local aliveFor = CurTime() - v.born
 		local fadein = math.Clamp( Lerp( InverseLerp(aliveFor,0,v.dur/5), 0, 255 ), 0, 255 )
+		local scalein = math.pow(fadein/255, 1/4)
 
-		draw.DrawText( v.text, "deathrun_hud_Medium", v.x+1, v.y+1, Color(0,0,0,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-		draw.DrawText( v.text, "deathrun_hud_Medium", v.x, v.y, Color(255,255,255,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+		
+
+		deathrunShadowTextSimple( v.text, "deathrun_hud_Medium", v.x+1, v.y+1, Color(0,0,0,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+		deathrunShadowTextSimple( v.text, "deathrun_hud_Medium", v.x, v.y, Color(255,255,255,fadein), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
 
 		v.x = v.x + v.dx * fmul
 		v.y = v.y + v.dy * fmul
@@ -898,3 +918,20 @@ cvars.AddChangeCallback("deathrun_vhs7", function( name, old, new )
 	end
 end, "tvborder_callback")
 
+hook.Add("HUDPaintBackground", "Vaporwave", function()
+
+
+	local M = Matrix()
+
+	M:Translate( Vector(ScrW()/2, ScrH()/2) )
+	M:Rotate( Angle(0,5 * math.sin(CurTime()*0.5),0) )
+	M:Scale( Vector(1,1,1) * (0.9 + 0.2*math.sin( CurTime()*0.3)) )
+	M:Translate( -Vector(ScrW()/2, ScrH()/2) )  
+
+	--cam.PushModelMatrix( M )
+end)
+
+hook.Add("PostDrawHUD", "Vaporwave", function()
+
+	--cam.PopModelMatrix()
+end)

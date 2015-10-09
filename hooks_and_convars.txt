@@ -116,6 +116,9 @@ CLIENT CONVARS:
 	deathrun_zones_visibility <0-1>
 		Enables zone visibility, defaults to 1.
 
+	deathrun_stats_visibility <0-1>
+		Enabled the YOUR STATS popup when the player spawns.
+
 
 -----------
 -- HOOKS --
