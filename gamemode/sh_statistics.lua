@@ -22,7 +22,7 @@ if SERVER then
 			if vic:Team() ~= att:Team() then
 				data1 = sql.Query( "SELECT kills FROM deathrun_stats WHERE sid = '"..att:SteamID().."'")
 				local kills = data1[1]["kills"]
-				res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1) )
+				res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1).." WHERE sid = '"..att:SteamID().."'" )
 			end
 		else
 			if vic:Team() == TEAM_RUNNER then
@@ -39,9 +39,33 @@ if SERVER then
 		if vic:IsPlayer() and not vic:IsBot() then
 			data2 = sql.Query( "SELECT deaths FROM deathrun_stats WHERE sid = '"..vic:SteamID().."'")
 			local deaths = data2[1]["deaths"]
-			res = sql.Query( "UPDATE deathrun_stats SET deaths = "..tostring(deaths+1) )
+			res = sql.Query( "UPDATE deathrun_stats SET deaths = "..tostring(deaths+1).." WHERE sid = '"..vic:SteamID().."'" )
 		end
 
+	end)
+
+	hook.Add("DeathrunRoundWin", "stats", function( winteam )
+		if winteam == TEAM_RUNNER or winteam == TEAM_DEATH then
+			players = team.GetPlayers( winteam )
+			if winteam == TEAM_RUNNER then
+				for k,ply in ipairs( players ) do
+					if not ply:IsBot() then 
+						local data1 = sql.Query("SELECT runner_wins FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'")
+						local wins = data1[1]["runner_wins"]
+						sql.Query( "UPDATE deathrun_stats SET runner_wins = "..tostring( wins+1 ).." WHERE sid = '"..ply:SteamID().."'")
+					end
+				end
+			end
+			if winteam == TEAM_DEATH then
+				for k,ply in ipairs( players ) do
+					if not ply:IsBot() then 
+						local data1 = sql.Query("SELECT death_wins FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'")
+						local wins = data1[1]["death_wins"]
+						sql.Query( "UPDATE deathrun_stats SET death_wins = "..tostring( wins+1 ).." WHERE sid = '"..ply:SteamID().."'")
+					end
+				end
+			end
+		end
 	end)
 
 	concommand.Add("stats_test", function( ply, cmd, args )
