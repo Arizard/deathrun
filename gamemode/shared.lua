@@ -83,7 +83,7 @@ local function intToBool( i )
 end
 
 CreateConVar("deathrun_infinite_ammo", "1", defaultFlags, "Should ammo automatically replenish.")
-CreateConVar("deathrun_autojump_velocity_cap", 650, defaultFlags, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
+CreateConVar("deathrun_autojump_velocity_cap", 0, defaultFlags, "The amount to limit players speed to when they use autojump. For game balance. 0 = unlimited")
 CreateConVar("deathrun_allow_autojump", 1, defaultFlags, "Allows players to use autojump.")
 CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", defaultFlags, "The URL to open when the player types !help.")
 

@@ -92,7 +92,9 @@ if SERVER then
 
 	hook.Add("PlayerLoadout", "DisplayStatsForPlayers", function(ply)
 		if ply:Alive() and not ply:GetSpectate() then
-			DR:DisplayStats( ply )
+			timer.Simple(0.5, function()
+				DR:DisplayStats( ply )
+			end )
 		end
 	end)
 
