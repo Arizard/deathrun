@@ -223,7 +223,7 @@ if CLIENT then
 				surface.SetDrawColor( DR.Colors.Turq )
 				surface.DrawRect(x,y,w,80)
 
-				draw.ShadowText("YOUR STATS", "deathrun_3d2d_large", 0, y, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
+				deathrunShadowTextSimple("YOUR STATS", "deathrun_3d2d_large", 0, y, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
 
 				local labels = {
 				"Kills",
@@ -233,10 +233,10 @@ if CLIENT then
 				}
 
 				for i = 1, #labels do
-					draw.ShadowText(labels[i], "deathrun_3d2d_small", x+20, y + 100 + 70*(i-1), DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 0)
+					deathrunShadowTextSimple(labels[i], "deathrun_3d2d_small", x+20, y + 100 + 70*(i-1), DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 0)
 				end
 				for i = 1, #stats3d.data do
-					draw.ShadowText(tostring(stats3d.data[i]), "deathrun_3d2d_small", x+w-20, y + 100 + 70*(i-1), DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 0)
+					deathrunShadowTextSimple(tostring(stats3d.data[i]), "deathrun_3d2d_small", x+w-20, y + 100 + 70*(i-1), DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 0)
 				end
 				-- close stencil
 
