@@ -15,6 +15,11 @@ function MV:IsMapNominated( mapname )
 end
 
 function MV:NewDermaRow( tbl_cols, w, h, customColor, customColor2, doclick )
+
+	if doclick == nil then
+		doclick = function() end
+	end
+
 	local panel = vgui.Create("DPanel")
 	panel:SetSize(w,h)
 	panel.tbl_cols = tbl_cols
@@ -42,7 +47,7 @@ function MV:NewDermaRow( tbl_cols, w, h, customColor, customColor2, doclick )
 		local label = vgui.Create("DLabel", panel)
 		label:SetText( columns[i] )
 		label:SetTextColor( customColor2 or DR.Colors.Clouds )
-		label:SetFont("deathrun_derma_Small")
+		label:SetFont("deathrun_derma_Tiny")
 		label:SizeToContents()
 		label:SetPos( #columns > 1 and 4+(k * ((panel:GetWide()-8)/(#columns-1)) - label:GetWide()*align) or (panel:GetWide()-8)/2 - label:GetWide()/2, panel:GetTall()/2 - label:GetTall()/2 - 1 )
 
@@ -78,8 +83,8 @@ function MV:OpenFullMapList( maps )
 	end
 
 	local scr = vgui.Create("DScrollPanel", panel)
-	scr:SetSize(panel:GetWide(), panel:GetTall())
-	scr:SetPos(0,0)
+	scr:SetSize(panel:GetWide()-8, panel:GetTall())
+	scr:SetPos(4,0)
 
 	local vbar = scr:GetVBar()
 	vbar:SetWide(4)
@@ -114,14 +119,35 @@ function MV:RepopulateMapList()
 		local dlist = MV.AllMapsListList
 		local maps = dlist.maps
 		dlist:Clear()
-		dlist:Add( MV:NewDermaRow({"Click on a map to see options!"}, dlist:GetParent():GetParent():GetWide()-4, 24 ) )
+
+		local lb = dlist:Add( "DLabel" )
+		lb:SetFont( "deathrun_derma_Medium" )
+		lb:SetText("Maps")
+		lb:SetColor( DR.Colors.Turq )
+		lb:SizeToContents()
+		lb:SetWide( dlist:GetWide() )
+
+		local lb = dlist:Add( "DLabel" )
+		lb:SetFont( "deathrun_derma_Tiny" )
+		lb:SetText("Click on a map to see its options!")
+		lb:SetColor( DR.Colors.Turq )
+		lb:SizeToContents()
+		lb:SetWide( dlist:GetWide() )
+
+		local pn = dlist:Add("DPanel")
+		pn:SetWide( dlist:GetWide() )
+		pn:SetTall( 8 )
+		pn.Paint = function() end
+
+
+		--dlist:Add( MV:NewDermaRow({"Click on a map to see options!"}, dlist:GetParent():GetParent():GetWide()-4, 24 ) )
 		for i = 1,#maps do
-			local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "Nominated!" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, MV:IsMapNominated( maps[i] ) and DR.Colors.Turq or HexColor("#303030"),
+			local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "[NOMINATED]" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, MV:IsMapNominated( maps[i] ) and DR.Colors.Turq or HexColor("#303030"),
 				function( self )
 					local map = self:GetParent().mapname
 
 					local menu = vgui.Create("DMenu")
-					local nominate = menu:AddOption("Nominate map for voting")
+					local nominate = menu:AddOption("Nominate Map")
 					nominate:SetIcon("icon16/lightbulb.png")
 					nominate.mapname = map
 					function nominate:DoClick()

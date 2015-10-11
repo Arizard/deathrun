@@ -47,8 +47,10 @@ DR.DermaColors.TurqDark = HexColor("#d35400")
 
 
 function deathrunShadowText( text, font, x, y, col, ax, ay , d)
+	d = d or 1
 	if d ~= 0 and d ~= nil then
-		draw.DrawText( text, font, x+d, y+d, Color(0,0,0,col.a/1.2), ax, ay )
+		draw.DrawText( text, font, x+d*2, y+d*2, Color(0,0,0,col.a/4), ax, ay )
+		draw.DrawText( text, font, x+d, y+d, Color(0,0,0,col.a/2), ax, ay )
 	end
 	draw.DrawText( text, font, x, y, col, ax, ay)
 end
