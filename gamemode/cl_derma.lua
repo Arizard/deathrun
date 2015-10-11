@@ -482,3 +482,152 @@ vgui.Register("deathrun_multipanel", MPANEL)
 concommand.Add("deathrun_test_derma", function()
 	vgui.Create("deathrun_window")
 end)
+
+function surface.EasyPoly(tbl) -- needs a table in format { {x1,y1}, {x2,y2} }
+	local poly = {}
+
+	for i = 1, #tbl do
+		local temp = {}
+		temp['x'] = tbl[i][1]
+		temp['y'] = tbl[i][2]
+
+		table.insert(poly, temp)
+	end
+
+	
+	surface.DrawPoly(poly)
+	
+
+end
+
+function surface.DrawCircle(x, y, r)
+
+	local segments = 45
+
+	local poly = {}
+
+	for i = 1, segments do
+		local temp = {}
+		temp['x'] = math.cos( (math.ceil(i*(360/segments)) )*(math.pi/180) ) * r + x
+		temp['y'] = math.sin( (math.ceil(i*(360/segments)))*(math.pi/180) ) * r + y
+
+		table.insert(poly, temp)
+	end
+
+	surface.DrawPoly(poly)
+
+end
+
+function QuadLerp( frac, p1, p2 )
+
+    local y = (p1-p2) * (frac -1)^2 + p2
+    return y
+
+end
+
+function InverseLerp( pos, p1, p2 )
+
+	local range = 0
+	range = p2-p1
+
+	if range == 0 then return 1 end
+
+	return ((pos - p1)/range)
+
+end
+local AUTOGGLE = {}
+
+function AUTOGGLE:Init()
+	self.state = false
+	self.text = "AuToggle Toggle Switch"
+	self.font = "deathrun_derma_Tiny"
+
+	self.t = 0
+
+	self.button = vgui.Create("DButton", self)
+	function self.button:Paint() end
+	self.button:SetText("")
+	function self.button:DoClick()
+		self:GetParent():Toggle()
+	end
+	self.button:SetSize(self:GetSize())
+end
+function AUTOGGLE:SetText( s )
+	self.text = s
+end
+function AUTOGGLE:SetTextColor( col )
+end
+function AUTOGGLE:GetText()
+	return self.text
+end
+function AUTOGGLE:SetFont( s )
+	self.font = s
+end
+function AUTOGGLE:GetFont()
+	return self.font
+end
+function AUTOGGLE:PerformLayout()
+	self.button:SetSize(self:GetSize())
+end
+function AUTOGGLE:Think()
+
+	if not self.state then
+		if self.t > 0 then
+			self.t = self.t - FrameTime()*2
+		else
+			self.t = 0
+		end
+	else
+		if self.t < 1 then
+			self.t = self.t + FrameTime()*2
+		else
+			self.t = 1
+		end
+	end
+end
+function AUTOGGLE:Paint( w, h )
+	surface.SetDrawColor( DR.Colors.Turq )
+	draw.NoTexture()
+	--surface.DrawOutlinedRect(0,0,w,h)
+
+	--surface.DrawRect(8, h/2-8, 4 + ( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) )*12, 16)
+	--surface.DrawOutlinedRect(8, h/2-8, 16, 16)
+	surface.DrawCircle( 16, h/2, 8 )
+	surface.SetDrawColor( DR.Colors.Clouds )
+	surface.DrawCircle( 16, h/2, 6*( 1- ( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) ) )
+
+	--surface.SetDrawColor( AuColors.Solid.Emerald )
+	--surface.DrawCircle( 16, h/2, 10*( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) )
+
+
+	deathrunShadowTextSimple( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 0 )
+end
+function AUTOGGLE:SetConVar( s )
+	self.convar = GetConVar( s )
+	self.state = self.convar:GetBool()
+end
+function AUTOGGLE:Toggle()
+	self.state = not self.state
+	if self.convar then
+		RunConsoleCommand( self.convar:GetName() , tostring( self.state == true and 1 or 0 ) )
+	end
+	self:DoToggle( not self.state, self.state )
+end
+function AUTOGGLE:DoToggle( ostate, nstate )
+end
+function AUTOGGLE:SetValue( b )
+	self.state = b
+end
+function AUTOGGLE:SizeToContents()
+	surface.SetFont( self:GetFont() )
+
+	local tw, th = 0,0
+	local fw, fh = surface.GetTextSize( self:GetText() )
+	
+	tw = 16 + 8 + 8 + fw + 8
+	th = self:GetTall()
+
+	self:SetSize( tw, th )
+end
+
+vgui.Register("AuToggle_Deathrun", AUTOGGLE)
