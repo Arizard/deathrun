@@ -1,15 +1,4 @@
 #Arizard's Deathrun
-<table>
-<tr>
-<td>
- <p><b>GAMEMODE STATUS</b></p>
-
-<td>
- <b><i>SOMEWHAT READY</i></b> - It's mostly stable but expect some bugs.
-</td>
-</tr>
-</table>
-
 
 Yet another Deathrun gamemode for Garrysmod. 
 
@@ -20,17 +9,6 @@ This gamemode aims to create a new standard for deathrun gamemodes to improve ev
 This means I'm taking suggestions for what should be standard in Deathrun (i.e. Button Claiming). In fact, I'm begging for suggestions here. I hope to make this *the Deathrun gamemode* one day.
 
 Also, if you see any horriffic, eye-meltingly bad code anywhere in this repository, feel free to spam my steam or github messages about it and I will try and fix it as soon as possible.
-
-###Planned Features:
-* Death Avoidance Penalty - Force players to spectator for 3 rounds when they attempt to death-avoid.
-* Pointshop 2 support (pointshop 1 support already implemented)
-* ReDie - Allow players to spawn as ghosts so that they can practice the map instead of being forced to spectate.
-* Evolve support for scoreboard (kick, ban, slay, gag)
-* MORE HOOKS
-
-###Separate stuff
-* RTD
-* Leveling/XP (hooks into starts/ends)
 
 ##Currently Implemented Features
 
