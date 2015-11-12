@@ -151,29 +151,32 @@ If a player has been AFK for at least 35 seconds since the start of the round, t
 
 ##Images
 Help Menu
+
 ![](http://i.imgur.com/DBhgaVb.jpg)
 
 Settings Menu
+
 ![](http://i.imgur.com/GgcCbBn.jpg)
 
 Weapon recoil pattern
+
 ![](http://i.imgur.com/qoUp7qb.png)
 
-Health and Velocity HUD
-![](http://i.imgur.com/RdleFGm.png)
-
 Crosshair Creator
+
 ![](http://i.imgur.com/pdx6iFl.jpg)
 
 Scoreboard
+
 ![](http://i.imgur.com/l5qpgBH.jpg)
 
 Nomination window
 
-![](http://i.imgur.com/5w0oNpT.png)
+![](http://i.imgur.com/w3I5WA6.jpg)
 
 Mapvote window
-![](http://i.imgur.com/w3I5WA6.jpg)
+
+![](http://i.imgur.com/al5IQ4E.png)
 
 Autojump Velocity Cap (at 450 u/s)
 
