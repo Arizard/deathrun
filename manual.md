@@ -22,6 +22,8 @@ Typing !settings or pressing F2 will open the Settings menu. This lets players e
 ###Zones and Rewards
 Server admins can add customisable ending zones to each map, specifying their dimensions, color, and behavior. A number of presets for zones are included in the gamemode - notably, the "end" preset. Selecting this preset will register the zone as a map ending, and any players passing through the zone will be considered to have finished the map.
 
+To open the zones menu, type !zones .
+
 End zones call the hook:
 <pre>DeathrunPlayerFinishMap (PLAYER ply, STRING name, TABLE zone, INT place)
 -- Where ply is the player finishing the map
@@ -149,10 +151,10 @@ If a player has been AFK for at least 35 seconds since the start of the round, t
 
 ##Images
 Help Menu
-![](http://i.imgur.com/Ealwjha.png)
+![](http://i.imgur.com/DBhgaVb.jpg)
 
 Settings Menu
-![](http://i.imgur.com/DJtmTaw.png)
+![](http://i.imgur.com/GgcCbBn.jpg)
 
 Weapon recoil pattern
 ![](http://i.imgur.com/qoUp7qb.png)
@@ -161,22 +163,23 @@ Health and Velocity HUD
 ![](http://i.imgur.com/RdleFGm.png)
 
 Crosshair Creator
-![](http://i.imgur.com/LB95Yko.png)
+![](http://i.imgur.com/pdx6iFl.jpg)
 
 Scoreboard
-![](http://i.imgur.com/WkyEzwd.png)
+![](http://i.imgur.com/l5qpgBH.jpg)
 
 Nomination window
 
 ![](http://i.imgur.com/5w0oNpT.png)
 
 Mapvote window
-![](http://i.imgur.com/al5IQ4E.png)
+![](http://i.imgur.com/w3I5WA6.jpg)
 
-Autojump Velocity Cap
+Autojump Velocity Cap (at 450 u/s)
 
-![](http://i.imgur.com/sMcW33i.png)
+![](http://i.imgur.com/P2u4KrJ.png)
 
 Start and End zones with Zone Editor
 
-![](http://i.imgur.com/mjJcrmH.png)
+![](http://i.imgur.com/VacPaV3.png)
+![](http://i.imgur.com/mB561X1.png)

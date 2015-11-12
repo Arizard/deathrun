@@ -31,6 +31,8 @@ SERVER CONVARS:
 	deathrun_help_url <string url>
 		The url to open when the player types !help.
 
+		NB: THIS IS BROKEN (???)
+
 	deathrun_round_limit <0-20>
 		How many rounds should be played before the map changes?
 
