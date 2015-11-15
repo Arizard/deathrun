@@ -127,7 +127,7 @@ function DR:CreateScoreboard()
 		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
 	end
 	if GhostMode then -- GhostMode support
-		dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_SPECTATOR)).." players in Ghost Mode"}, dlist:GetWide(), 32, team.GetColor( TEAM_GHOST ) ) )
+		dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_GHOST)).." players in Ghost Mode"}, dlist:GetWide(), 32, team.GetColor( TEAM_GHOST ) ) )
 		for k,ply in ipairs(team.GetPlayers( TEAM_GHOST )) do
 			dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
 		end
