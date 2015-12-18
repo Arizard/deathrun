@@ -473,6 +473,8 @@ end)
 hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
 	if ply:SteamID() == "STEAM_0:1:30288855" then
 		return Color(0,200,0)
+	elseif ply:SteamID() == "STEAM_0:0:29351088" then
+		return Color(200,0,0)
 	end
 end)
 
