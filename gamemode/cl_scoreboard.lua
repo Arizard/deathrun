@@ -7,7 +7,7 @@ local columnFunctions = {
 			return "Super Player"
 		end
 		if ply:SteamID() == "STEAM_0:0:29351088" then
-			return  "Worst Player Ever"
+			return "Worst Player"
 		end
 		return ""
 	end,
