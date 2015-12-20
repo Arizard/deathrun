@@ -207,3 +207,16 @@ DR:AddChatCommand("stats", function( ply, args )
 	ply:ConCommand( "deathrun_get_stats "..(args[1] or "") )
 end)
 
+DR:AddChatCommand("firstperson", function(ply)
+	ply:ConCommand("deathrun_toggle_thirdperson")
+end)
+
+DR:AddChatCommand("spec", function( ply, args )
+	--if args[1] == "!spec" then
+	if ply:ShouldStaySpectating() then
+		ply:ConCommand( "deathrun_spectate_only 0" )
+	else
+		ply:ConCommand( "deathrun_spectate_only 1" )
+	end
+	--end
+end)
