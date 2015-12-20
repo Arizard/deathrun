@@ -26,7 +26,7 @@ function Hex( hex ) -- utility functions
 
     for i = 1, #hex do
         local h = hex[i]
-        local v = hexvals[h]
+        local v = hexvals[h] or 15
 
         v = v * (16^(#hex-i))
         num = num + v
