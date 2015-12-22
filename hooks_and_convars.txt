@@ -63,6 +63,8 @@ SERVER CONVARS:
 	deathrun_autoslay_delay <0-999>
 		How long to wait after a round starts to slay the AFK players. Measured in seconds. (Thanks Omega for reminding me to add this here.)
 
+	deathrun_idle_kick_time <0-999>
+		How long to wait before kicking an idle player (seconds)
 
 CLIENT CONVARS:
 
