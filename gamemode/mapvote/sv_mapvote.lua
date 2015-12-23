@@ -217,6 +217,12 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 
 	if args[1] then
 		nom = args[1]
+
+		if nom == game.GetMap() then
+			ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
+			return
+		end
+
 		MV.PlayerNominations[ ply:SteamID() ] = nom
 
 		MV.Nominations = {}

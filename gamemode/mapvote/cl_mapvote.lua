@@ -142,23 +142,25 @@ function MV:RepopulateMapList()
 
 		--dlist:Add( MV:NewDermaRow({"Click on a map to see options!"}, dlist:GetParent():GetParent():GetWide()-4, 24 ) )
 		for i = 1,#maps do
-			local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "[NOMINATED]" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, MV:IsMapNominated( maps[i] ) and DR.Colors.Turq or HexColor("#303030"),
-				function( self )
-					local map = self:GetParent().mapname
+			if maps[i] ~= game.GetMap() then
+				local mapderma = MV:NewDermaRow({maps[i] or "Error.", MV:IsMapNominated( maps[i] ) and "[NOMINATED]" or "" }, dlist:GetParent():GetParent():GetWide()-8, 24, DR.Colors.Clouds, MV:IsMapNominated( maps[i] ) and DR.Colors.Turq or HexColor("#303030"),
+					function( self )
+						local map = self:GetParent().mapname
 
-					local menu = vgui.Create("DMenu")
-					local nominate = menu:AddOption("Nominate Map")
-					nominate:SetIcon("icon16/lightbulb.png")
-					nominate.mapname = map
-					function nominate:DoClick()
-						RunConsoleCommand("mapvote_nominate_map",self.mapname)
+						local menu = vgui.Create("DMenu")
+						local nominate = menu:AddOption("Nominate Map")
+						nominate:SetIcon("icon16/lightbulb.png")
+						nominate.mapname = map
+						function nominate:DoClick()
+							RunConsoleCommand("mapvote_nominate_map",self.mapname)
+						end
+
+						menu:Open()
 					end
-
-					menu:Open()
-				end
-			)
-			mapderma.mapname = maps[i]
-			dlist:Add( mapderma )
+				)
+				mapderma.mapname = maps[i]
+				dlist:Add( mapderma )
+			end
 		end
 	end
 end
