@@ -73,20 +73,22 @@ if SERVER then
 	end)
 
 	function DR:DisplayStats( ply ) -- displays a player's stats in front of their face
-		local res = sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'" )
+		if IsValid( ply ) then
+			local res = sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'" )
 
-		if res then
-			net.Start("deathrun_display_stats")
-			--kills
-			net.WriteInt( res[1]["kills"], 16 )
-			--deaths
-			net.WriteInt( res[1]["deaths"], 16 )
-			--runner_wins
-			net.WriteInt( res[1]["runner_wins"], 16 )
-			--death_wins
-			net.WriteInt( res[1]["death_wins"], 16 )
+			if res then
+				net.Start("deathrun_display_stats")
+				--kills
+				net.WriteInt( res[1]["kills"], 16 )
+				--deaths
+				net.WriteInt( res[1]["deaths"], 16 )
+				--runner_wins
+				net.WriteInt( res[1]["runner_wins"], 16 )
+				--death_wins
+				net.WriteInt( res[1]["death_wins"], 16 )
 
-			net.Send( ply )
+				net.Send( ply )
+			end
 		end
 	end
 
