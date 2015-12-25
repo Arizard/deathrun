@@ -242,6 +242,7 @@ end
 
 function GM:PlayerDeath( ply )
 
+	ply:Extinguish()
 	-- some death sounds
 	local deathsounds = {
 		"vo/npc/male01/myarm01.wav",
