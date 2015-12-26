@@ -455,6 +455,46 @@ end
 hook.Add("ShowTeam", "DeathrunSettingsBind", function( ply ) ply:ConCommand("deathrun_open_settings") end)
 hook.Add("ShowHelp", "DeathrunHelpBind", function( ply ) ply:ConCommand("deathrun_open_help") end)
 
+local function IsCSSPrimary( wep )
+
+	local prims = {
+		"_rif_",
+		"_shot_",
+		"_mach_",
+		"_smg_",
+		"_snip_",
+	}
+
+	for k,v in ipairs(prims) do
+		if weapons.Get( wep:GetClass() ) ~= nil then
+			if string.find( weapons.Get( wep:GetClass() ).WorldModel, v ) ~= nil then
+				return true
+			end
+		end
+	end
+
+	return false
+
+end
+
+local function IsCSSSecondary( wep )
+
+	if weapons.Get( wep:GetClass() ) ~= nil then
+		if string.find( weapons.Get( wep:GetClass() ).WorldModel, "_pist_" ) ~= nil then
+			return true 
+		end
+	else
+		return false
+	end
+
+end
+
+concommand.Add("deathrun_dropweapon", function( ply, cmd, args)
+	if ply:Alive() and ply:GetActiveWeapon() ~= nil then
+		ply:DropWeapon( ply:GetActiveWeapon() )
+	end
+end)
+
 -- stop people whoring the weapons
 hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( ply, wep )
 
@@ -464,10 +504,31 @@ hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( pl
 	local weps = ply:GetWeapons()
 	local wepsclasses = {}
 	local filledslots = {}
+
+	-- make sure they don't already have a weapon in slot 4 and slot 2
+	local slots = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+
+	-- _rif_ _shot_ _mach_ _smg_ _snip_ in slot 4 (3)
+	-- _pist_ in slot 2 (1)
+
+	local secondaries = 0
+	local primaries = 0
+
 	for k,v in ipairs(weps) do
 		table.insert( wepsclasses, v:GetClass() )
+		
+		if IsCSSPrimary( v ) then
+			primaries = primaries + 1
+		elseif IsCSSSecondary( v ) then
+			secondaries = secondaries + 1
+		end
+
+	end
+	if (IsCSSPrimary( wep ) and primaries > 0) or (IsCSSSecondary( wep ) and secondaries > 0) then
+		return false
 	end
 	if table.HasValue(wepsclasses, class) then return false end
+
 end)
 
 -- Something to check how long it's been since the player last did something

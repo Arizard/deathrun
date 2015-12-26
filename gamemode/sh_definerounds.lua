@@ -65,6 +65,10 @@ end
 
 local rounds_played = 0
 
+function ROUND:GetRoundsPlayed()
+	return rounds_played
+end
+
 local DeathTeamStreaks = {}
 local DeathTimes = {}
 

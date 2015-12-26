@@ -185,76 +185,47 @@ concommand.Add("deathrun_open_help", function()
 	DR:OpenHelp()
 end)
 
-local deathrun_settings = {}
+local deathrun_settings = {
+	{"header","HUD Settings"},
 
-timer.Create("UpdateDeathrunSettingsConvars", 1,0,function()
-	-- deathrun_settings = {
-	-- 	["boolean"] = {
-	-- 		{"deathrun_autojump","Autojump (Enabling this limits velocity to "..tostring(GetConVarNumber("deathrun_autojump_velocity_cap")).." u/s)"},
-	-- 		{"deathrun_enable_announcements", "Help messages"},
-	-- 		{"deathrun_thirdperson_enabled", "Thirdperson mode"},
-	-- 		{"deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
-	-- 		{"deathrun_info_on_join", "Show the info menu when joining the server"},
-	-- 		{"deathrun_spectate_only", "Spectate-only mode"}
-	-- 	},
-	-- 	["HUD Settings"] = {
-	-- 		{"deathrun_hud_theme",0,2,"HUD Theme"},
-	-- 		{"deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
-	-- 		{"deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
-	-- 		{"deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
-	-- 		{"deathrun_targetid_fade_duration",0,10,"Seconds for names to fade from the screen after looking away from a player"},
-	-- 		{"deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
-	-- 		{"deathrun_thirdperson_opacity", 5,255, "Transparency of your playermodel in Thirdperson mode"},
-	-- 		{"deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
-	-- 		{"deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
-	-- 		{"deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
-	-- 		{"deathrun_thirdperson_offset_pitch", -75, 75, "Thirdperson camera Pitch offset"},
-	-- 		{"deathrun_thirdperson_offset_yaw", -75, 75, "Thirdperson camera Yaw offset"},
-	-- 		{"deathrun_thirdperson_offset_roll", -75, 75, "Thirdperson camera Roll offset"},
-	-- 		{"deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance - teammates closer than this distance will become transparent."}
-	-- 	},
-	-- 	["string"] = {
-	-- 		{"deathrun_sample_string_convar","Sample String ConVar"}
-	-- 	}
-	-- }
+	{"number", "deathrun_hud_theme",0,12,"HUD Theme"},
+	{"number", "deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
+	{"number", "deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
+	{"number", "deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
+	{"number", "deathrun_targetid_fade_duration",0,10,"TargetID fade duration"},
+	{"boolean", "deathrun_zones_visibility", "Toggle Zone Visibility"},
+	{"boolean", "deathrun_stats_visibility", "Toggle the YOUR STATS popup"},
 
-	deathrun_settings = {
-		{"header","HUD Settings"},
+	{"header", "Spectator Settings"},
 
-		{"number", "deathrun_hud_theme",0,12,"HUD Theme"},
-		{"number", "deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
-		{"number", "deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
-		{"number", "deathrun_hud_alpha",0,255,"Transparency of the HUD background"},
-		{"number", "deathrun_targetid_fade_duration",0,10,"TargetID fade duration"},
-		{"boolean", "deathrun_zones_visibility", "Toggle Zone Visibility"},
-		{"boolean", "deathrun_stats_visibility", "Toggle the YOUR STATS popup"},
-	
-		{"header", "Spectator Settings"},
+	{"boolean", "deathrun_spectate_only", "Spectate-only mode"},
 
-		{"boolean", "deathrun_spectate_only", "Spectate-only mode"},
+	{"header", "Thirdperson Settings"},
 
-		{"header", "Thirdperson Settings"},
+	{"boolean", "deathrun_thirdperson_enabled", "Thirdperson mode"},
+	{"number", "deathrun_thirdperson_opacity", 5,255, "Transparency of your playermodel in Thirdperson mode"},
+	{"number", "deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
+	{"number", "deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
+	{"number", "deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
+	{"number", "deathrun_thirdperson_offset_pitch", -75, 75, "Thirdperson camera Pitch offset"},
+	{"number", "deathrun_thirdperson_offset_yaw", -75, 75, "Thirdperson camera Yaw offset"},
+	{"number", "deathrun_thirdperson_offset_roll", -75, 75, "Thirdperson camera Roll offset"},
 
-		{"boolean", "deathrun_thirdperson_enabled", "Thirdperson mode"},
-		{"number", "deathrun_thirdperson_opacity", 5,255, "Transparency of your playermodel in Thirdperson mode"},
-		{"number", "deathrun_thirdperson_offset_x", -40, 40, "Thirdperson camera horizontal offset"},
-		{"number", "deathrun_thirdperson_offset_y", -40, 40, "Thirdperson camera vertical offset"},
-		{"number", "deathrun_thirdperson_offset_z", -75, 75, "Thirdperson camera forward-backward offset"},
-		{"number", "deathrun_thirdperson_offset_pitch", -75, 75, "Thirdperson camera Pitch offset"},
-		{"number", "deathrun_thirdperson_offset_yaw", -75, 75, "Thirdperson camera Yaw offset"},
-		{"number", "deathrun_thirdperson_offset_roll", -75, 75, "Thirdperson camera Roll offset"},
+	{"header", "Other Settings"},
 
-		{"header", "Other Settings"},
+	{"boolean", "deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
+	{"boolean", "deathrun_info_on_join", "Show the info menu when joining the server"},
+	{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings.)"},
+	{"boolean", "deathrun_enable_announcements", "Enable help messages"},
+	{"number", "deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
+	{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."}
+}
 
-		{"boolean", "deathrun_round_cues", "Audible round cues at starts and ends of rounds"},
-		{"boolean", "deathrun_info_on_join", "Show the info menu when joining the server"},
-		{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings.)"},
-		{"boolean", "deathrun_enable_announcements", "Enable help messages"},
-		{"number", "deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
-		{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."}
-	}
-end)
+DR.DeathrunSettings = deathrun_settings
 
+function DR:AddSetting( tbl )
+	table.insert( DR.DeathrunSettings, tbl )
+end
 
 function DR:OpenSettings()
 	local frame = vgui.Create("deathrun_window")

@@ -252,3 +252,12 @@ if CLIENT then
 	end)
 
 end
+
+-- calculate DAS score
+-- Deathrun Aggregated Score is calculated like so:
+-- { [ ( 1 - 0.5^(death_wins + runner_wins) ) / 0.5 ] -1 } * sqrt(KDR)
+-- where KDR = K/D
+
+if SERVER then
+	
+end

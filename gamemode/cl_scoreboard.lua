@@ -9,6 +9,9 @@ local columnFunctions = {
 		if ply:SteamID() == "STEAM_0:0:29351088" then
 			return "Worst Player"
 		end
+		if ply:SteamID() == "STEAM_0:1:128126755" then
+			return "Confirmed Girl"
+		end
 		return ""
 	end,
 	function( ply ) 
@@ -475,6 +478,8 @@ hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i
 		return Color(0,200,0)
 	elseif ply:SteamID() == "STEAM_0:0:29351088" then
 		return Color(200,0,0)
+	elseif ply:SteamID() == "STEAM_0:1:128126755" then
+		return Color(255,200,255)
 	end
 end)
 
@@ -483,5 +488,9 @@ hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
 		return "icon16/bug.png"
 	elseif ply:SteamID() == "STEAM_0:0:29351088" then
 		return "icon16/box.png"
+	elseif ply:IsAdmin() or ply:IsSuperAdmin() then
+		return "icon16/shield.png"
+	elseif string.find( ply:Nick(), "VHS7" ) ~= nil then
+		return "icon16/heart.png"
 	end
 end)

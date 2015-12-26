@@ -298,3 +298,15 @@ end)
 DR:AddChatCommand("rtv",function( ply )
 	ply:ConCommand( "mapvote_rtv" )
 end)
+
+hook.Add("PlayerSay", "CheckRTVChat", function(ply, text, pub)
+	local args = string.Split( text, " " )
+	if #args == 1 then
+		if args[1] == "rtv" then
+			ply:ConCommand( "mapvote_rtv" )
+		end
+		if args[1] == "nominate" or args[1] == "maps" then
+			ply:ConCommand( "mapvote_list_maps" )
+		end
+	end
+end)

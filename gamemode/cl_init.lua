@@ -121,10 +121,6 @@ else
 
 end
 
-concommand.Add("+menu", function(ply)
-	RunConsoleCommand("deathrun_not_amused")
-end)
-
 concommand.Add("deathrun_toggle_thirdperson", function(ply)
 	if GetConVarNumber("deathrun_thirdperson_enabled") == 0 then
 		ply:ConCommand("deathrun_thirdperson_enabled 1")
@@ -193,3 +189,6 @@ function DR:SetMainTextColor( col )
 	DR.Colors.Text.Turq = col
 end
 
+concommand.Add("+menu", function()
+	RunConsoleCommand("deathrun_dropweapon")
+end)
