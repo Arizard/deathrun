@@ -490,7 +490,7 @@ local function IsCSSSecondary( wep )
 end
 
 concommand.Add("deathrun_dropweapon", function( ply, cmd, args)
-	if ply:Alive() and ply:GetActiveWeapon() ~= nil then
+	if ply:Alive() and ply:GetActiveWeapon() ~= nil and IsValid( ply:GetActiveWeapon() ) then
 		ply:DropWeapon( ply:GetActiveWeapon() )
 	end
 end)
