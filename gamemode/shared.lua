@@ -216,7 +216,7 @@ function GM:Move( ply, data )
 	local addspeed = wishspd - current
 	if addspeed <= 0 then return end
 
-	local accelspeed = 50 * ft() * wishspeed
+	local accelspeed = 1000 * ft() * wishspeed
 	if accelspeed > addspeed then
 		accelspeed = addspeed
 	end
