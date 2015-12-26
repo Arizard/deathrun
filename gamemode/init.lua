@@ -465,7 +465,8 @@ local function IsCSSPrimary( wep )
 		"_snip_",
 	}
 
-	for k,v in ipairs(prims) do
+	for i = 1,#prims do
+		v = prims[i]
 		if weapons.Get( wep:GetClass() ) ~= nil then
 			if string.find( weapons.Get( wep:GetClass() ).WorldModel, v ) ~= nil then
 				return true
@@ -516,18 +517,22 @@ hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( pl
 
 	for k,v in ipairs(weps) do
 		table.insert( wepsclasses, v:GetClass() )
-		
+
+	end
+	if table.HasValue(wepsclasses, class) then return false end
+
+	for k,v in ipairs( weps ) do
 		if IsCSSPrimary( v ) then
 			primaries = primaries + 1
 		elseif IsCSSSecondary( v ) then
 			secondaries = secondaries + 1
 		end
-
 	end
+
 	if (IsCSSPrimary( wep ) and primaries > 0) or (IsCSSSecondary( wep ) and secondaries > 0) then
 		return false
 	end
-	if table.HasValue(wepsclasses, class) then return false end
+	
 
 end)
 

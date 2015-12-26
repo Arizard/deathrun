@@ -251,7 +251,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	accfrac = ( self.Owner:GetVelocity():Length()/self.Owner:GetWalkSpeed() )*0.075
 
 	if not self.Owner:IsOnGround() then
-		accfrac = accfrac * 10 + (1 + self.Owner.CurAccel/50)
+		accfrac = accfrac * 10 + (1 + (40)/50)
 	else
 		accfrac = accfrac * 10
 	end
@@ -269,6 +269,9 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
 	--print(accfrac)
 	bullet.Spread 	= Vector( math.pow(accfrac, 1), math.pow(accfrac, 1), 0 )			-- Aim Cone
+	if self.Shotgun == true then
+		bullet.Spread 	= Vector( math.pow(accfrac + 0.1, 1), math.pow(accfrac + 0.1, 1), 0 )
+	end
 	bullet.Tracer	= 4									-- Show a tracer on every x bullets 
 	bullet.Force	= 5									-- Amount of force to give to phys objects
 	bullet.Damage	= dmg
