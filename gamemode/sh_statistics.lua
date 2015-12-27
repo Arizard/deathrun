@@ -147,6 +147,7 @@ if CLIENT then
 	}
 
 	local statsvis = CreateClientConVar( "deathrun_stats_visibility", 1, true, false )
+	local labels = {}
 
 	net.Receive( "deathrun_display_stats", function()
 
@@ -166,16 +167,27 @@ if CLIENT then
 					dea_win
 				}
 
+				labels = {
+					"Your Kills",
+					"Your Deaths",
+					"Your Runner Wins",
+					"Your Death Wins"
+				}
+
 				stats3d.pos = LocalPlayer():EyePos() + LocalPlayer():EyeAngles():Forward()*36
 				stats3d.ang = LocalPlayer():EyeAngles()
 				stats3d.ang:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
 				stats3d.ang:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
 				stats3d.born = CurTime()
+
+				hook.Call( "DeathrunAddStatsRow", nil, labels, stats3d.data)
 			end
 		end
+
+
 	end)
 
-	local w, h = 600, 380
+	local w, h = 1000, 380
 	local x, y = -w/2, -h/2
 
 	surface.CreateFont("deathrun_3d2d_large", {
@@ -189,6 +201,8 @@ if CLIENT then
 		antialias = true,
 	})
 
+	
+
 	hook.Add( "PostDrawTranslucentRenderables", "statsdisplay", function()
 	
 		local delay = 0.45
@@ -197,7 +211,9 @@ if CLIENT then
 		local t = CurTime()-( stats3d.born + delay )
 
 		if t < lifetime then
-			cam.Start3D2D( stats3d.pos, stats3d.ang, 0.05 )
+			h = 80 + 75 * #labels
+
+			cam.Start3D2D( stats3d.pos, stats3d.ang, 0.04 )
 
 				render.ClearStencil()
 				render.SetStencilEnable(true) -- i dont know how this works?!?!?!?
@@ -225,14 +241,9 @@ if CLIENT then
 				surface.SetDrawColor( DR.Colors.Turq )
 				surface.DrawRect(x,y,w,80)
 
-				deathrunShadowTextSimple("YOUR STATS", "deathrun_3d2d_large", 0, y, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
+				deathrunShadowTextSimple("STATS", "deathrun_3d2d_large", 0, y, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
 
-				local labels = {
-				"Kills",
-				"Deaths",
-				"Runner Wins",
-				"Death Wins"
-				}
+				
 
 				for i = 1, #labels do
 					deathrunShadowTextSimple(labels[i], "deathrun_3d2d_small", x+20, y + 100 + 70*(i-1), DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 0)

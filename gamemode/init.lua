@@ -227,7 +227,7 @@ function GM:PlayerLoadout( ply )
 	ply:SetJumpPower( 290 )
 
 	if ply:Team() == TEAM_DEATH then
-		ply:SetRunSpeed( 650 )	
+		ply:SetRunSpeed( GetConVar("deathrun_death_sprint"):GetFloat() )	
 	end
 
 	ply:DrawViewModel( true )

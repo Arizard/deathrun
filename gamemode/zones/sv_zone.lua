@@ -231,6 +231,10 @@ hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, n
 			placetext = placestring.."th"
 		end
 
+		
+		for k,v in ipairs( team.GetPlayers( TEAM_DEATH ) ) do
+			v:SetRunSpeed( 250 )
+		end
 
 		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place!")
 		ply.HasFinishedMap = true
