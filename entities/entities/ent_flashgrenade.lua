@@ -118,7 +118,7 @@ if CLIENT then
 		}
 
 		local tr = util.TraceLine( td )
-		if not tr.Hit then
+		if (not tr.Hit) or (tr.MatType == MAT_GLASS) then
 			local bonus = 1
 			
 			local sx, sy, svis = self:GetPos():ToScreen().x, self:GetPos():ToScreen().y, self:GetPos():ToScreen().visible
