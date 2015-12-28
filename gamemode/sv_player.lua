@@ -230,3 +230,13 @@ function DR:ChatBroadcast( msg )
 		MsgC(DR.Colors.Turq, "Server Broadcast: "..msg.."\n")
 	--end
 end
+
+timer.Create("MoveSpectatorsToCorrectTeam", 5, 0, function()
+	for k,ply in ipairs(player.GetAll()) do
+		if ply:Team() ~= TEAM_SPECTATOR then
+			if ply:ShouldStaySpectating() == true then
+				ply:SetTeam( TEAM_SPECTATOR )
+			end
+		end
+	end
+end)
