@@ -606,7 +606,7 @@ DR:SaveDeathAvoid()
 function DR:PunishDeathAvoid( ply, amt )
 	local id = "id"..tostring( ply:SteamID64() )
 	DR.BarredPlayers[id] = DR.BarredPlayers[id] or 0 -- create the entry if it doesn't exist
-	DR.BarredPlayers[id] = DR.BarredPlayers[id] + (amt or 1) -- add 3 rounds
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] + (amt or 1) -- add 1 rounds
 
 	DR:SaveDeathAvoid()
 end

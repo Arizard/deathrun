@@ -220,3 +220,32 @@ DR:AddChatCommand("spec", function( ply, args )
 	end
 	--end
 end)
+
+-- unstuck command
+local stuckers = {} -- mother stuckers
+concommand.Add("deathrun_unstuck", function( ply, cmd, args )
+
+	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 10 then
+		local trace = {
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward()*10,
+			filter = ply,
+			mins = DR.Hulls.HullMin,
+			maxs = DR.Hulls.HullStand,
+			mask = MASK_SHOT_HULL,
+		}
+
+		local tr = util.TraceHull( trace )
+		ply:SetPos( tr.HitPos )
+
+		stuckers[ply:SteamID64()] = CurTime()
+
+		DR:ChatBroadcast( ply:Nick().." attempted to free themselves from the clutches of a bugged trap.")
+	end
+
+end)
+
+DR:AddChatCommand("stuck", function(ply, args)
+	ply:ConCommand("deathrun_unstuck")
+end)
+DR:AddChatCommandAlias( "stuck", "unstuck" )
