@@ -551,7 +551,7 @@ function DR:UpdateNotifications( )
 	for k,v in ipairs( notifications ) do
 		
 		local aliveFor = CurTime() - v.born
-		local fadein = math.Clamp( Lerp( InverseLerp(aliveFor,0,v.dur/5), 0, 255 ), 0, 255 )
+		local fadein = math.Clamp( Lerp( InverseLerp(aliveFor,0,0.5), 0, 255 ), 0, 255 )
 		local scalein = math.pow(fadein/255, 1/4)
 
 		

@@ -20,7 +20,7 @@ RoundLimit = CreateConVar("deathrun_round_limit", 6, defaultFlags, "How many rou
 DeathAvoidPunishment = CreateConVar("deathrun_death_avoid_punishment", 1, defaultFlags, "How many round should a player sit out after they attempt to death avoid?")
 DeathMax = CreateConVar("deathrun_max_deaths", 64, defaultFlags, "Maximum amount of players on the Death team at any given time.")
 
-CreateConVar("deathrun_autoslay_delay", 30, defaultFlags, "How long to wait after a start of a round before slaying all the AFKs.")
+CreateConVar("deathrun_autoslay_delay", 90, defaultFlags, "How long to wait after a start of a round before slaying all the AFKs.")
 
 DR.DeathAvoidPunishment = DeathAvoidPunishment
 

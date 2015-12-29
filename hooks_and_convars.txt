@@ -66,6 +66,12 @@ SERVER CONVARS:
 	deathrun_idle_kick_time <0-999>
 		How long to wait before kicking an idle player (seconds)
 
+	deathrun_alltalk <0-1>
+		Enable alltalk - 1 for enabled, 0 to stop living players from hearing dead players.
+
+	deathrun_death_model <string model path>
+		The default model for the Deaths.
+
 CLIENT CONVARS:
 
 	deathrun_crosshair_thickness <0-999>

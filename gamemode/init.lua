@@ -117,7 +117,22 @@ hook.Add("PlayerDisconnected", "DeathrunPlayerDisconnectMessage", function( ply 
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end)
 
+CreateConVar("deathrun_death_model", "", defaultFlags, "The default model for the Deaths." )
+local deathModel = GetConVar( "deathrun_death_model" )
+
 hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
+
+	if ply:Team() == TEAM_DEATH then
+		local mdl = deathModel:GetString()
+		if string.sub( mdl, -4, -1 ) == ".mdl" then
+			ply:SetModel( mdl )
+		else
+			print("The default death model is not a valid .mdl file ('"..mdl.."'). Please change the deathrun_death_model ConVar.")
+		end
+	elseif ply:Team() == TEAM_RUNNER then
+	    ply:SetModel( table.Random( playermodels ) )
+	end
+
 	local mdl = hook.Call("ChangePlayerModel", nil, ply)
 	if mdl then
 		ply:SetModel( mdl )
@@ -125,8 +140,10 @@ hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
 		if (not ply:GetModel()) or ply:GetModel() == "models/player.mdl" then -- don't override the current set model if there is one
 			print("Player "..tostring(ply:Nick()).." did not have a model - setting them a new one.")
 			ply:SetModel( table.Random( playermodels ) )
+			
 		end
 	end
+	
 end)
 
 local function SpawnSpectator( ply )
@@ -310,7 +327,7 @@ end
 
 DR.KillList = {}
 
-timer.Create("DeathrunSendKillList", 1.5,0,function()
+timer.Create("DeathrunSendKillList", 0.7,0,function()
 	if #DR.KillList > 0 then
 		local message = ""
 		
@@ -403,6 +420,8 @@ function GM:EntityTakeDamage( target, dmginfo )
 end
 
 -- player muting
+CreateConVar("deathrun_alltalk", 1, defaultFlags, "Enable alltalk - 1 for enabled, 0 to stop living players from hearing dead players.")
+local alltalk = GetConVar("deathrun_alltalk")
 function GM:PlayerCanHearPlayersVoice( listener, talker )
 
 	listener.mutelist = listener.mutelist or {}
@@ -410,10 +429,16 @@ function GM:PlayerCanHearPlayersVoice( listener, talker )
 	if table.HasValue( listener.mutelist, talker:SteamID() ) then
 		return false -- dont transmit voices which are on the mutelist
 	else
+		if alltalk:GetBool() == false then
+			if talker:GetSpectate() == true and listener:GetSpectate() == false then return false end
+			if talker:Alive() == false and listener:Alive() == true then return false end
+			if talker:GetObserverMode() ~= OBS_MODE_NONE and listener:GetObserverMode() == OBS_MODE_NONE then return false end
+		end
 		return true
 	end
 
 end
+-- end player muting
 
 concommand.Add("deathrun_toggle_mute", function(ply, cmd, args)
 	local id = args[1]
