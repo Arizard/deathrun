@@ -5,6 +5,45 @@ print("Loading Statistics...")
 
 if SERVER then
 
+	-- store a table of all the player names and associated steamid communityid when they join
+
+	sql.Query( "CREATE TABLE deathrun_ids ( sid64 STRING, sid STRING, nick STRING )" )
+
+	hook.Add("PlayerInitialSpawn", "UpdatePlayerIDs", function(ply)
+		-- update player names
+		local id64 = ply:SteamID64()
+		local id = ply:SteamID()
+
+		local res = sql.Query( "SELECT * FROM deathrun_ids WHERE sid64 = '"..id64.."'" )
+		if not res then
+			res = sql.Query( "INSERT INTO deathrun_ids VALUES ( '"..id64.."', '"..id.."', '"..ply:Nick().."' )" )
+		else
+			res = sql.Query( "UPDATE deathrun_ids SET sid64 = '"..id64.."', sid = '"..id.."', nick = '"..ply:Nick().."' " )
+		end
+	end)
+
+	function DR:SteamToNick( sid )
+		local com = true
+		if string.find( sid, "STEAM_" ) ~= nil then com = false end
+
+		local nick = "UNKNOWN"
+		local res
+
+		if com then
+			res = sql.Query( "SELECT * FROM deathrun_ids WHERE sid64 = '"..sid.."'" )
+		else
+			res = sql.Query( "SELECT * FROM deathrun_ids WHERE sid = '"..sid.."'" )
+		end
+
+		if res then
+			nick = res[1]["nick"]
+		end
+
+		return nick
+
+	end
+
+
 	sql.Query( "CREATE TABLE deathrun_stats ( sid STRING, kills INTEGER, deaths INTEGER, runner_wins INTEGER, death_wins INTEGER )" )
 
 	hook.Add("PlayerAuthed", "CreateStatsRow", function( ply, steamid, uid )
@@ -14,6 +53,7 @@ if SERVER then
 		end
 
 		res = sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..steamid.."'" )
+
 	end)
 
 	hook.Add("PlayerDeath", "DeathrunStats", function( vic, inf, att )
@@ -75,6 +115,17 @@ if SERVER then
 	function DR:DisplayStats( ply ) -- displays a player's stats in front of their face
 		if IsValid( ply ) then
 			local res = sql.Query( "SELECT * FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'" )
+			local res2 = sql.Query("SELECT sid, (runner_wins + death_wins) AS total_wins FROM deathrun_stats ORDER BY total_wins DESC LIMIT 1")
+
+			local highscoreName = ""
+			local highscore = 0
+
+			if res2 then
+				highscoreName = DR:SteamToNick( res2[1]["sid"] )
+				highscore = res2[1]["total_wins"]
+
+				--PrintTable( res2 )
+			end
 
 			if res then
 				net.Start("deathrun_display_stats")
@@ -86,6 +137,9 @@ if SERVER then
 				net.WriteInt( res[1]["runner_wins"], 16 )
 				--death_wins
 				net.WriteInt( res[1]["death_wins"], 16 )
+
+				net.WriteString( highscoreName )
+				net.WriteInt( highscore, 32 )
 
 				net.Send( ply )
 			end
@@ -159,19 +213,23 @@ if CLIENT then
 				deaths = net.ReadInt( 16 )
 				run_win = net.ReadInt( 16 )
 				dea_win = net.ReadInt( 16 )
+				mo_wins_name = net.ReadString()
+				mo_wins = net.ReadInt( 32 )
 
 				stats3d.data = {
 					kills,
 					deaths,
 					run_win,
-					dea_win
+					dea_win,
+					mo_wins_name.." ("..tostring(mo_wins)..")",
 				}
 
 				labels = {
 					"Your Kills",
 					"Your Deaths",
 					"Your Runner Wins",
-					"Your Death Wins"
+					"Your Death Wins",
+					"Most Wins",
 				}
 
 				stats3d.pos = LocalPlayer():EyePos() + LocalPlayer():EyeAngles():Forward()*36
