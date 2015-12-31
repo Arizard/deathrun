@@ -12,13 +12,20 @@ ENT.Spawnable			= true
 ENT.AdminSpawnable		= true
 
 ENT.WorldModel = "models/balloons/balloon_classicheart.mdl"
+ENT.Models = {
+	"models/balloons/balloon_classicheart.mdl",
+	"models/balloons/balloon_dog.mdl",
+	"models/balloons/balloon_star.mdl"
+}
+
+
+for k,v in ipairs( ENT.Models ) do
+	util.PrecacheModel( v )
+end
 
 function ENT:Initialize()
-	local models = {
-		"models/balloons/balloon_classicheart.mdl",
-		"models/balloons/balloon_dog.mdl",
-		"models/balloons/balloon_star.mdl"
-	}
+	
+	local models = self.Models
 
 	self.WorldModel = table.Random( models )
 

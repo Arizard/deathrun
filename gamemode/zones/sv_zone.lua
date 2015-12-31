@@ -208,6 +208,12 @@ end
 resetFinishers()
 hook.Add("DeathrunBeginPrep", "DeathrunResetFinishers", resetFinishers)
 
+ZONE.StartTime = nil
+
+hook.Add("DeathrunBeginActive", "DeathrunResetZoneTimer", function()
+	ZONE.StartTime = CurTime()
+end)
+
 hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, name, z)
 	if (ply:Team() ~= TEAM_RUNNER) or ply:GetSpectate() or (not ply:Alive()) or ROUND:GetCurrent() == ROUND_WAITING then return end
 	if z.type == "end" and ply.HasFinishedMap ~= true then
@@ -236,7 +242,7 @@ hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, n
 			v:SetRunSpeed( 250 )
 		end
 
-		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place!")
+		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place with a time of "..string.ToMinutesSecondsMilliseconds(CurTime() - ZONE.StartTime).."!")
 		ply.HasFinishedMap = true
 
 		hook.Call("DeathrunPlayerFinishMap", nil, ply, name, z, place)
