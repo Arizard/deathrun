@@ -18,7 +18,7 @@ if SERVER then
 		if not res then
 			res = sql.Query( "INSERT INTO deathrun_ids VALUES ( '"..id64.."', '"..id.."', '"..Base64Encode( ply:Nick() ).."' )" )
 		else
-			res = sql.Query( "UPDATE deathrun_ids SET sid64 = '"..id64.."', sid = '"..id.."', nick = '"..Base64Encode( ply:Nick() ).."' " )
+			res = sql.Query( "UPDATE deathrun_ids SET nick = '"..Base64Encode( ply:Nick() ).."' WHERE sid64 = '"..id64.."' " )
 		end
 	end)
 
@@ -58,28 +58,32 @@ if SERVER then
 
 	hook.Add("PlayerDeath", "DeathrunStats", function( vic, inf, att )
 
-		if att:IsPlayer() then
-			if vic:Team() ~= att:Team() then
-				data1 = sql.Query( "SELECT kills FROM deathrun_stats WHERE sid = '"..att:SteamID().."'")
-				local kills = data1[1]["kills"]
-				res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1).." WHERE sid = '"..att:SteamID().."'" )
-			end
-		else
-			if vic:Team() == TEAM_RUNNER then
-				for _, ply in ipairs( team.GetPlayers( TEAM_DEATH ) ) do
-					if not ply:IsBot() then
-						data1 = sql.Query( "SELECT kills FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'")
-						local kills = data1[1]["kills"]
-						res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1).." WHERE sid = '"..ply:SteamID().."'" )
+		if ROUND:GetCurrent() == ROUND_ACTIVE then
+
+			if att:IsPlayer() then
+				if vic:Team() ~= att:Team() then
+					data1 = sql.Query( "SELECT kills FROM deathrun_stats WHERE sid = '"..att:SteamID().."'")
+					local kills = data1[1]["kills"]
+					res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1).." WHERE sid = '"..att:SteamID().."'" )
+				end
+			else
+				if vic:Team() == TEAM_RUNNER then
+					for _, ply in ipairs( team.GetPlayers( TEAM_DEATH ) ) do
+						if not ply:IsBot() then
+							data1 = sql.Query( "SELECT kills FROM deathrun_stats WHERE sid = '"..ply:SteamID().."'")
+							local kills = data1[1]["kills"]
+							res = sql.Query( "UPDATE deathrun_stats SET kills = "..tostring(kills+1).." WHERE sid = '"..ply:SteamID().."'" )
+						end
 					end
 				end
 			end
-		end
 
-		if vic:IsPlayer() and not vic:IsBot() then
-			data2 = sql.Query( "SELECT deaths FROM deathrun_stats WHERE sid = '"..vic:SteamID().."'")
-			local deaths = data2[1]["deaths"]
-			res = sql.Query( "UPDATE deathrun_stats SET deaths = "..tostring(deaths+1).." WHERE sid = '"..vic:SteamID().."'" )
+			if vic:IsPlayer() and not vic:IsBot() then
+				data2 = sql.Query( "SELECT deaths FROM deathrun_stats WHERE sid = '"..vic:SteamID().."'")
+				local deaths = data2[1]["deaths"]
+				res = sql.Query( "UPDATE deathrun_stats SET deaths = "..tostring(deaths+1).." WHERE sid = '"..vic:SteamID().."'" )
+			end
+
 		end
 
 	end)

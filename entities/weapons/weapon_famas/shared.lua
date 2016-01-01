@@ -9,7 +9,7 @@ if ( CLIENT ) then
 	killicon.AddFont( "weapon_famas", "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 
 end
-
+SWEP.Slot				= 3
 
 SWEP.HoldType			= "ar2"
 SWEP.Base				= "weapon_cs_base"

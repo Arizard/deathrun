@@ -531,32 +531,28 @@ hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( pl
 	local wepsclasses = {}
 	local filledslots = {}
 
-	-- make sure they don't already have a weapon in slot 4 and slot 2
-	local slots = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-
-	-- _rif_ _shot_ _mach_ _smg_ _snip_ in slot 4 (3)
-	-- _pist_ in slot 2 (1)
+	local slot1, slot3 = 0,0
 
 	local secondaries = 0
 	local primaries = 0
 
 	for k,v in ipairs(weps) do
 		table.insert( wepsclasses, v:GetClass() )
-
-	end
-	if table.HasValue(wepsclasses, class) then return false end
-
-	for k,v in ipairs( weps ) do
-		if IsCSSPrimary( v ) then
-			primaries = primaries + 1
-		elseif IsCSSSecondary( v ) then
-			secondaries = secondaries + 1
+		if v.Slot ~= nil then
+			if v.Slot == 1 then
+				slot1 = slot1 + 1
+			end
+			if v.Slot == 3 then
+				slot3 = slot3 + 1
+			end
 		end
 	end
 
-	if (IsCSSPrimary( wep ) and primaries > 0) or (IsCSSSecondary( wep ) and secondaries > 0) then
-		return false
-	end
+	if wep.Slot == 1 and slot1 > 0 then return false end
+	if wep.Slot == 3 and slot3 > 0 then return false end
+	if table.HasValue(wepsclasses, class) then return false end
+
+
 	
 
 end)

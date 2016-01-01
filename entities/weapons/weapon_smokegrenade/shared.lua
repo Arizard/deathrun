@@ -7,7 +7,7 @@ end
 if (CLIENT) then
 
         SWEP.PrintName                  = "Smoke Grenade"
-        SWEP.Slot                               = 3
+        SWEP.Slot                               = 2
         SWEP.SlotPos                    = 0
         SWEP.DrawAmmo                   = false
         SWEP.DrawCrosshair              = false
@@ -18,6 +18,8 @@ if (CLIENT) then
         SWEP.IconLetter                         = "P"
         killicon.AddFont("weapon_smokegrenade", "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ))
 end
+
+SWEP.Slot                               = 2
 
 SWEP.Base                                       = "weapon_grenade_base"
 

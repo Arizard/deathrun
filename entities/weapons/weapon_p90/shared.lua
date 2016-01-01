@@ -11,6 +11,7 @@ if ( CLIENT ) then
 end
 SWEP.HoldType                   = "smg"
 
+SWEP.Slot				= 3
 
 SWEP.Base                               = "weapon_cs_base"
 SWEP.Category                   = "Counter-Strike"

@@ -7,7 +7,7 @@ end
 if (CLIENT) then
 
         SWEP.PrintName                  = "NADE BASE"
-        SWEP.Slot                               = 4
+        SWEP.Slot                               = 2
         SWEP.SlotPos                    = 1
         SWEP.DrawAmmo                   = false
         SWEP.DrawCrosshair              = false

@@ -11,7 +11,7 @@ elseif CLIENT then
 	SWEP.ViewModelFlip		= false
 	SWEP.CSMuzzleFlashes	= false
 	
-	SWEP.Slot				= 2
+	SWEP.Slot				= 0
 	SWEP.SlotPos			= 1
 	SWEP.IconLetter			= "j"
 
@@ -21,6 +21,8 @@ elseif CLIENT then
 	killicon.AddFont( SWEP.NameOfSWEP, "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 	
 end
+
+SWEP.Slot				= 0
 
 SWEP.IronSightsPos = Vector ( -15.6937, -10.1535, -1.0596 )
 SWEP.IronSightsAng = Vector ( 46.9034, 9.0593, -90.2522 )
