@@ -473,6 +473,9 @@ function GM:GetFallDamage( ply, speed )
 	if dmg ~= nil then
 		return dmg
 	end
+	if ply:Team() == TEAM_DEATH then
+		return 0 -- deaths keep killing themselves on deathrun_ramesses_revenge
+	end
 	return speed/8
 end
 
