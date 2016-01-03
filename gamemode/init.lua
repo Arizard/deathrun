@@ -117,7 +117,7 @@ hook.Add("PlayerDisconnected", "DeathrunPlayerDisconnectMessage", function( ply 
 	DR:ChatBroadcast( ply:Nick().." has left the server." )
 end)
 
-CreateConVar("deathrun_death_model", "", defaultFlags, "The default model for the Deaths." )
+CreateConVar("deathrun_death_model", "models/player/monk.mdl", defaultFlags, "The default model for the Deaths." )
 local deathModel = GetConVar( "deathrun_death_model" )
 
 hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
