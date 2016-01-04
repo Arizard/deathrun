@@ -245,6 +245,6 @@ hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, n
 		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place with a time of "..string.ToMinutesSecondsMilliseconds(CurTime() - ZONE.StartTime).."!")
 		ply.HasFinishedMap = true
 
-		hook.Call("DeathrunPlayerFinishMap", nil, ply, name, z, place)
+		hook.Call("DeathrunPlayerFinishMap", nil, ply, name, z, place, CurTime() - ZONE.StartTime)
 	end
 end)

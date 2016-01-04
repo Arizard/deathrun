@@ -5,6 +5,58 @@ print("Loading Statistics...")
 
 if SERVER then
 
+	-- record timings
+	--sql.Query("DROP TABLE deathrun_records")
+	sql.Query("CREATE TABLE IF NOT EXISTS deathrun_records ( sid64 STRING, mapname STRING, seconds REAL )")
+
+	hook.Add("DeathrunPlayerFinishMap", "DeathrunMapRecords", function( ply, zname, zone, place, seconds )
+		local sid64 = ply:SteamID64()
+		local mapname = game.GetMap()
+
+		sql.Query("INSERT INTO deathrun_records VALUES ('"..sid64.."', '"..mapname.."', "..tostring(seconds)..")")
+	end)
+
+	local endmap = nil
+	local function findendmap()
+		--PrintTable( ZONE.zones )
+		if ZONE.zones then
+			for k,v in pairs( ZONE.zones ) do
+				print(v.type)
+				if v.type == "end" then
+					endmap = v
+				end
+			end
+		end
+	end
+	findendmap()
+
+	hook.Add("InitPostEntity", "DeathrunFindEndZone", function()
+		findendmap()
+	end)
+
+	hook.Add("DeathrunBeginPrep", "DeathrunSendRecords", function()
+
+		-- deathrun_send_map_records
+		--
+		res = sql.Query("SELECT * FROM deathrun_records WHERE mapname = '"..game.GetMap().."' ORDER BY seconds ASC LIMIT 3")
+		--PrintTable( endmap )
+		if endmap ~= nil and res ~= false then
+			if res == nil then 
+				res = {}
+			else
+				for i = 1, #res do
+					res[i]["nickname"] = DR:SteamToNick( res[i]["sid64"] )
+				end
+			end
+
+			net.Start("deathrun_send_map_records")
+			net.WriteVector( 0.5*(endmap.pos1 + endmap.pos2) )
+			net.WriteString( util.TableToJSON( res ) )
+			net.Broadcast()
+		end
+
+	end)
+
 	-- store a table of all the player names and associated steamid communityid when they join
 
 	sql.Query( "CREATE TABLE deathrun_ids ( sid64 STRING, sid STRING, nick STRING )" )
@@ -164,10 +216,26 @@ if SERVER then
 
 	util.AddNetworkString("deathrun_send_stats")
 	util.AddNetworkString("deathrun_display_stats")
+	util.AddNetworkString("deathrun_send_map_records")
+
+
 
 end
 
 if CLIENT then
+
+	DR.MapRecordsDrawPos = Vector(0,0,0)
+	DR.MapRecordsCache = {}
+
+
+
+	net.Receive("deathrun_send_map_records", function()
+		DR.MapRecordsDrawPos = net.ReadVector()
+		DR.MapRecordsCache = util.JSONToTable( net.ReadString() )
+
+		print("Records Pos",DR.MapRecordsDrawPos)
+		PrintTable( DR.MapRecordsCache )
+	end)
 
 	DR.PlayerStatsCache = {}
 
@@ -319,6 +387,37 @@ if CLIENT then
 
 
 			cam.End3D2D()
+		end
+
+		if DR.MapRecordsDrawPos ~= Vector(0,0,0) and DR.MapRecordsDrawPos ~= nil then
+			if LocalPlayer():GetPos():Distance( DR.MapRecordsDrawPos ) < 1000 then
+				local recordsAng = LocalPlayer():EyeAngles()
+				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
+				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
+
+				cam.Start3D2D( DR.MapRecordsDrawPos, recordsAng, 0.12 )
+					
+					surface.SetDrawColor( DR.Colors.Turq )
+					surface.DrawRect(-700,-300, 1400, 80 )
+
+					deathrunShadowTextSimple("TOP 3 RECORDS", "deathrun_3d2d_large", 0, -300, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
+						
+					if DR.MapRecordsCache[1] ~= nil then
+						for i = 1, #DR.MapRecordsCache do
+							local k = i-1
+							local v = DR.MapRecordsCache[i]
+
+							deathrunShadowTextSimple( tostring(i)..". "..string.sub( v["nickname"] or "", 1, 24 ), "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
+							deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(v["seconds"] or "0"), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
+
+							surface.SetDrawColor( DR.Colors.Turq )
+							surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
+						end
+					else
+						deathrunShadowTextSimple( "No records yet!", "deathrun_3d2d_large", 0, -200, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2 )
+					end
+				cam.End3D2D()
+			end
 		end
 
 		
