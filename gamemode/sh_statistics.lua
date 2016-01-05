@@ -414,13 +414,28 @@ if CLIENT then
 		end
 
 		if DR.MapRecordsDrawPos ~= Vector(0,0,0) and DR.MapRecordsDrawPos ~= nil then
-			if LocalPlayer():GetPos():Distance( DR.MapRecordsDrawPos ) < 1000 then
-				local recordsAng = LocalPlayer():EyeAngles()
-				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
-				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
-				recordsAng.roll = 90
+			local dist = LocalPlayer():GetPos():Distance( DR.MapRecordsDrawPos )
+			if dist < 1000 then
+				-- 
 
-				cam.Start3D2D( DR.MapRecordsDrawPos, recordsAng, 0.12 )
+				-- local recordsAng = ( (LocalPlayer():EyePos() - DR.MapRecordsDrawPos):GetNormalized() )
+				-- recordsAng = recordsAng:Angle() + Angle(90,0,00)
+				-- recordsAng:RotateAroundAxis( recordsAng:Up(), 90)
+				-- recordsAng.roll = 90
+
+				--recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
+				--recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
+
+				--local scale = math.Clamp( InverseLerp( dist, 1000, 400 ), 0,1) * 0.12
+
+				--if dist < 20 then
+					local recordsAng = LocalPlayer():EyeAngles()
+					recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
+					recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
+					recordsAng.roll = 90
+				--end
+
+				cam.Start3D2D( DR.MapRecordsDrawPos, recordsAng, 0.10 )
 					
 					surface.SetDrawColor( DR.Colors.Turq )
 					surface.DrawRect(-700,-300, 1400, 80 )
@@ -438,7 +453,7 @@ if CLIENT then
 
 								surface.SetDrawColor( DR.Colors.Turq )
 								surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
-							elseif i == #DR.MapRecordsCache + 2 then
+							elseif i == #DR.MapRecordsCache + 2 and DR.MapPBCache ~= 0 then
 								deathrunShadowTextSimple( "Personal Best", "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
 								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds( DR.MapPBCache or 0 ), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
 

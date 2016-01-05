@@ -49,8 +49,19 @@ CreateClientConVar("deathrun_zones_visibility","1",true, false)
 
 hook.Add("PostDrawTranslucentRenderables", "DeathrunZoneCuboidDrawing", function()
 	for name, z in pairs( ZONE.zones or {} ) do
-		if z.type and GetConVar("deathrun_zones_visibility"):GetBool() == true then
-			ZONE:DrawCuboid( z.pos1, z.pos2, z.color )
+		if z.type then
+			local center = 0.5*(z.pos1 + z.pos2)
+			local dist = center:Distance( LocalPlayer():GetPos() )
+			if dist < 1000 then
+				if GetConVar("deathrun_zones_visibility"):GetBool() == true then
+					local tempcolor = table.Copy( z.color )
+
+					local frac = math.Clamp( InverseLerp( dist, 1000, 400 ), 0,1)
+					tempcolor.a = frac*z.color.a
+
+					ZONE:DrawCuboid( z.pos1, z.pos2, tempcolor )
+				end
+			end
 		end
 	end
 end)
