@@ -39,6 +39,7 @@ if SERVER then
 		-- deathrun_send_map_records
 		--
 		res = sql.Query("SELECT * FROM deathrun_records WHERE mapname = '"..game.GetMap().."' ORDER BY seconds ASC LIMIT 3")
+
 		--PrintTable( endmap )
 		if endmap ~= nil and res ~= false then
 			if res == nil then 
@@ -53,6 +54,24 @@ if SERVER then
 			net.WriteVector( 0.5*(endmap.pos1 + endmap.pos2) )
 			net.WriteString( util.TableToJSON( res ) )
 			net.Broadcast()
+		end
+
+		for k,ply in ipairs(player.GetAll()) do
+			res2 = sql.Query("SELECT * FROM deathrun_records WHERE mapname = '"..game.GetMap().."' AND sid64 = '"..ply:SteamID64().."' ORDER BY seconds ASC LIMIT 3")
+			if endmap ~= nil and res2 ~= false then
+				local seconds = -1
+				if res2 ~= nil then
+					if res2[1] then
+						if res2[1]["seconds"] then
+							seconds = res2[1]["seconds"]
+						end
+					end
+				end
+
+				net.Start("deathrun_send_map_pb")
+				net.WriteFloat( seconds )
+				net.Send( ply )
+			end
 		end
 
 	end)
@@ -217,7 +236,7 @@ if SERVER then
 	util.AddNetworkString("deathrun_send_stats")
 	util.AddNetworkString("deathrun_display_stats")
 	util.AddNetworkString("deathrun_send_map_records")
-
+	util.AddNetworkString("deathrun_send_map_pb")
 
 
 end
@@ -226,6 +245,7 @@ if CLIENT then
 
 	DR.MapRecordsDrawPos = Vector(0,0,0)
 	DR.MapRecordsCache = {}
+	DR.MapPBCache = 0
 
 
 
@@ -235,6 +255,10 @@ if CLIENT then
 
 		print("Records Pos",DR.MapRecordsDrawPos)
 		PrintTable( DR.MapRecordsCache )
+	end)
+
+	net.Receive("deathrun_send_map_pb", function()
+		DR.MapPBCache = net.ReadFloat()
 	end)
 
 	DR.PlayerStatsCache = {}
@@ -394,6 +418,7 @@ if CLIENT then
 				local recordsAng = LocalPlayer():EyeAngles()
 				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Right(), 90 )
 				recordsAng:RotateAroundAxis( LocalPlayer():EyeAngles():Forward(), 90 )
+				recordsAng.roll = 90
 
 				cam.Start3D2D( DR.MapRecordsDrawPos, recordsAng, 0.12 )
 					
@@ -403,15 +428,23 @@ if CLIENT then
 					deathrunShadowTextSimple("TOP 3 RECORDS", "deathrun_3d2d_large", 0, -300, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2)
 						
 					if DR.MapRecordsCache[1] ~= nil then
-						for i = 1, #DR.MapRecordsCache do
+						for i = 1, #DR.MapRecordsCache + 2 do
 							local k = i-1
-							local v = DR.MapRecordsCache[i]
+							if i <= #DR.MapRecordsCache then
+								local v = DR.MapRecordsCache[i]
 
-							deathrunShadowTextSimple( tostring(i)..". "..string.sub( v["nickname"] or "", 1, 24 ), "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
-							deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(v["seconds"] or "0"), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
+								deathrunShadowTextSimple( tostring(i)..". "..string.sub( v["nickname"] or "", 1, 24 ), "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
+								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(v["seconds"] or "0"), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
 
-							surface.SetDrawColor( DR.Colors.Turq )
-							surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
+								surface.SetDrawColor( DR.Colors.Turq )
+								surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
+							elseif i == #DR.MapRecordsCache + 2 then
+								deathrunShadowTextSimple( "Personal Best", "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
+								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds( DR.MapPBCache or 0 ), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
+
+								surface.SetDrawColor( DR.Colors.Turq )
+								surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
+							end
 						end
 					else
 						deathrunShadowTextSimple( "No records yet!", "deathrun_3d2d_large", 0, -200, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 2 )
