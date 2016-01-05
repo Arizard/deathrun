@@ -225,7 +225,7 @@ end)
 local stuckers = {} -- mother stuckers
 concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 
-	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 10 then
+	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 30 then
 		local trace = {
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward()*10,
