@@ -476,7 +476,9 @@ function GM:GetFallDamage( ply, speed )
 	if ply:Team() == TEAM_DEATH then
 		return 0 -- deaths keep killing themselves on deathrun_ramesses_revenge
 	end
-	return speed/8
+
+	local damage = math.max( 0, math.ceil( 0.2418*speed - 141.75 ) )
+	return damage
 end
 
 -- Function Key Binds

@@ -17,9 +17,7 @@ function DR:GetAnnouncerTable( )
 	return msgs
 end
 
-function DR:AddAnnouncement( ann )
-	table.insert( msgs, ann or "Blank Announcement" )
-end
+
 
 local msgs = {}
 
@@ -39,6 +37,10 @@ msgs = {
 	"Change your HUD theme in the F2 menu.",
 	"Disconnecting while on the Death team is not allowed and will be considered death avoidance. You will be forced to play 1 extra rounds as Death.",
 }
+
+function DR:AddAnnouncement( ann )
+	table.insert( msgs, ann or "Blank Announcement" )
+end
 
 local AnnouncementInterval = CreateClientConVar("deathrun_announcement_interval", 60, true, false)
 local AnnouncementEnabled = CreateClientConVar("deathrun_enable_announcements", 1, true, false)
