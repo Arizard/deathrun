@@ -223,6 +223,12 @@ end)
 
 -- unstuck command
 local stuckers = {} -- mother stuckers
+
+hook.Add("EntityTakeDamage", "unstuckblocker", function(ply)
+	if ply:IsPlayer() then
+		stuckers[ply:SteamID64()] = CurTime()
+	end
+end)
 concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 
 	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 30 then

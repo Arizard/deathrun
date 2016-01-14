@@ -36,7 +36,15 @@ DR.Colors = {
 
 DR.DermaColors = {}
 
-DR.AirAccelerate = 1000
+DR.AirAccelerate = 1000 -- does nothing
+
+function DR:SetMainColor( col )
+	DR.Colors.Turq = col
+end
+
+function DR:SetMainTextColor( col )
+	DR.Colors.Text.Turq = col
+end
 
 --[[
 

@@ -260,7 +260,7 @@ end)
 
 local RTVRatio = CreateConVar("mapvote_rtv_ratio", 0.5, defaultFlags, "The ratio between votes and players in order to initiate a mapvote.")
 
-function MV:CheckRTV()
+function MV:CheckRTV( suppress )
 
 	if MV.Active then return end
 
@@ -281,17 +281,20 @@ function MV:CheckRTV()
 	else
 
 		local needed = math.ceil(RTVRatio:GetFloat() * numplayers) - votes + 1
-
-		DR:ChatBroadcast(tostring(needed).." more votes needed in order to change the map. Type !rtv to vote.")
+		if not suppress then
+			DR:ChatBroadcast(tostring(needed).." more votes needed in order to change the map. Type !rtv to vote.")
+		end
 	end
 
 end
 
 concommand.Add( "mapvote_rtv", function( ply )
 
+	local suppress = ply.WantsRTV
+
 	ply.WantsRTV = true
 
-	MV:CheckRTV()
+	MV:CheckRTV( suppress )
 
 end)
 

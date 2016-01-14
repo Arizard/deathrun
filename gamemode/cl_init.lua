@@ -181,13 +181,7 @@ function GM:PreDrawPlayerHands( hands, vm, ply, wep )
 	end
 end
 
-function DR:SetMainColor( col )
-	DR.Colors.Turq = col
-end
 
-function DR:SetMainTextColor( col )
-	DR.Colors.Text.Turq = col
-end
 
 concommand.Add("+menu", function()
 	RunConsoleCommand("deathrun_dropweapon")
