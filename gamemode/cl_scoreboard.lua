@@ -20,6 +20,8 @@ local columnFunctions = {
 	function( ply ) return ply:Ping() end,
 }
 
+CreateClientConVar("deathrun_scoreboard_small", 0, true, false)
+
 
 if IsValid(DR.ScoreboardPanel) then -- remove the scoreboard on autorefresh
 	DR.ScoreboardPanel:Remove()
@@ -118,28 +120,38 @@ function DR:CreateScoreboard()
 		end
 	end
 
-	dlist:Add( header )
-	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to scroll and interact with scoreboard."}, dlist:GetWide(), 32, DR.Colors.Turq ) )
+	local small = GetConVar("deathrun_scoreboard_small"):GetBool()
 
-	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_DEATH)).." players on Death Team"}, dlist:GetWide(), 32, team.GetColor( TEAM_DEATH ) ) )
+	dlist:Add( header )
+	dlist:Add( DR:NewScoreboardSpacer( {"[Hint] Right Click to scroll and interact with scoreboard."}, dlist:GetWide(), small and 24 or 32, DR.Colors.Turq ) )
+
+	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_DEATH)).." players on Death Team"}, dlist:GetWide(), small and 24 or 32, team.GetColor( TEAM_DEATH ) ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_DEATH )) do
-		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
+		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 	end
-	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_RUNNER)).." players on Runner Team"}, dlist:GetWide(), 32, team.GetColor( TEAM_RUNNER ) ) )
+	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_RUNNER)).." players on Runner Team"}, dlist:GetWide(), small and 24 or 32, team.GetColor( TEAM_RUNNER ) ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_RUNNER )) do
-		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
+		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 	end
 	if GhostMode then -- GhostMode support
-		dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_GHOST)).." players in Ghost Mode"}, dlist:GetWide(), 32, team.GetColor( TEAM_GHOST ) ) )
+		dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_GHOST)).." players in Ghost Mode"}, dlist:GetWide(), small and 24 or 32, team.GetColor( TEAM_GHOST ) ) )
 		for k,ply in ipairs(team.GetPlayers( TEAM_GHOST )) do
-			dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
+			dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 		end
 	end
-	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_SPECTATOR)).." players Spectating"}, dlist:GetWide(), 32 ) )
+	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_SPECTATOR)).." players Spectating"}, dlist:GetWide(), small and 24 or 32,  HexColor("#303030") ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_SPECTATOR )) do
-		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), 28 ) )
+		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 	end
 
+	local options = DR:NewScoreboardSpacer( {""}, dlist:GetWide(), 24, HexColor("#303030") )
+
+	local sizetog = vgui.Create("AuToggle_Deathrun", options)
+	sizetog:SetConVar( "deathrun_scoreboard_small" )
+	sizetog:SetText("Small Text")
+	sizetog:SizeToContents()
+
+	dlist:Add( options )
 	dlist:SizeToChildren()
 
 	DR.ScoreboardPanel = scoreboard
@@ -172,7 +184,10 @@ function DR:NewScoreboardSpacer( tbl_cols, w, h, customColor ) -- static columns
 		local label = vgui.Create("DLabel", panel)
 		label:SetText( columns[i] )
 		label:SetTextColor( customColor )
-		label:SetFont("deathrun_derma_Small")
+
+		local small = GetConVar("deathrun_scoreboard_small"):GetBool()
+
+		label:SetFont(small and "deathrun_derma_Tiny" or "deathrun_derma_Small")
 		label:SizeToContents()
 		label:SetPos( #columns > 1 and 4+(k * ((panel:GetWide()-8)/(#columns-1)) - label:GetWide()*align) or (panel:GetWide()-8)/2 - label:GetWide()/2, 0 )
 		label:CenterVertical()
@@ -274,7 +289,9 @@ function DR:NewScoreboardPlayer( ply, w, h )
 		local label = vgui.Create("DLabel", data)
 		label:SetText( columnFunctions[i]( ply ) )
 		label:SetTextColor( plyscorecol )
-		label:SetFont("deathrun_derma_Small")
+		local small = GetConVar("deathrun_scoreboard_small"):GetBool()
+
+		label:SetFont(small and "deathrun_derma_Tiny" or "deathrun_derma_Small")
 		label:SetExpensiveShadow( 1 )
 		label:SizeToContents()
 		label:SetPos( k * ((data:GetWide()-8)/(#columns-1)) - label:GetWide()*align, 0  )
