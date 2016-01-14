@@ -248,7 +248,7 @@ concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 
 		DR:ChatBroadcast( ply:Nick().." attempted to free themselves from the clutches of a bugged trap.")
 	else
-		DeathrunChatPrint( ply, "You can't use that right now." )
+		ply:DeathrunChatPrint("You can't use that right now.")
 	end
 
 end)
