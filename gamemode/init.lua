@@ -520,9 +520,15 @@ local function IsCSSSecondary( wep )
 
 end
 
+local stop_the_drop = {
+	"weapon_fuckmeintheass",
+}
+
 concommand.Add("deathrun_dropweapon", function( ply, cmd, args)
 	if ply:Alive() and ply:GetActiveWeapon() ~= nil and IsValid( ply:GetActiveWeapon() ) then
-		ply:DropWeapon( ply:GetActiveWeapon() )
+		if not table.HasValue( stop_the_drop, ply:GetActiveWeapon():GetClass() ) then
+			ply:DropWeapon( ply:GetActiveWeapon() )
+		end
 	end
 end)
 

@@ -4,13 +4,16 @@ local columnFunctions = {
 	function() return "" end, -- empty space to even the spacings out
 	function( ply ) 
 		if ply:SteamID() == "STEAM_0:1:30288855" then -- don't remove this or i kill u
-			return "Super Player"
+			return "Author"
 		end
 		if ply:SteamID() == "STEAM_0:0:29351088" then
 			return "Worst Player"
 		end
+		if ply:SteamID() == "STEAM_0:0:90710956" then
+			return "Associate"
+		end
 		if ply:SteamID() == "STEAM_0:1:128126755" then
-			return "Confirmed Girl"
+			return "Confirmed Grill"
 		end
 		return ""
 	end,
@@ -411,35 +414,35 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid 30 "..self.ply:SteamID()..' Banned by server staff for half an hour.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 120 Banned by server staff for half an hour.' )
 				end
 				local option = menu:AddOption( "Ban for 2 hours" ) -- 2hr ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid 120 "..self.ply:SteamID()..' Banned by server staff for 2 hours.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 120 Banned by server staff for 2 hours.' )
 				end
 				local option = menu:AddOption( "Ban for 24 hours" ) -- 1d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid 1440 "..self.ply:SteamID()..' Banned by server staff for 1 day.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 1440 Banned by server staff for 1 day.' )
 				end
 				local option = menu:AddOption( "Ban for 1 week" ) -- 7d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid 10080 "..self.ply:SteamID()..' Banned by server staff for 1 week.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 10080 Banned by server staff for 1 week.' )
 				end
 				local option = menu:AddOption( "Ban permanently" ) -- 7d ban
 				option.ply = menu.ply
 				option:SetIcon("icon16/clock_red.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid 0 "..self.ply:SteamID()..' Banned by server staff forever.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 0 Banned by server staff forever.' )
 				end
 			end
 
@@ -497,6 +500,8 @@ hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i
 		return Color(200,0,0)
 	elseif ply:SteamID() == "STEAM_0:1:128126755" then
 		return Color(255,200,255)
+	elseif ply:SteamID() == "STEAM_0:0:90710956" then
+		return Color( 0, 200, 0 )
 	end
 end)
 
@@ -507,6 +512,8 @@ hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
 		return "icon16/rainbow.png"
 	elseif ply:IsAdmin() or ply:IsSuperAdmin() then
 		return "icon16/shield.png"
+	elseif ply:SteamID() == "STEAM_0:0:90710956" then
+		return "icon16/bug_add.png"
 	elseif string.find( ply:Nick(), "VHS7" ) ~= nil then
 		return "icon16/heart.png"
 	end
