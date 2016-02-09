@@ -49,6 +49,33 @@ function ZONE:Create( name, pos1, pos2, color, type )
 
 end
 
+function ZONE:ZoneData( name )
+	return ZONE.zones[name] or false
+end
+
+function ZONE:GetPlayerInZone( name )
+	return ply.InZones and ply.InZones[name]
+end
+
+function ZONE:GetPlayerInZoneType( ply, t )
+	for k,v in pairs( ply.InZones ) do
+		if ZONE.zones[ k ] and v == true then
+			if type(t) == "string" then
+				if ZONE.zones[ k ].type == t then
+					return true
+				end
+			elseif type(t) == "table" then
+				for _,j in ipairs( t ) do
+					if ZONE.zones[ k ].type == j then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
 function ZONE:Tick() -- cycle through zones and check for players
 
 	for name, z in pairs( ZONE.zones ) do
@@ -58,17 +85,21 @@ function ZONE:Tick() -- cycle through zones and check for players
 				-- create a bunch of variables on the player
 				ply.InZones = ply.InZones or {}
 
-				if not table.HasValue(ply.InZones, name) then
-					if VectorInCuboid( ply:GetPos()+Vector(0,0,50), z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
-						table.insert(ply.InZones, name)
+				if not ply.InZones[ name ] then
+					if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
+						ply.InZones[name] = true
 						hook.Call("DeathrunPlayerEnteredZone", nil, ply, name, z)
 						
 					end
 				else
-					if not VectorInCuboid( ply:GetPos()+Vector(0,0,50), z.pos1, z.pos2 ) then -- if we remember them being inside, but they arent anymore, then they left.
-						table.RemoveByValue(ply.InZones, name)
+					if not PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we remember them being inside, but they arent anymore, then they left.
+						ply.InZones[name] = false
 						hook.Call("DeathrunPlayerExitedZone", nil, ply, name, z)
 					end
+				end
+
+				if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
+					hook.Call("DeathrunPlayerInsideZone", nil, ply, name, z)	
 				end
 			end
 		end
@@ -214,7 +245,43 @@ hook.Add("DeathrunBeginActive", "DeathrunResetZoneTimer", function()
 	ZONE.StartTime = CurTime()
 end)
 
+local function denyZone( ply, name, z )
+
+	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE then ply:Kill() end
+	
+end
+
+hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, name, z)
+	if z.type == "deny_team_runner" and ply:Team() == TEAM_RUNNER then
+		denyZone( ply, name, z )
+		return
+	end
+	if z.type == "deny_team_death" and ply:Team() == TEAM_DEATH then
+		denyZone( ply, name, z )
+		return
+	end
+	if z.type == "deny" then
+		denyZone( ply, name, z )
+		return
+	end
+end)
+
+hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
+	if ZONE:GetPlayerInZoneType( ply, {"deny", "deny_team_death", "deny_team_runner"} ) then
+		--cmd:SetMaxSpeed( 0 )
+		--cmd:SetMaxClientSpeed( 0 )
+	end
+end)
+
 hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, name, z)
+
+	if string.sub( z.type, 1, 4 ) == "deny" then
+		if not ply.DenyEntryList then
+			ply.DenyEntryList = {}
+		end
+		ply.DenyEntryList[ name ] = ply:GetPos()
+	end
+
 	if (ply:Team() ~= TEAM_RUNNER) or ply:GetSpectate() or (not ply:Alive()) or ROUND:GetCurrent() == ROUND_WAITING then return end
 	if z.type == "end" and ply.HasFinishedMap ~= true then
 		table.insert( finishorder, ply )

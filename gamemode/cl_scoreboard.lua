@@ -23,6 +23,23 @@ local columnFunctions = {
 	function( ply ) return ply:Ping() end,
 }
 
+local function IsSupporting( ply )
+
+	local strings = {
+		"VHS7",
+		"VHS-7",
+		"vhs7.tv",
+	}
+
+	for i = 1, #strings do
+		if string.find( string.lower( ply:Nick() ), string.lower( strings[i] ) ) ~= nil then
+			return true
+		end
+	end
+
+	return false
+end
+
 CreateClientConVar("deathrun_scoreboard_small", 0, true, false)
 
 
@@ -414,7 +431,7 @@ function DR:NewScoreboardPlayer( ply, w, h )
 				option:SetIcon("icon16/clock.png")
 				function option:DoClick()
 					if not IsValid(self.ply) then return end
-					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 120 Banned by server staff for half an hour.' )
+					LocalPlayer():ConCommand("ulx banid "..self.ply:SteamID()..' 30 Banned by server staff for half an hour.' )
 				end
 				local option = menu:AddOption( "Ban for 2 hours" ) -- 2hr ban
 				option.ply = menu.ply
@@ -514,7 +531,7 @@ hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
 		return "icon16/shield.png"
 	elseif ply:SteamID() == "STEAM_0:0:90710956" then
 		return "icon16/bug_add.png"
-	elseif string.find( ply:Nick(), "VHS7" ) ~= nil then
+	elseif IsSupporting( ply ) then
 		return "icon16/heart.png"
 	end
 end)

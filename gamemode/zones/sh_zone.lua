@@ -8,6 +8,17 @@
 
 ZONE = ZONE or {} -- global table
 
+ZONE.ZoneTypes = {
+	"start",
+	"end",
+	"deny_team_death",
+	"deny_team_runner",
+	"deny",
+	"custom1",
+	"custom2",
+	"custom3",
+}
+
 function VectorMinMax( vec1, vec2 )
 	local min = Vector(0,0,0)
 	local max = Vector(0,0,0)
@@ -47,4 +58,41 @@ function VectorInCuboid( pos, min, max ) -- check if vector is within cuboid
 	else
 		return false
 	end
+end
+
+function PlayerInCuboid( ply, min, max ) -- check if vector is within cuboid
+	local plymin, plymax = ply:GetPos() + ply:OBBMins(), ply:GetPos() + ply:OBBMaxs()
+	return CuboidOverlap( plymin, plymax, min, max )
+end
+
+function CuboidOverlap( min1, max1, min2, max2 )
+	local min1, max1 = VectorMinMax( min1, max1 )
+	local min2, max2 = VectorMinMax( min2, max2 )
+
+	local pass = 0
+
+	if VectorInCuboid( min1, min2, max2 ) then
+		return true
+	elseif VectorInCuboid( max1, min2, max2 ) then
+		return true
+	elseif VectorInCuboid( min2, min1, max1 ) then
+		return true
+	elseif VectorInCuboid( max2, min1, max1 ) then
+		return true
+	end
+
+	if (min1.x > min2.x) ~= (max1.x > max2.x) then
+		pass = pass + 1
+	end
+
+	if (min1.y > min2.y) ~= (max1.y > max2.y) then
+		pass = pass + 1
+	end
+
+	if (min1.z > min2.z) ~= (max1.z > max2.z) then
+		pass = pass + 1
+	end
+
+	if pass >= 3 then return true else return false end
+
 end

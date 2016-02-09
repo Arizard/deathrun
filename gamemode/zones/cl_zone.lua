@@ -5,7 +5,7 @@ net.Receive("ZoneSendZones", function()
 end)
 
 local line_mat = Material("color.vmt")
-function ZONE:DrawCuboid( pos1, pos2, col )
+function ZONE:DrawCuboid( pos1, pos2, col, alt )
 	local pos1, pos2 = VectorMinMax( pos1, pos2 )
 
 	col = Color(col.r, col.g, col.b, col.a )
@@ -43,6 +43,29 @@ function ZONE:DrawCuboid( pos1, pos2, col )
 	render.DrawBeam( points[3], points[7], width, 1, 1, col )
 	render.DrawBeam( points[4], points[8], width, 1, 1, col )
 
+	if alt then
+
+
+		width = width/2 * (1+math.floor(CurTime()*4)%2)
+		render.DrawBeam( points[1], points[3], width, 1, 1, col)
+		render.DrawBeam( points[2], points[4], width, 1, 1, col)
+
+		render.DrawBeam( points[1], points[6], width, 1, 1, col)
+		render.DrawBeam( points[2], points[5], width, 1, 1, col)
+
+		render.DrawBeam( points[4], points[7], width, 1, 1, col)
+		render.DrawBeam( points[3], points[8], width, 1, 1, col)
+
+		render.DrawBeam( points[3], points[6], width, 1, 1, col)
+		render.DrawBeam( points[2], points[7], width, 1, 1, col)
+
+		render.DrawBeam( points[1], points[8], width, 1, 1, col)
+		render.DrawBeam( points[4], points[5], width, 1, 1, col)
+
+		render.DrawBeam( points[5], points[7], width, 1, 1, col)
+		render.DrawBeam( points[6], points[8], width, 1, 1, col)
+	end
+
 end
 
 CreateClientConVar("deathrun_zones_visibility","1",true, false)
@@ -59,7 +82,24 @@ hook.Add("PostDrawTranslucentRenderables", "DeathrunZoneCuboidDrawing", function
 					local frac = math.Clamp( InverseLerp( dist, 1000, 400 ), 0,1)
 					tempcolor.a = frac*z.color.a
 
-					ZONE:DrawCuboid( z.pos1, z.pos2, tempcolor )
+					local alt = false
+					local ply = LocalPlayer()
+
+					if z.type == "deny_team_runner" and ply:Team() == TEAM_RUNNER then
+						alt = true
+					end
+					if z.type == "deny_team_death" and ply:Team() == TEAM_DEATH then
+						alt = true
+					end
+					if z.type == "deny" then
+						alt = true
+					end
+
+					ZONE:DrawCuboid( z.pos1, z.pos2, tempcolor, alt )
+
+					--if string.sub( z.type, 1, 4 ) == "deny" then
+						--ZONE:DrawCuboid( z.pos1, z.pos2, tempcolor, true )
+					--end
 				end
 			end
 		end

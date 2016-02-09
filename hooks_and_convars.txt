@@ -165,7 +165,7 @@ SHARED:
 	DeathrunBeginWaiting ()
 		Called when round state is switched to ROUND_WAITING ( 3 )
 
-	DeathrunBeginPreptime ()
+	DeathrunBeginPrep ()
 		Called when round state is switched to ROUND_PREP ( 4 )
 
 	DeathrunBeginActive ()

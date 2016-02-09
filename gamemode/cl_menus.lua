@@ -425,9 +425,9 @@ function DR:OpenZoneEditor()
 	local dd = vgui.Create("DComboBox")
 	dd:SetSize( dlist:GetWide()/2 -2, 18 )
 	dd:SetValue("end")
-	dd:AddChoice("start")
-	dd:AddChoice("end")
-	dd:AddChoice("custom")
+	for i = 1, #ZONE.ZoneTypes do
+		dd:AddChoice( ZONE.ZoneTypes[i] )
+	end
 	dlist:Add(dd)
 
 	local sbmt =  vgui.Create("deathrun_button")
