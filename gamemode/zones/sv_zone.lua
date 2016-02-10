@@ -58,7 +58,7 @@ function ZONE:GetPlayerInZone( name )
 end
 
 function ZONE:GetPlayerInZoneType( ply, t )
-	for k,v in pairs( ply.InZones ) do
+	for k,v in pairs( ply.InZones or {} ) do
 		if ZONE.zones[ k ] and v == true then
 			if type(t) == "string" then
 				if ZONE.zones[ k ].type == t then

@@ -594,13 +594,16 @@ function AUTOGGLE:Paint( w, h )
 	--surface.DrawOutlinedRect(8, h/2-8, 16, 16)
 	surface.DrawCircle( 16, h/2, 8 )
 	surface.SetDrawColor( DR.Colors.Clouds )
-	surface.DrawCircle( 16, h/2, 6*( 1- ( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) ) )
+	surface.DrawCircle( 16, h/2, 6 )
+	
+	surface.SetDrawColor( DR.Colors.Turq )
+	surface.DrawCircle( 16, h/2, 4*( 1- ( self.state and QuadLerp(self.t, 1, 0) or QuadLerp(1-self.t, 0, 1) ) ) )
 
-	--surface.SetDrawColor( AuColors.Solid.Emerald )
+	--surface.SetDrawColor( AuColors.New.E )
 	--surface.DrawCircle( 16, h/2, 10*( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) )
 
 
-	deathrunShadowTextSimple( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 0 )
+	AuShadowText( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Turq, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 end
 function AUTOGGLE:SetConVar( s )
 	self.convar = GetConVar( s )
