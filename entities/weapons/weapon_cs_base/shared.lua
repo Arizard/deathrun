@@ -36,6 +36,8 @@ SWEP.Instructions	= ""
 -- So the category name is now defined in all of the child SWEPS.
 SWEP.Category			= "Counter-Strike"
 
+SWEP.LaserBeams = false
+
 SWEP.Spawnable			= false
 SWEP.AdminSpawnable		= false
 
@@ -81,7 +83,6 @@ function SWEP:Initialize()
 end
 
 
-
 function SWEP:Holster()
 	if self then
 		self:SetIronsights( false, true )
@@ -89,9 +90,6 @@ function SWEP:Holster()
 	return true
 end
 
------------------------------------------------------------
---	Reload does nothing
------------------------------------------------------------
 function SWEP:Reload()
 	
 	if (self:Clip1() == self.Primary.ClipSize) or self.Reloading == true then return end
@@ -124,6 +122,10 @@ if SERVER then
 	SWEP.LastThink = RealTime()
 	function SWEP:Think()
 
+		if self.Think2 then
+			self:Think2()
+		end
+
 		self.Owner.LastSpeed = self.Owner.LastSpeed or 0
 
 		local speed = self.Owner:GetVelocity():Length()
@@ -146,9 +148,15 @@ if SERVER then
 				self.Owner:GiveAmmo( self.Primary.ClipSize, self:GetPrimaryAmmoType(), true )
 			end
 		end
+
+		
 	end
 else
 	function SWEP:Think() -- clientside think
+
+		if self.Think2 then
+			self:Think2()
+		end
 
 		self.Owner.LastSpeed = self.Owner.LastSpeed or 0
 
@@ -159,6 +167,8 @@ else
 		self.Owner.CurAccel = accel
 
 		self.Reloading = false
+
+		
 	end
 end
 
@@ -171,7 +181,12 @@ function SWEP:PrimaryAttack2() end
 SWEP.LastPrimaryShotTime = 0
 function SWEP:PrimaryAttack()
 
-	timer.Simple( self.Primary.Delay*0.9, function() 
+	self:PrimaryAttack2()
+
+	self.Reloading = false
+	self:SetNetworkedBool( "ReloadingShotgun", false )
+
+	timer.Simple( self.Primary.Delay*0.8, function() 
 		if self.Weapon and not self.Reloading then
 			self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
 		end
@@ -189,7 +204,11 @@ function SWEP:PrimaryAttack()
 	if ( !self:CanPrimaryAttack() ) then return end
 	
 	-- Play shoot sound
-	self.Weapon:EmitSound( self.Primary.Sound )
+	if self.LaserBeams then
+		self.Weapon:EmitSound( "weapons/airboat/airboat_gun_energy1.wav", 75, 100 - 50*(math.min(self.Primary.Damage*self.Primary.NumShots,100)/100), 1 )
+	else
+		self.Weapon:EmitSound( self.Primary.Sound )
+	end
 	
 	-- Shoot the bullet
 	self:CSShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self.Primary.Cone )
@@ -208,7 +227,7 @@ function SWEP:PrimaryAttack()
 		self.Weapon:SetNetworkedFloat( "LastShootTime", CurTime() )
 	end
 
-	self:PrimaryAttack2()
+	
 
 
 	
@@ -323,10 +342,43 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	local owner = self.Owner
 	local slf = self
 
-	bullet.Callback = function(ply, tr, dmginfo)
-		--if SERVER and tr.HitPos then
-			--print(tr.Entity:GetClass())
-		--end
+	if self.LaserBeams then
+		bullet.Callback = function(ply, tr, dmginfo)
+			local newBeam = table.Copy( self.EmptyBeam )
+
+			local id = ply:LookupAttachment("anim_attachment_RH")
+			local att = ply:GetAttachment( id )
+			newBeam.start = att and att.Pos + att.Ang:Forward()*20 + att.Ang:Up()*2 or self:GetPos()
+			
+			if CLIENT then
+				local att = ply:GetViewModel():GetAttachment( 1 )
+				newBeam.start = att.Pos
+			end
+
+			newBeam.endpos = tr.HitPos
+			local green = Color(50,200,50)
+			local gold = Color(255,200,50)
+			
+			-- if math.random(0,10) > 5 then
+			-- 	newBeam.r, newBeam.g, newBeam.b, a = gold.r, gold.g, gold.b
+			-- else
+			-- 	newBeam.r, newBeam.g, newBeam.b, a = green.r, green.g, green.b
+			-- end
+			newBeam.r = 255
+			newBeam.b = math.random(0,100)
+
+			if SERVER then
+				for k,v in ipairs( player.GetAll() ) do
+					if v ~= ply then
+						net.Start("NewBeamMeme")
+						net.WriteString( util.TableToJSON(newBeam) )
+						net.Send( v )
+					end
+				end
+			else
+				table.insert( WeaponBeams, newBeam )
+			end
+		end
 	end
 
 	self.Owner:FireBullets( bullet )
@@ -345,6 +397,11 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 
 end
 
+function SWEP:OnDrop()
+	self.Reloading = false
+	self:SetNetworkedBool( "ReloadingShotgun", false )
+	return true
+end
 
 -----------------------------------------------------------
 --	Checks the objects before any action is taken
@@ -570,4 +627,38 @@ function SWEP:OnRestore()
 	self.NextSecondaryAttack = 0
 	self:SetIronsights( false )
 	
+end
+
+if SERVER then
+	util.AddNetworkString("NewBeamMeme")
+end
+SWEP.EmptyBeam = {
+	start = Vector(0,0,0),
+	endpos = Vector(0,0,0),
+	r = 0,
+	g = 0,
+	b = 0,
+	alpha = 255
+}
+if CLIENT then
+	print("Loaded laser beams")
+	WeaponBeams = {} -- global
+	
+	local laser = Material('color.vmt')
+	hook.Add("PreDrawTranslucentRenderables", "Lasers", function()
+		render.SetMaterial(laser)
+		for k,v in pairs(WeaponBeams) do
+			if v ~= nil then
+				if v.alpha > 0 then
+					render.DrawBeam( v.start, v.endpos, 1, 0, 1, Color(v.r,v.g,v.b, v.alpha) )
+					WeaponBeams[k].alpha = WeaponBeams[k].alpha - 255*FrameTime()
+				end
+			else
+				WeaponBeams[k] = nil
+			end
+		end
+	end)
+	net.Receive("NewBeamMeme",function()
+		table.insert( WeaponBeams, util.JSONToTable( net.ReadString() ) )
+	end)
 end

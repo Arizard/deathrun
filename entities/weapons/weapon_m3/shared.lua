@@ -27,7 +27,7 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.Primary.Sound			= Sound( "Weapon_M3.Single" )
-SWEP.Primary.Recoil			= 7
+SWEP.Primary.Recoil			= 2
 SWEP.Primary.Damage			= 8
 SWEP.Primary.NumShots		= 8
 SWEP.Primary.Cone			= 0.1
@@ -39,72 +39,106 @@ SWEP.Primary.Ammo			= "buckshot"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
+SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 SWEP.Shotgun = true
 
 SWEP.IronSightsPos 		= Vector( 5.7, -3, 3 )
+SWEP.ShellInterval = 0.65
+SWEP.Shotgun = true
+SWEP.NextReload = 0
 
 
-/*---------------------------------------------------------
-	Reload does nothing
----------------------------------------------------------*/
 function SWEP:Reload()
 	
-	//if ( CLIENT ) then return end
-	
-	self:SetIronsights( false )
-	
-	// Already reloading
-	if ( self.Weapon:GetNetworkedBool( "reloading", false ) ) then return end
-	
-	// Start reloading if we can
-	if ( self.Weapon:Clip1() < self.Primary.ClipSize && self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 ) then
-		
-		self.Weapon:SetNetworkedBool( "reloading", true )
-		self.Weapon:SetVar( "reloadtimer", CurTime() + 0.3 )
-		self.Weapon:SendWeaponAnim( ACT_VM_RELOAD )
-		self.Owner:DoReloadEvent()
-	end
+	--print( self.ReloadingShotgun )
 
+	if (self:Clip1() == self.Primary.ClipSize) or self.ReloadingShotgun == true then return end
+	if CurTime() < self.NextReload then return end
+
+	--self.Weapon:DefaultReload( ACT_VM_RELOAD );
+	
+	self:SetIronsights( false, true )
+
+	self.ReloadingShotgun = true
+	self.NextShell = CurTime() + 0.1
+	self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START )
+
+	--print( self.ReloadingShotgun )
+	--print( CurTime(), self.NextShell )
+end
+
+function SWEP:PrimaryAttack2()
+	self.NextReload = CurTime() + 0.75
 end
 
 /*---------------------------------------------------------
    Think does nothing
 ---------------------------------------------------------*/
-function SWEP:Think()
+function SWEP:Think2()
 
+	if self.ReloadingShotgun then
+		if self.NextShell < CurTime() then
+			--self.Weapon:SetNextPrimaryFire( self.NextShell )
+			if (self:Clip1() < self.Primary.ClipSize) then
+				
+				self.Weapon:SendWeaponAnim( ACT_VM_RELOAD )
+				timer.Simple(self.ShellInterval*0.8, function()
+					if IsValid(self.Weapon) then
+						if self.ReloadingShotgun then
+							self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_START )
+						end
+					end
+				end)
+				self.Owner:DoReloadEvent()
+				self.Owner:RemoveAmmo( 1, self.Primary.Ammo, false )
+				self.Weapon:SetClip1(  self.Weapon:Clip1() + 1 )
+				self.NextShell = CurTime() + self.ShellInterval
 
-	if ( self.Weapon:GetNetworkedBool( "reloading", false ) ) then
-	
-		if ( self.Weapon:GetVar( "reloadtimer", 0 ) < CurTime() ) then
-			
-			// Finsished reload -
-			if ( self.Weapon:Clip1() >= self.Primary.ClipSize || self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then
-				self.Weapon:SetNetworkedBool( "reloading", false )
-				return
-			end
-			
-			// Next cycle
-			self.Weapon:SetVar( "reloadtimer", CurTime() + 0.3 )
-			self.Weapon:SendWeaponAnim( ACT_VM_RELOAD )
-			self.Owner:DoReloadEvent()
-			
-			// Add ammo
-			self.Owner:RemoveAmmo( 1, self.Primary.Ammo, false )
-			self.Weapon:SetClip1(  self.Weapon:Clip1() + 1 )
-			
-			// Finish filling, final pump
-			if ( self.Weapon:Clip1() >= self.Primary.ClipSize || self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then
+			elseif ( self.Weapon:Clip1() >= self.Primary.ClipSize or self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then
 				self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH )
 				self.Owner:DoReloadEvent()
-			else
-			
+				self.ReloadingShotgun = false
+				timer.Simple(self.ShellInterval*0.8, function()
+					if IsValid(self.Weapon) then
+						if not self.ReloadingShotgun then
+							self.Weapon:SendWeaponAnim( ACT_SHOTGUN_IDLE4 )
+						end
+					end
+				end)
 			end
-			
 		end
-	
 	end
 
-end
+	-- if ( self.Weapon:GetNetworkedBool( "reloading", false ) ) then
+	
+	-- 	if ( self.Weapon:GetVar( "reloadtimer", 0 ) < CurTime() ) then
+			
+	-- 		-- Finsished reload -
+	-- 		if ( self.Weapon:Clip1() >= self.Primary.ClipSize || self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then
+	-- 			self.Weapon:SetNetworkedBool( "reloading", false )
+	-- 			return
+	-- 		end
+			
+	-- 		-- Next cycle
+	-- 		self.Weapon:SetVar( "reloadtimer", CurTime() + 0.3 )
+	-- 		self.Weapon:SendWeaponAnim( ACT_VM_RELOAD )
+	-- 		self.Owner:DoReloadEvent()
+			
+	-- 		-- Add ammo
+	-- 		self.Owner:RemoveAmmo( 1, self.Primary.Ammo, false )
+	-- 		self.Weapon:SetClip1(  self.Weapon:Clip1() + 1 )
+			
+	-- 		-- Finish filling, final pump
+	-- 		if ( self.Weapon:Clip1() >= self.Primary.ClipSize || self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then
+	-- 			self.Weapon:SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH )
+	-- 			self.Owner:DoReloadEvent()
+	-- 		else
+			
+	-- 		end
+			
+	-- 	end
+	
+	-- end
 
+end
