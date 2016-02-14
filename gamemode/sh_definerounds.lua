@@ -374,7 +374,7 @@ ROUND:AddState( ROUND_OVER,
 				local shouldswitch = hook.Call("DeathrunShouldMapSwitch") or true
 				
 				if shouldswitch == true then
-					DR:ChatBroadcast("Round limit reached. Initiating RTV...")
+					--DR:ChatBroadcast("Round limit reached. Initiating RTV...")
 					timer.Simple(3, function()
 						MV:BeginMapVote()
 					end)
