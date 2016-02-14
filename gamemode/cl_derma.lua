@@ -11,7 +11,6 @@ surface.CreateFont("deathrun_derma_Large", {
 surface.CreateFont("deathrun_derma_Medium", {
 	font = fontstandard2,
 	size = 34,
-	antialias = true,
 	weight = 200
 })
 
@@ -603,7 +602,7 @@ function AUTOGGLE:Paint( w, h )
 	--surface.DrawCircle( 16, h/2, 10*( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) )
 
 
-	AuShadowText( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Turq, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Turq, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 end
 function AUTOGGLE:SetConVar( s )
 	self.convar = GetConVar( s )
