@@ -188,7 +188,9 @@ concommand.Add("mapvote_begin_mapvote", function(ply, cmd, args)
 		cont = true
 	end
 
-	MV:BeginMapVote()
+	if not hook.Call("DeathrunStartMapvote", nil, ROUND:GetRoundsPlayed()) then
+		MV:BeginMapVote()
+	end
 
 end)
 
@@ -276,7 +278,9 @@ function MV:CheckRTV( suppress )
 
 	local ratio = votes/numplayers
 	if ratio > RTVRatio:GetFloat() then
-		MV:BeginMapVote()
+		if not hook.Call("DeathrunStartMapvote", nil, ROUND:GetRoundsPlayed()) then
+			MV:BeginMapVote()
+		end
 		DR:ChatBroadcast("RTV limit reached. Initiating mapvote.")
 	else
 
