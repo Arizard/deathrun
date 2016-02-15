@@ -73,7 +73,9 @@ end
 	
 ]]
 
--- don't touch this
+-- don't touch this otherwise shit will hit the fan and your custom colors won't work
 hook.Add("InitPostEntity", "DeathrunChangeColors", function()
 	hook.Call("DeathrunChangeColors", nil, nil)
 end)
+
+
