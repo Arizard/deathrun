@@ -260,3 +260,5 @@ local function AutoHop( ply, data )
 end
 hook.Add( "SetupMove", "AutoHop", AutoHop )
 
+-- get rid of some default hooks
+hook.Remove("PlayerTick", "TickWidgets")

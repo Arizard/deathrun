@@ -14,8 +14,8 @@ function PLAYER:BeginSpectate()
 		DR:ChatBroadcast("Player "..self:Nick().." will be punished for attempting to avoid being on the Death team!")
 	end
 
-	self:StripWeapons()
-	self:StripAmmo()
+	--self:StripWeapons()
+	--self:StripAmmo()
 
 	self.Spectating = true
 	--self.StaySpectating = false
@@ -23,7 +23,7 @@ function PLAYER:BeginSpectate()
 
 	self:Spectate( OBS_MODE_IN_EYE )
 
-	self:SetupHands( nil )
+	--self:SetupHands( nil )
 
 	self.VoluntarySpec = false
 

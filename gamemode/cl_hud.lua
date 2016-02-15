@@ -18,20 +18,27 @@ local HudAmmoPos = CreateClientConVar("deathrun_hud_ammo_position", 8, true, fal
 local HudTheme = CreateClientConVar("deathrun_hud_theme", 0, true, false) -- different themes
 local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 50, true, false)
 
+
 local HideElements = {
-	["CHudBattery"] = true,
-	["CHudCrosshair"] = true,
-	["CHudHealth"] = true,
-	["CHudAmmo"] = true
+	["CHudBattery"] = false,
+	["CHudCrosshair"] = false,
+	["CHudHealth"] = false,
+	["CHudAmmo"] = HudTheme:GetInt() ~= 2 and false or true
 }
 
+local hudThemeCache = HudTheme:GetInt()
+cvars.AddChangeCallback( "deathrun_hud_theme", function( cv, o, n )
+	if math.floor(tonumber(n)) == 2 then
+		HideElements["CHudAmmo"] = true
+	else
+		HideElements["CHudAmmo"] = false
+	end
+end)
+
 function GM:HUDShouldDraw( el )
-	if HideElements[ el ] then
-		if HudTheme:GetInt() == 2 and el == "CHudAmmo" then --incase we use classic deathrun hud
-			return true
-		else
-			return false
-		end
+	local hide = HideElements[ el ]
+	if hide ~= nil then
+		return hide
 	else
 		return true
 	end

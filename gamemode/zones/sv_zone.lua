@@ -76,35 +76,49 @@ function ZONE:GetPlayerInZoneType( ply, t )
 	return false
 end
 
+local skipcount = 0
+local skip = 0
+local tickrate = math.ceil( 1/engine.TickInterval() ) -- makes it a bit less taxing, at the cost of reducing the resolution of records
+
+if tickrate >= 100 then
+	skip = 2
+elseif tickrate >= 66 then
+	skip = 1
+end
+
 function ZONE:Tick() -- cycle through zones and check for players
+	if skipcount == skip then
+		for name, z in pairs( ZONE.zones ) do
+			if z.type then
+				for k, ply in ipairs(player.GetAllPlaying()) do
+					if ply:GetPos():Distance( (z.pos1 + z.pos2)/2 ) < z.pos1:Distance(z.pos2) * 0.6 then
+						-- create a bunch of variables on the player
+						ply.InZones = ply.InZones or {}
 
-	for name, z in pairs( ZONE.zones ) do
-		if z.type then
-			for k, ply in ipairs(player.GetAll()) do
+						if not ply.InZones[ name ] then
+							if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
+								ply.InZones[name] = true
+								hook.Call("DeathrunPlayerEnteredZone", nil, ply, name, z)
+								
+							end
+						else
+							if not PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we remember them being inside, but they arent anymore, then they left.
+								ply.InZones[name] = false
+								hook.Call("DeathrunPlayerExitedZone", nil, ply, name, z)
+							end
+						end
 
-				-- create a bunch of variables on the player
-				ply.InZones = ply.InZones or {}
-
-				if not ply.InZones[ name ] then
-					if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
-						ply.InZones[name] = true
-						hook.Call("DeathrunPlayerEnteredZone", nil, ply, name, z)
-						
+						if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
+							hook.Call("DeathrunPlayerInsideZone", nil, ply, name, z)	
+						end
 					end
-				else
-					if not PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we remember them being inside, but they arent anymore, then they left.
-						ply.InZones[name] = false
-						hook.Call("DeathrunPlayerExitedZone", nil, ply, name, z)
-					end
-				end
-
-				if PlayerInCuboid( ply, z.pos1, z.pos2 ) then -- if we don't remember them being inside, but they are inside, then they mustve just entered the zone.
-					hook.Call("DeathrunPlayerInsideZone", nil, ply, name, z)	
 				end
 			end
 		end
+		skipcount = 0
+	else
+		skipcount = skipcount + 1
 	end
-
 end
 
 hook.Add("Tick", "ZoneTick", function() ZONE:Tick() end)
@@ -266,12 +280,12 @@ hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, na
 	end
 end)
 
-hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
-	if ZONE:GetPlayerInZoneType( ply, {"deny", "deny_team_death", "deny_team_runner"} ) then
-		--cmd:SetMaxSpeed( 0 )
-		--cmd:SetMaxClientSpeed( 0 )
-	end
-end)
+-- hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
+-- 	if ZONE:GetPlayerInZoneType( ply, {"deny", "deny_team_death", "deny_team_runner"} ) then
+-- 		--cmd:SetMaxSpeed( 0 )
+-- 		--cmd:SetMaxClientSpeed( 0 )
+-- 	end
+-- end)
 
 hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, name, z)
 

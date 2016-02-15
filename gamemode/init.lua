@@ -616,36 +616,43 @@ end)
 -- this stuff gets handled in sh_definerounds.lua and shared.lua
 -- Barred players are not included in player.GetAllPlaying()
 
-if not file.Exists("deathrun/deathbarred.txt", "DATA") then
-	file.Write("deathrun/deathbarred.txt","")
+local deathbarred_path = "deathrun/deathbarred2.txt"
+
+if not file.Exists(deathbarred_path, "DATA") then
+	file.Write(deathbarred_path,"")
 end
 
-DR.BarredPlayers = util.JSONToTable( file.Read("deathrun/deathbarred.txt", "DATA") ) or { ["STEAMID_EXAMPLE"] = 3 }
-PrintTable( DR.BarredPlayers )
+DR.BarredPlayers = util.JSONToTable( file.Read(deathbarred_path, "DATA") ) or { ["STEAMID_EXAMPLE"] = { rounds = 3, lastpunish = os.time() } }
+--PrintTable( DR.BarredPlayers )
+--print("There are "..tostring(#DR.BarredPlayers).." players being punished for death avoidance.")
 
 function DR:SaveDeathAvoid()
 	for k,v in pairs( DR.BarredPlayers ) do -- remove all players with 0 rounds left
-		if v == 0 then
+		if v.rounds == 0 or v.lastpunish < os.time() - 1*24*60*60 then -- remove all players punished 24 hours ago
 			DR.BarredPlayers[k] = nil
 		end
 	end
-	file.Write("deathrun/deathbarred.txt",util.TableToJSON( DR.BarredPlayers ) )
-	PrintTable( DR.BarredPlayers )
+	file.Write(deathbarred_path,util.TableToJSON( DR.BarredPlayers ) )
+	--PrintTable( DR.BarredPlayers )
 end
 
 DR:SaveDeathAvoid()
 
+hook.Add("PostCleanupMap", "SaveDeathAvoid", function()
+	DR:SaveDeathAvoid()
+end)
+
 function DR:PunishDeathAvoid( ply, amt )
 	local id = "id"..tostring( ply:SteamID64() )
-	DR.BarredPlayers[id] = DR.BarredPlayers[id] or 0 -- create the entry if it doesn't exist
-	DR.BarredPlayers[id] = DR.BarredPlayers[id] + (amt or 1) -- add 1 rounds
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] or { rounds = 0, lastpunish = os.time() } -- create the entry if it doesn't exist
+	DR.BarredPlayers[id].rounds = DR.BarredPlayers[id].rounds + (amt or 1) -- add 1 rounds
 
-	DR:SaveDeathAvoid()
+	
 end
 
 function DR:GetDeathAvoid( ply ) -- returns how many rounds they still need to serve as punishment
 	local id = "id"..tostring( ply:SteamID64() )
-	return DR.BarredPlayers[id] or 0
+	return (DR.BarredPlayers[id] ~= nil) and (DR.BarredPlayers[id].rounds or 0) or 0
 end
 
 function DR:GetOnlineBarredPlayers()
@@ -660,10 +667,10 @@ end
 
 function DR:PardonDeathAvoid( ply, amt )
 	local id = "id"..tostring( ply:SteamID64() )
-	DR.BarredPlayers[id] = DR.BarredPlayers[id] or 0
-	DR.BarredPlayers[id] = DR.BarredPlayers[id] - (amt or 1)
+	DR.BarredPlayers[id] = DR.BarredPlayers[id] or { rounds = 0, lastpunish = os.time() }
+	DR.BarredPlayers[id].rounds = DR.BarredPlayers[id].rounds - (amt or 1)
 
-	DR:SaveDeathAvoid()
+	
 end
 
 concommand.Add("test_avoid", function( ply )
