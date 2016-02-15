@@ -151,7 +151,7 @@ SERVER:
 	DeathrunFallDamage ( PLAYER ply, FLOAT speed )
 		Called to calculate fall damage. Return a value to override the default fall damage.
 
-	DeathrunShouldMapSwitch ()
+	DeathrunShouldMapSwitch ( INT roundsPlayed )
 		Called on round end to determine whether mapvote should be started immediately or not. Return true to do so. (Useful for custom rtv and similar stuff)
 
 	DeathrunStartMapvote ( INT roundsPlayed )
