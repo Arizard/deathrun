@@ -154,7 +154,7 @@ SERVER:
 	DeathrunShouldMapSwitch ()
 		Called on round end to determine whether mapvote should be started immediately or not. Return true to do so. (Useful for custom rtv and similar stuff)
 
-	DeathrunStartMapVote ( INT roundsPlayed )
+	DeathrunStartMapvote ( INT roundsPlayed )
 		Called before built in map voting system is about to be initiated. Return true to suppress the mapvote and replace it with your own.
 
 	DeathrunPlayerEnteredZone ( PLAYER ply, STRING name, TABLE zone )
