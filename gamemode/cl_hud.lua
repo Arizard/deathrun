@@ -16,7 +16,7 @@ local CuesConVar = CreateClientConVar("deathrun_round_cues", 1, true, false)
 local HudPos = CreateClientConVar("deathrun_hud_position", 6, true, false) -- 0 topleft, 1 topcenter, 2 topright, 3 centerleft, 4 centercenter, 5 centerright, 6 bottomleft, 7 bottomcenter, 8 bottomright
 local HudAmmoPos = CreateClientConVar("deathrun_hud_ammo_position", 8, true, false) 
 local HudTheme = CreateClientConVar("deathrun_hud_theme", 0, true, false) -- different themes
-local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 50, true, false)
+local HudAlpha = CreateClientConVar("deathrun_hud_alpha", 255, true, false)
 
 
 local HideElements = {
