@@ -364,21 +364,19 @@ ROUND:AddState( ROUND_OVER,
 		hook.Call("DeathrunBeginOver", nil )
 		rounds_played = rounds_played + 1
 		if SERVER then
-			if rounds_played < GetConVarNumber("deathrun_round_limit") then
+			if not hook.Call("DeathrunShouldMapSwitch", nil, rounds_played) and ( rounds_played < GetConVarNumber("deathrun_round_limit") ) then
 				DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(GetConVarNumber("deathrun_round_limit") - rounds_played).." rounds to go!")
 				ROUND:SetTimer(GetConVarNumber("deathrun_finishtime_duration") )
 				timer.Simple(GetConVarNumber("deathrun_finishtime_duration") , function()
 					ROUND:RoundSwitch( ROUND_PREP )
 				end)
 			else
-				local shouldswitch = hook.Call("DeathrunShouldMapSwitch") or true
-				
-				if shouldswitch == true then
-					--DR:ChatBroadcast("Round limit reached. Initiating RTV...")
-					timer.Simple(3, function()
+				--DR:ChatBroadcast("Round limit reached. Initiating RTV...")
+				timer.Simple(3, function()
+					if not hook.Call("DeathrunStartMapvote", nil, rounds_played) then
 						MV:BeginMapVote()
-					end)
-				end
+					end
+				end)
 			end
 		end
 	end,

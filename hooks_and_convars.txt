@@ -151,8 +151,11 @@ SERVER:
 	DeathrunFallDamage ( PLAYER ply, FLOAT speed )
 		Called to calculate fall damage. Return a value to override the default fall damage.
 
-	DeathrunShouldMapSwitch ()
-		Called when the mapvote is about to be initiated. Return false to suppress the mapvote and replace it with your own.
+	DeathrunShouldMapSwitch ( INT roundsPlayed )
+		Called on round end to determine whether mapvote should be started immediately or not. Return true to do so. (Useful for custom rtv and similar stuff)
+
+	DeathrunStartMapvote ( INT roundsPlayed )
+		Called before built in map voting system is about to be initiated. Return true to suppress the mapvote and replace it with your own.
 
 	DeathrunPlayerEnteredZone ( PLAYER ply, STRING name, TABLE zone )
 		Called when a player enters a zone. name = identifier of that zone. zone = table storing zone data.
