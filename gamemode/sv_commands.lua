@@ -132,6 +132,10 @@ end)
 
 DR.ChatCommands = {}
 
+function DR:GetChatCommandTable()
+	return DR.ChatCommands
+end
+
 function DR:AddChatCommand(cmd, func)
 	DR.ChatCommands[cmd] = func
 	print("Deathrun - Added chat command "..cmd)
@@ -257,3 +261,27 @@ DR:AddChatCommand("stuck", function(ply, args)
 	ply:ConCommand("deathrun_unstuck")
 end)
 DR:AddChatCommandAlias( "stuck", "unstuck" )
+
+concommand.Add("deathrun_punish", function( ply, cmd, args )
+	if args[1] then
+		args[2] = args[2] or 1
+		if AdminAccess( ply ) then
+			local targets = FindPlayersByName( args[1] )
+			if #targets == 0 then
+				ply:DeathrunSafeChatPrint("No targets to punish.")
+			elseif #targets == 1 then
+				local t = targets[1]
+				DR:PunishDeathAvoid( t, tonumber(args[2]) )
+				DeathrunSafeChatPrint(ply,"Punishing "..tostring(t:Nick()).." for another "..tostring( DR:GetDeathAvoid( t ) ).." rounds.")
+			elseif #targets > 1 then
+				ply:DeathrunSafeChatPrint("Too many targets to punish.")
+			end
+		end
+	end
+end)
+
+DR:AddChatCommand( "punish", function(ply, args)
+	if not args[1] then return end
+	args[2] = args[2] or 1
+	ply:ConCommand( "deathrun_punish "..args[1].." "..args[2] )
+end)

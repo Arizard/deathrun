@@ -12,6 +12,8 @@ MV.Nominations = {}
 MV.Active = false
 MV.TimeLeft = MV.VotingTime
 
+MV.LoadTime = CurTime()
+
 local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
 
 --commands
@@ -265,6 +267,13 @@ local RTVRatio = CreateConVar("mapvote_rtv_ratio", 0.5, defaultFlags, "The ratio
 function MV:CheckRTV( suppress )
 
 	if MV.Active then return end
+
+	if not suppress then
+		if MV.LoadTime + 60 > CurTime() then
+			DR:ChatBroadcast("It is too early to call an RTV.")
+			return
+		end
+	end
 
 	local votes = 0
 	local numplayers = #player.GetAll()

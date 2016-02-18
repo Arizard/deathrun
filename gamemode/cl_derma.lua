@@ -152,7 +152,7 @@ function MAIN:Paint(w,h)
 	surface.DrawRect(0,h-8,w,4)
 
 	--title
-	deathrunShadowTextSimple( self.title ,"deathrun_derma_WindowTitle",w/2,14, DR.Colors.Clouds , TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1)
+	deathrunShadowTextSimple( self.title ,"deathrun_derma_WindowTitle",8,14, DR.Colors.Clouds , TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1)
 end
 
 function MAIN:SetPrimaryColor( col )

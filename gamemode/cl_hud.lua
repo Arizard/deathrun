@@ -23,8 +23,17 @@ local HideElements = {
 	["CHudBattery"] = false,
 	["CHudCrosshair"] = false,
 	["CHudHealth"] = false,
-	["CHudAmmo"] = HudTheme:GetInt() ~= 2 and false or true
+	["CHudAmmo"] = false
 }
+
+hook.Add("HUDPaint","FixCHudAmmo", function()
+	if HudTheme:GetInt() == 2 then
+		HideElements["CHudAmmo"] = true
+	else
+		HideElements["CHudAmmo"] = false
+	end
+	hook.Remove("HUDPaint", "FixCHudAmmo")
+end)
 
 local hudThemeCache = HudTheme:GetInt()
 cvars.AddChangeCallback( "deathrun_hud_theme", function( cv, o, n )
@@ -37,8 +46,8 @@ end)
 
 function GM:HUDShouldDraw( el )
 	local hide = HideElements[ el ]
-	if hide ~= nil then
-		return hide
+	if hide == false then
+		return false
 	else
 		return true
 	end
@@ -515,6 +524,8 @@ net.Receive("DeathrunNotification", function()
 	DR:AddNotification( net.ReadString(), ScrW()-32,ScrH()/7, 0, -0.35, 0, -0.00025, 10 )
 end)
 
+
+
 function DR:AddNotification( msg, x, y, dx, dy, ddx, ddy, dur )
 
 	msg = string.Replace(msg, "%newline%","\n")
@@ -618,6 +629,13 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 	surface.SetDrawColor( DR.Colors.Clouds )
 	surface.DrawRect(x, y + h + gap, mw, mh)
 	deathrunShadowTextSimple( stalemate and "YOU'RE ALL TERRIBLE!" or "MOST VALUABLE PLAYERS", "deathrun_hud_Medium", x + w/2, y + h + gap +mh/2 - 1, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0 )
+end
+
+function GM:HUDWeaponPickedUp( wep )
+	DR:AddNotification( "+ "..(wep.PrintName or "Weapon"), ScrW()-32, ScrH()/2, 0, -0.2, 0, 0, 5 )
+end
+function GM:HUDAmmoPickedUp( name, amt )
+	DR:AddNotification( "+ "..(amt or 0).." "..(name or "Ammo"), ScrW()-32, ScrH()/2 + 20, 0, -0.2, 0, 0, 5 )
 end
 
 -- sass hud

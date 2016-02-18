@@ -645,9 +645,7 @@ end)
 function DR:PunishDeathAvoid( ply, amt )
 	local id = "id"..tostring( ply:SteamID64() )
 	DR.BarredPlayers[id] = DR.BarredPlayers[id] or { rounds = 0, lastpunish = os.time() } -- create the entry if it doesn't exist
-	DR.BarredPlayers[id].rounds = DR.BarredPlayers[id].rounds + (amt or 1) -- add 1 rounds
-
-	
+	DR.BarredPlayers[id].rounds = math.Clamp( DR.BarredPlayers[id].rounds + (amt or 1), 0, 99 ) -- add 1 rounds
 end
 
 function DR:GetDeathAvoid( ply ) -- returns how many rounds they still need to serve as punishment
@@ -668,7 +666,7 @@ end
 function DR:PardonDeathAvoid( ply, amt )
 	local id = "id"..tostring( ply:SteamID64() )
 	DR.BarredPlayers[id] = DR.BarredPlayers[id] or { rounds = 0, lastpunish = os.time() }
-	DR.BarredPlayers[id].rounds = DR.BarredPlayers[id].rounds - (amt or 1)
+	DR.BarredPlayers[id].rounds = math.Clamp( DR.BarredPlayers[id].rounds - (amt or 1), 0, 99 )
 
 	
 end
