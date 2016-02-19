@@ -42,7 +42,7 @@ hook.Add("SetupMove", "DeathrunDisableSpectatorSpacebar", function( ply, mv, cmd
 	end
 
 	if ply:Alive() then
-		if ROUND:GetCurrent() == ROUND_PREP then
+		if ROUND:GetCurrent() == ROUND_PREP and ply:Team() == TEAM_RUNNER then
 			--mv:SetButtons( bit.band( mv:GetButtons(), bit.bnot( IN_JUMP ) ) )
 
 			local block = hook.Call("DeathrunPreventPreptimeMovement") or true
