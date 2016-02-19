@@ -743,7 +743,7 @@ net.Receive("DeathrunForceSpectator", function(len, ply)
 	end
 end)
 
-local removeSpeed = CreateConVar("deathrun_disable_default_deathspeed", 0, defaultFlags, "Removed the player_speedmod entities from maps to disable the default deathspeed.")
+local removeSpeed = CreateConVar("deathrun_disable_default_deathspeed", 0, defaultFlags, "Removes the player_speedmod entities from maps to disable the default deathspeed.")
 
 function DR:RemoveSpeedMods()
 	if removeSpeed:GetBool() == true then

@@ -75,6 +75,9 @@ SERVER CONVARS:
 	deathrun_death_model <string model path>
 		The default model for the Deaths.
 
+	deathrun_disable_default_deathspeed <0/1>
+		Removes the player_speedmod entities from maps to disable the default deathspeed.
+
 CLIENT CONVARS:
 
 	deathrun_crosshair_thickness <0-999>
