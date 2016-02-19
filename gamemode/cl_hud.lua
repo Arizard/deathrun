@@ -521,7 +521,7 @@ local emptynotification = {
 }
 
 net.Receive("DeathrunNotification", function()
-	DR:AddNotification( net.ReadString(), ScrW()-32,ScrH()/7, 0, -0.35, 0, -0.00025, 10 )
+	DR:AddNotification( net.ReadString(), ScrW()-32,ScrH()/6, 0, -0.35, 0, -0.00025, 10 )
 end)
 
 
@@ -544,6 +544,8 @@ function DR:AddNotification( msg, x, y, dx, dy, ddx, ddy, dur )
 
 
 	table.insert(notifications, new)
+
+	MsgC(Color(0,255,0),msg.."\n")
 end
 
 concommand.Add("deathrun_test_notification", function(ply, cmd, args)

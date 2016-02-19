@@ -257,7 +257,11 @@ function GM:PlayerLoadout( ply )
 	
 end
 
-function GM:PlayerDeath( ply )
+hook.Add("AcceptInput", "DeathrunKillers", function( ent, input, activator, caller )
+	ent.LastCaller = caller
+end)
+
+function GM:PlayerDeath( ply, inflictor, attacker )
 
 	ply:Extinguish()
 	-- some death sounds
@@ -322,40 +326,73 @@ function GM:PlayerDeath( ply )
 		end
 	end)
 
-	table.insert( DR.KillList, ply )
+	if inflictor.LastCaller then
+		if inflictor.LastCaller.User then
+			attacker = inflictor.LastCaller.User
+		end
+	end
+
+	table.insert( DR.KillList, {ply, attacker} )
+	
 end
 
 DR.KillList = {}
 
-timer.Create("DeathrunSendKillList", 0.7,0,function()
+timer.Create("DeathrunSendKillList", 0.5,0,function()
 	if #DR.KillList > 0 then
 		local message = ""
 		
 		-- remove the invalid players
 		for k,v in ipairs(DR.KillList) do
-			if not IsValid(v) then
+			if not IsValid(v[1]) then
 				table.remove( DR.KillList, k )
 			end
 		end
 
-		for i = 1, #DR.KillList do
-			local ply = DR.KillList[i]
-			if IsValid(ply) then
-				if i < #DR.KillList-1 then
-					message = message..(i == 1 and "" or " ")..ply:Nick()..","
-					if i%4 == 0 then
-						message = message.."%newline%"
-					end
-				elseif i == #DR.KillList - 1 then
-					message = message.." "..ply:Nick().." and"
+		PrintTable( DR.KillList )
+
+		if type(DR.KillList[1]) == "table" then
+
+			local ply = DR.KillList[1][1]
+			local att = DR.KillList[1][2]
+
+			if not IsValid( ply ) then return end
+
+			message = ply:Nick().." was killed"
+
+			if IsValid(att) then
+				if att:IsPlayer() then
+					message = message.." by "..att:Nick().."!"
 				else
-					message = message.." "..ply:Nick()
+					message = message.." by a mysterious cause!"
 				end
+			else
+				message = message.."!"
 			end
+
+			DR:DeathNotification( message )
+
+			table.remove( DR.KillList, 1 )
 		end
-		message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
-		DR:DeathNotification( message )
-		DR.KillList = {}
+
+		-- for i = 1, #DR.KillList do
+		-- 	local ply = DR.KillList[i]
+		-- 	if IsValid(ply) then
+		-- 		if i < #DR.KillList-1 then
+		-- 			message = message..(i == 1 and "" or " ")..ply:Nick()..","
+		-- 			if i%4 == 0 then
+		-- 				message = message.."%newline%"
+		-- 			end
+		-- 		elseif i == #DR.KillList - 1 then
+		-- 			message = message.." "..ply:Nick().." and"
+		-- 		else
+		-- 			message = message.." "..ply:Nick()
+		-- 		end
+		-- 	end
+		-- end
+		-- message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
+		-- DR:DeathNotification( message )
+		-- DR.KillList = {}
 	end
 end)
 
