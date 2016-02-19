@@ -7,7 +7,7 @@ local columnFunctions = {
 			return "Author"
 		end
 		if ply:SteamID() == "STEAM_0:0:29351088" then
-			return "Rude Guy"
+			return "Worst Player"
 		end
 		if ply:SteamID() == "STEAM_0:0:90710956" then
 			return "Associate"
@@ -368,6 +368,15 @@ function DR:NewScoreboardPlayer( ply, w, h )
 			net.WriteString( self.ply:SteamID() )
 			net.SendToServer()
 		end
+
+		-- local punop = menu:AddOption( "Force Death for 1 round" )
+		-- punop.ply = menu.ply
+		-- punop:SetIcon("icon16/controller_delete.png")
+		-- function punop:DoClick()
+		-- 	if not IsValid( self.ply ) then return end
+
+		-- 	RunConsoleCommand("deathrun_punish",)
+		-- end
 		
 		menu:AddSpacer()
 

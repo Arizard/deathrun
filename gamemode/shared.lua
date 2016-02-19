@@ -47,7 +47,7 @@ hook.Add("SetupMove", "DeathrunDisableSpectatorSpacebar", function( ply, mv, cmd
 
 			local block = hook.Call("DeathrunPreventPreptimeMovement") or true
 
-			if block == true then
+			if block == true and ply:Team() == TEAM_RUNNER then -- block movement for runners
 				mv:SetSideSpeed( 0 )
 				mv:SetUpSpeed( 0 )
 				mv:SetForwardSpeed( 0 )
