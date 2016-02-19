@@ -7,7 +7,7 @@ local columnFunctions = {
 			return "Author"
 		end
 		if ply:SteamID() == "STEAM_0:0:29351088" then
-			return "Rude Guy"
+			return "Worst Player"
 		end
 		if ply:SteamID() == "STEAM_0:0:90710956" then
 			return "Associate"
