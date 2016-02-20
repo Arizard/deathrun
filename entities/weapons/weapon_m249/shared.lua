@@ -12,7 +12,7 @@ if ( CLIENT ) then
 	
 	SWEP.ViewModelFlip		= false
 	
-	killicon.AddFont( "weapon_para", "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( "weapon_m249", "CSKillIcons", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
 	
 end
 
