@@ -251,7 +251,7 @@ local function resetFinishers()
 	finishorder = {}
 end
 resetFinishers()
-hook.Add("DeathrunBeginPrep", "DeathrunResetFinishers", resetFinishers)
+hook.Add("DeathrunBeginActive", "DeathrunResetFinishers", resetFinishers)
 
 ZONE.StartTime = nil
 

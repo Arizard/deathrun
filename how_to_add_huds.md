@@ -16,16 +16,17 @@
 <pre>
 
 -- lua/autorun/client/custom_hud_example.lua
+hook.Add("InitPostEntity", "CustomHUDAdd", function()
+	local function leftSideHUD(x,y)
+		draw.SimpleText("HP: "..tostring(LocalPlayer():Health()), "deathrun_hud_Large", x,y, Color(255,255,255))
+		draw.SimpleText("VEL: "..tostring(LocalPlayer():GetVelocity():Length2D()), "deathrun_hud_Large", x,y+55, Color(255,255,255))
+	end
 
-local function leftSideHUD(x,y)
-	draw.SimpleText("HP: "..tostring(LocalPlayer():Health()), "deathrun_hud_Large", x,y, Color(255,255,255))
-	draw.SimpleText("VEL: "..tostring(LocalPlayer():GetVelocity():Length2D()), "deathrun_hud_Large", x,y+55, Color(255,255,255))
-end
+	local function rightSideHUD(x,y)
+		-- nothing here because we have infinite ammo enabled anyways
+	end
 
-local function rightSideHUD(x,y)
-	-- nothing here because we have infinite ammo enabled anyways
-end
-
-DR:AddCustomHUD( 4,  leftsideHUD, rightSideHUD )
+	DR:AddCustomHUD( 4,  leftsideHUD, rightSideHUD )
+end)
 -- done!
 </pre>

@@ -62,6 +62,9 @@ end
 
 function PlayerInCuboid( ply, min, max ) -- check if vector is within cuboid
 	local plymin, plymax = ply:GetPos() + ply:OBBMins(), ply:GetPos() + ply:OBBMaxs()
+	if VectorInCuboid( ply:GetPos() + Vector(0,0,50), min, max ) then
+		return true
+	end
 	return CuboidOverlap( plymin, plymax, min, max )
 end
 
