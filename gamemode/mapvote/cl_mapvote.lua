@@ -69,7 +69,7 @@ end
 
 function MV:OpenFullMapList( maps )
 	local frame = vgui.Create("deathrun_window")
-	frame:SetSize(480, 480*1.618 - 44) -- GOLDEN RATIO FIBONACCI SPIRAL OMG
+	frame:SetSize(480, math.min(ScrH()-64, (480*1.618 - 44) ) ) -- GOLDEN RATIO FIBONACCI SPIRAL OMG
 	frame:Center()
 	frame:MakePopup()
 	frame:SetTitle("Map List")

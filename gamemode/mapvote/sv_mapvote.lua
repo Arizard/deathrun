@@ -16,6 +16,19 @@ MV.LoadTime = CurTime()
 
 local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE
 
+if not file.Exists("map_statistics.txt", "DATA") then
+	file.Write("map_statistics.txt","[]")
+end
+
+MV.MapStats = util.JSONToTable( file.Read("map_statistics.txt", "DATA") )
+
+hook.Add("DeathrunBeginPrep", "RecordMapStats", function() -- increment stats by 1 each time a round is played on the map
+	local map = game.GetMap()
+	MV.MapStats[map] = MV.MapStats[map] or #player.GetAllPlaying()
+	MV.MapStats[map] = MV.MapStats[map] + #player.GetAllPlaying()
+	file.Write("map_statistics.txt", util.TableToJSON( MV.MapStats ) )
+end)
+
 --commands
 concommand.Add("mapvote_list_maps", function(ply)
 
@@ -221,6 +234,8 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 
 	if args[1] then
 		nom = args[1]
+
+		print(nom, game.GetMap())
 
 		if nom == game.GetMap() then
 			ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")

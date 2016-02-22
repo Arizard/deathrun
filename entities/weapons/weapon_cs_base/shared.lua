@@ -258,6 +258,44 @@ function SWEP:GetRecoilShiftAmount()
 	local shiftamt = ( QuadLerp( InverseLerp( self.KickBack, minshift, maxshift ), 0, 160000 ) )*(self.Primary.Recoil/1.5)/10000
 	return shiftamt
 end
+
+function BulletLaserCallback(ply, tr, dmginfo)
+	local newBeam = table.Copy( self.EmptyBeam )
+
+	local id = ply:LookupAttachment("anim_attachment_RH")
+	local att = ply:GetAttachment( id )
+	newBeam.start = att and att.Pos + att.Ang:Forward()*20 + att.Ang:Up()*2 or self:GetPos()
+	
+	if CLIENT then
+		local att = ply:GetViewModel():GetAttachment( 1 )
+		newBeam.start = att.Pos
+	end
+
+	newBeam.endpos = tr.HitPos
+	local green = Color(50,200,50)
+	local gold = Color(255,200,50)
+	
+	-- if math.random(0,10) > 5 then
+	-- 	newBeam.r, newBeam.g, newBeam.b, a = gold.r, gold.g, gold.b
+	-- else
+	-- 	newBeam.r, newBeam.g, newBeam.b, a = green.r, green.g, green.b
+	-- end
+	newBeam.r = 255
+	newBeam.b = math.random(0,100)
+
+	if SERVER then
+		for k,v in ipairs( player.GetAll() ) do
+			if v ~= ply then
+				net.Start("NewBeamMeme")
+				net.WriteString( util.TableToJSON(newBeam) )
+				net.Send( v )
+			end
+		end
+	else
+		table.insert( WeaponBeams, newBeam )
+	end
+end
+
 -----------------------------------------------------------
 --   Name: SWEP:CSShootBullet( )
 -----------------------------------------------------------
@@ -342,42 +380,11 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	local owner = self.Owner
 	local slf = self
 
-	if self.LaserBeams then
-		bullet.Callback = function(ply, tr, dmginfo)
-			local newBeam = table.Copy( self.EmptyBeam )
+	
 
-			local id = ply:LookupAttachment("anim_attachment_RH")
-			local att = ply:GetAttachment( id )
-			newBeam.start = att and att.Pos + att.Ang:Forward()*20 + att.Ang:Up()*2 or self:GetPos()
-			
-			if CLIENT then
-				local att = ply:GetViewModel():GetAttachment( 1 )
-				newBeam.start = att.Pos
-			end
-
-			newBeam.endpos = tr.HitPos
-			local green = Color(50,200,50)
-			local gold = Color(255,200,50)
-			
-			-- if math.random(0,10) > 5 then
-			-- 	newBeam.r, newBeam.g, newBeam.b, a = gold.r, gold.g, gold.b
-			-- else
-			-- 	newBeam.r, newBeam.g, newBeam.b, a = green.r, green.g, green.b
-			-- end
-			newBeam.r = 255
-			newBeam.b = math.random(0,100)
-
-			if SERVER then
-				for k,v in ipairs( player.GetAll() ) do
-					if v ~= ply then
-						net.Start("NewBeamMeme")
-						net.WriteString( util.TableToJSON(newBeam) )
-						net.Send( v )
-					end
-				end
-			else
-				table.insert( WeaponBeams, newBeam )
-			end
+	bullet.Callback = function( ply, tr, dmginfo )
+		if self.LaserBeams then
+			BulletLaserCallback( ply, tr, dmginfo )
 		end
 	end
 
@@ -385,8 +392,6 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK ) 		-- View model animation
 	self.Owner:MuzzleFlash()								-- Crappy muzzle light
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )				-- 3rd Person Animation
-
-	
 
 	-- Remove 1 bullet from our clip
 	self:TakePrimaryAmmo( 1 )
