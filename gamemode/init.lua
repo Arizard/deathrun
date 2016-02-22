@@ -624,8 +624,9 @@ hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
 end)
 
 function DR:CheckIdleTime( ply ) -- return how long the player has been idle for
-	ply.LastActiveTime = ply.LastActiveTime or CurTime()
-	return CurTime() - ply.LastActiveTime
+	return 0 -- hotfix to prevent autokick after 22-02-2016 update
+	-- ply.LastActiveTime = ply.LastActiveTime or CurTime()
+	-- return CurTime() - ply.LastActiveTime
 end
 local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*5, defaultFlags, "How many seconds each to wait before kicking idle players.")
 timer.Create("CheckIdlePlayers", 0.95, 0, function()
