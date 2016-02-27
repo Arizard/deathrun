@@ -556,8 +556,10 @@ function DR:OpenZoneEditor()
 
 
 end
-concommand.Add("deathrun_open_zone_editor", function()
-	DR:OpenZoneEditor()
+concommand.Add("deathrun_open_zone_editor", function(ply, cmd)
+	if DR:CanAccessCommand( ply, cmd ) then
+		DR:OpenZoneEditor()
+	end
 end)
 
 DR.MOTDEnabled = DR.MOTDEnabled or true

@@ -19,16 +19,20 @@ local function FindPlayersByName( nick ) -- returns a table of players with name
 
 end
 
-local function AdminAccess( ply ) -- accounts for when ply = console
+local function AdminAccess( ply ) -- accounts for when ply = console (legacy)
 	--if true then return true end
 	if IsValid(ply) then
+		--local access = DR.Ranks[ply:GetUserGroup()] or 1
+
 		return ply:IsSuperAdmin()
 	else
 		return true
 	end
 end
 
-function DR:GeneralAdminAccess( ply )
+
+
+function DR:GeneralAdminAccess( ply ) -- legacy
 	return AdminAccess( ply )
 end
 
@@ -50,7 +54,7 @@ concommand.Add("deathrun_respawn",function(ply, cmd, args)
 		local targets = FindPlayersByName( args[1] )
 		local cont = false
 
-		if AdminAccess( ply ) then
+		if DR:CanAccessCommand( ply, cmd ) then
 			local players = ""
 			if #targets > 0 then
 				for k, targ in ipairs( targets ) do
@@ -73,7 +77,7 @@ concommand.Add("deathrun_respawn",function(ply, cmd, args)
 		end
 	
 	elseif not args[1] then
-		if (AdminAccess( ply ) or ROUND:GetCurrent() == ROUND_WAITING) and ( ply:Team() ~= TEAM_SPECTATOR ) then
+		if (DR:CanAccessCommand( ply, cmd ) or ROUND:GetCurrent() == ROUND_WAITING) and ( ply:Team() ~= TEAM_SPECTATOR ) then
 			ply:KillSilent()
 			ply:Spawn()
 
@@ -90,7 +94,7 @@ end, nil, nil, FCVAR_SERVER_CAN_EXECUTE )
 concommand.Add("deathrun_cleanup",function(ply, cmd, args)
 
 	
-		if AdminAccess( ply ) or ROUND:GetCurrent() == ROUND_WAITING then
+		if DR:CanAccessCommand( ply, cmd ) or ROUND:GetCurrent() == ROUND_WAITING then
 			game.CleanUpMap()
 			DeathrunSafeChatPrint( ply, "Cleaned up the map and reset entities.")
 		else
@@ -235,7 +239,7 @@ hook.Add("EntityTakeDamage", "unstuckblocker", function(ply)
 end)
 concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 
-	if ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 30 then
+	if DR:CanAccessCommand(ply, cmd) and ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 30 then
 		local trace = {
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward()*10,
@@ -265,7 +269,7 @@ DR:AddChatCommandAlias( "stuck", "unstuck" )
 concommand.Add("deathrun_punish", function( ply, cmd, args )
 	if args[1] then
 		args[2] = args[2] or 1
-		if AdminAccess( ply ) then
+		if DR:CanAccessCommand( ply, cmd ) then
 			local targets = FindPlayersByName( args[1] )
 			if #targets == 0 then
 				ply:DeathrunSafeChatPrint("No targets to punish.")

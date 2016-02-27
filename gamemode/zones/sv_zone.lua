@@ -143,7 +143,7 @@ end)
 
 -- add some concommands for creating zones
 concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endmap end
-	if DR:GeneralAdminAccess( ply ) and #args == 2 then
+	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
 		ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2])
 		ZONE:BroadcastZones()
 		DR:SafeChatPrint( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
@@ -154,7 +154,7 @@ DR:AddChatCommand("createzone", function(ply, args)
 end)
 
 concommand.Add("zone_remove", function(ply, cmd, args) -- e.g. zone_create endmap end
-	if DR:GeneralAdminAccess( ply ) and #args == 1 then
+	if DR:CanAccessCommand(ply, cmd) and #args == 1 then
 		ZONE.zones[args[1]] =  {}
 		ZONE:Save() 
 		ZONE:BroadcastZones()
@@ -166,7 +166,7 @@ DR:AddChatCommand("removezone", function(ply, args)
 end)
 
 concommand.Add("zone_setpos1", function(ply, cmd, args)
-	if DR:GeneralAdminAccess( ply ) and #args == 2 then
+	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
 		if args[2] == "eyetrace" and IsValid( ply ) then
 			if ZONE.zones[args[1]] then
 				ZONE.zones[args[1]].pos1 = ply:GetEyeTrace().HitPos
@@ -188,7 +188,7 @@ end)
 
 
 concommand.Add("zone_setpos2", function(ply, cmd, args)
-	if DR:GeneralAdminAccess( ply ) and #args == 2 then
+	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
 		if args[2] == "eyetrace" and IsValid( ply ) then
 			if ZONE.zones[args[1]] then
 				ZONE.zones[args[1]].pos2 = ply:GetEyeTrace().HitPos
@@ -208,7 +208,7 @@ DR:AddChatCommand("setzonepos2", function(ply, args)
 end)
 
 concommand.Add("zone_setcolor", function(ply, cmd, args) -- RGBA e.g. zone_setcolor endmap 255 0 0 255
-	if DR:GeneralAdminAccess( ply ) and #args > 0 then
+	if DR:CanAccessCommand(ply, cmd) and #args > 0 then
 		if ZONE.zones[args[1]] then
 			ZONE.zones[args[1]].color = Color( tonumber(args[2]) or 255, tonumber(args[3]) or 255, tonumber(args[4]) or 255, tonumber(args[5]) or 255 )
 			ZONE:BroadcastZones()
@@ -225,7 +225,7 @@ DR:AddChatCommand("setzonecolor", function(ply, args)
 end)
 
 concommand.Add("zone_settype", function(ply, cmd, args) -- e.g. zone_settype endmap end
-	if DR:GeneralAdminAccess( ply ) and #args == 2 then
+	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
 		if ZONE.zones[args[1]] then
 			ZONE.zones[args[1]].type = args[2]
 			ZONE:BroadcastZones()

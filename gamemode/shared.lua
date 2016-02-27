@@ -262,3 +262,18 @@ hook.Add( "SetupMove", "AutoHop", AutoHop )
 
 -- get rid of some default hooks
 hook.Remove("PlayerTick", "TickWidgets")
+
+function DR:GetAccessLevel( ply )
+	local access = DR.Ranks[ ply:GetUserGroup() ] or 1
+	return access or 1
+end
+
+function DR:CanAccessCommand( ply, cmd )
+	local access = DR:GetAccessLevel( ply )
+	local perm = DR.Permissions[ cmd ] or 99
+	if access >= perm then
+		return true
+	else
+		return false
+	end
+end
