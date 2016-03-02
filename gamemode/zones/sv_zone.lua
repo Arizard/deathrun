@@ -38,14 +38,20 @@ ZONE:Load()
 
 function ZONE:Create( name, pos1, pos2, color, type )
 
-	self.zones[name] = {}
+	if not istable(self.zones[name]) or next(self.zones[name]) == nil then -- empty table
+		self.zones[name] = {}
 
-	self.zones[name].pos1 = pos1
-	self.zones[name].pos2 = pos2
-	self.zones[name].color = color
-	self.zones[name].type = type
+		self.zones[name].pos1 = pos1
+		self.zones[name].pos2 = pos2
+		self.zones[name].color = color
+		self.zones[name].type = type
 
-	self:Save()
+		self:Save()
+
+		return true
+	end
+
+	return false
 
 end
 
@@ -144,9 +150,15 @@ end)
 -- add some concommands for creating zones
 concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
-		ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2])
-		ZONE:BroadcastZones()
-		DR:SafeChatPrint( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
+		local created = ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2])
+		if created or ply.LastZoneDenied == args[1] then
+			ZONE:BroadcastZones()
+			ZONE.Chat:Print( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
+			ply.LastZoneDenied = nil
+		else
+			ZONE.Chat:Print( ply, "There already exists a zone named '"..args[1].."'. Please delete it first!\nIf you wish to overwrite it run this command again")
+			ply.LastZoneDenied = args[1]
+		end
 	end
 end)
 DR:AddChatCommand("createzone", function(ply, args)
