@@ -36,9 +36,9 @@ end
 
 ZONE:Load()
 
-function ZONE:Create( name, pos1, pos2, color, type )
+function ZONE:Create( name, pos1, pos2, color, type, force )
 
-	if not istable(self.zones[name]) or next(self.zones[name]) == nil then -- empty table
+	if not istable(self.zones[name]) or next(self.zones[name]) == nil or force then -- empty table
 		self.zones[name] = {}
 
 		self.zones[name].pos1 = pos1
@@ -150,7 +150,7 @@ end)
 -- add some concommands for creating zones
 concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
-		if ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2]) or ply.LastZoneDenied == args[1] then
+		if ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2], ply.LastZoneDenied == args[1]) then
 			ZONE:BroadcastZones()
 			ZONE.Chat:Print( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
 			ply.LastZoneDenied = nil
