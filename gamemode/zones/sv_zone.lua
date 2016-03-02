@@ -150,8 +150,7 @@ end)
 -- add some concommands for creating zones
 concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
-		local created = ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2])
-		if created or ply.LastZoneDenied == args[1] then
+		if ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2]) or ply.LastZoneDenied == args[1] then
 			ZONE:BroadcastZones()
 			ZONE.Chat:Print( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
 			ply.LastZoneDenied = nil
