@@ -155,7 +155,7 @@ end)
 
 concommand.Add("zone_remove", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 1 then
-		ZONE.zones[args[1]] =  {}
+		ZONE.zones[args[1]] = nil
 		ZONE:Save() 
 		ZONE:BroadcastZones()
 		DR:SafeChatPrint( ply, "Deleted zone '"..args[1].."'")
