@@ -1,7 +1,7 @@
 GM.Name 	= "Deathrun"
 GM.Author 	= "Arizard"
 GM.Email 	= ""
-GM.Website 	= "arizard.github.io"
+GM.Website 	= "http://vhs7.tv"
 
 function GM:Initialize()
 
