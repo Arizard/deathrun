@@ -174,10 +174,10 @@ concommand.Add("zone_setpos1", function(ply, cmd, args)
 				ZONE:Save()
 				DR:SafeChatPrint( ply, args[1]..".pos1 set to "..tostring( ZONE.zones[args[1]].pos1) )
 			else
-				DR:SafeChatPrint( ply "Zone does not exist.")
+				DR:SafeChatPrint( ply, "Zone does not exist.")
 			end
 		else
-			DR:SafeChatPrint("Please use eyetrace.")
+			DR:SafeChatPrint( ply, "Please use eyetrace.")
 		end
 	end
 end)
@@ -196,10 +196,10 @@ concommand.Add("zone_setpos2", function(ply, cmd, args)
 				ZONE:Save()
 				DR:SafeChatPrint( ply, args[1]..".pos2 set to "..tostring( ZONE.zones[args[1]].pos2) )
 			else
-				DR:SafeChatPrint( ply "Zone does not exist.")
+				DR:SafeChatPrint( ply, "Zone does not exist.")
 			end
 		else
-			DR:SafeChatPrint("Please use eyetrace.")
+			DR:SafeChatPrint( ply, "Please use eyetrace.")
 		end
 	end
 end)
@@ -215,7 +215,7 @@ concommand.Add("zone_setcolor", function(ply, cmd, args) -- RGBA e.g. zone_setco
 			ZONE:Save()
 			DR:SafeChatPrint( ply, args[1]..".color set to "..tostring( ZONE.zones[args[1]].color) )
 		else
-			DR:SafeChatPrint( ply "Zone does not exist.")
+			DR:SafeChatPrint( ply, "Zone does not exist.")
 		end
 	end
 end)
@@ -232,7 +232,7 @@ concommand.Add("zone_settype", function(ply, cmd, args) -- e.g. zone_settype end
 			ZONE:Save()
 			DR:SafeChatPrint( ply, args[1]..".type set to "..tostring( ZONE.zones[args[1]].type) )
 		else
-			DR:SafeChatPrint( ply "Zone does not exist.")
+			DR:SafeChatPrint( ply, "Zone does not exist.")
 		end
 	end
 end)
