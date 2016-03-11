@@ -527,7 +527,7 @@ hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i
 	elseif ply:SteamID() == "STEAM_0:1:128126755" then
 		return Color(255,200,255)
 	elseif ply:SteamID() == "STEAM_0:0:90710956" then
-		return Color( 0, 200, 0 )
+		return HexColor( "#838996" )
 	end
 end)
 

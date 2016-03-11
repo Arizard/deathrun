@@ -767,7 +767,7 @@ function DR:DrawPlayerHUDSass( x, y )
 	deathrunShadowTextSimple(tostring(curhp), "sassLarge", x+128,y + h/2+2, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 2 )
 	deathrunShadowTextSimple("HP", "sassSmall", x+132,y + h/2+1, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 2 )
 
-	deathrunShadowTextSimple(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
+	deathrunShadowTextSimple(tostring(curvel).." VL", "sassSmall", x+w - 12,y + h/2 + 24+1, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
 
 	-- team text
 	local teamtext = team.GetName(ply:Team())
@@ -776,7 +776,7 @@ function DR:DrawPlayerHUDSass( x, y )
 		teamtext = ply:Nick()
 	end
 
-	deathrunShadowTextSimple(teamtext.." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 2 )
+	deathrunShadowTextSimple(teamtext.." - "..string.ToMinutesSeconds( math.Clamp( ROUND:GetTimer(), 0, 99999 ) ), "sassSmall", x+8, y + h/2 + 24, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2 )
 
 
 	-- position avatar
@@ -819,8 +819,8 @@ function DR:DrawPlayerHUDAmmoSass( x, y )
 		frac = math.Clamp( frac, 0, 1 )
 		--print( wepdata.ShouldDrawHUD )
 		if wepdata.ShouldDrawHUD == true then
-			deathrunShadowTextSimple( wepdata.Name, "sassSmall", x + w - 4, y + h - 68, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
-			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "sassLarge", x + w - 4, y + h - 20, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
+			deathrunShadowTextSimple( wepdata.Name, "sassSmall", x + w - 4, y + h - 68, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
+			deathrunShadowTextSimple( tostring( wepdata.Clip1 ).." +"..tostring( wepdata.Remaining1 ), "sassLarge", x + w - 4, y + h - 20, Color(255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 2 )
 		end
 	else
 		return

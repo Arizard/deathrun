@@ -264,6 +264,9 @@ hook.Add( "SetupMove", "AutoHop", AutoHop )
 hook.Remove("PlayerTick", "TickWidgets")
 
 function DR:GetAccessLevel( ply )
+	if not ply then
+		return 100
+	end
 	local access = DR.Ranks[ ply:GetUserGroup() ] or 1
 	return access or 1
 end
