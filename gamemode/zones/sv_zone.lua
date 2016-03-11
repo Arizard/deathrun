@@ -152,10 +152,10 @@ concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endma
 	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
 		if ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2], ply.LastZoneDenied == args[1]) then
 			ZONE:BroadcastZones()
-			ZONE.Chat:Print( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
+			DR:SafeChatPrint( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
 			ply.LastZoneDenied = nil
 		else
-			ZONE.Chat:Print( ply, "There already exists a zone named '"..args[1].."'. Please delete it first!\nIf you wish to overwrite it run this command again")
+			DR:SafeChatPrint( ply, "There already exists a zone named '"..args[1].."'. Please delete it first!\nIf you wish to overwrite it run this command again")
 			ply.LastZoneDenied = args[1]
 		end
 	end
