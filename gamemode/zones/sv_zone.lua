@@ -5,7 +5,7 @@ function ZONE:Save()
 	local map = game.GetMap()
 	local path = "deathrun/zones/"..map..".txt"
 
-	local json = util.TableToJSON( ZONE.zones )
+	local json = util.TableToJSON( self.zones )
 	file.Write( path, json )
 
 	print("Zones were saved.")
@@ -28,7 +28,7 @@ function ZONE:Load()
 	local json = file.Read(path,"DATA")
 	local tab = util.JSONToTable( json ) or {}
 
-	ZONE.zones = table.Copy( tab )
+	self.zones = table.Copy( tab )
 
 	print("Zones were loaded.")
 
@@ -36,21 +36,27 @@ end
 
 ZONE:Load()
 
-function ZONE:Create( name, pos1, pos2, color, type )
+function ZONE:Create( name, pos1, pos2, color, type, force )
 
-	ZONE.zones[name] = {}
+	if not istable(self.zones[name]) or next(self.zones[name]) == nil or force then -- empty table
+		self.zones[name] = {}
 
-	ZONE.zones[name].pos1 = pos1
-	ZONE.zones[name].pos2 = pos2
-	ZONE.zones[name].color = color
-	ZONE.zones[name].type = type
+		self.zones[name].pos1 = pos1
+		self.zones[name].pos2 = pos2
+		self.zones[name].color = color
+		self.zones[name].type = type
 
-	ZONE:Save()
+		self:Save()
+
+		return true
+	end
+
+	return false
 
 end
 
 function ZONE:ZoneData( name )
-	return ZONE.zones[name] or false
+	return self.zones[name] or false
 end
 
 function ZONE:GetPlayerInZone( name )
@@ -59,14 +65,14 @@ end
 
 function ZONE:GetPlayerInZoneType( ply, t )
 	for k,v in pairs( ply.InZones or {} ) do
-		if ZONE.zones[ k ] and v == true then
+		if self.zones[ k ] and v == true then
 			if type(t) == "string" then
-				if ZONE.zones[ k ].type == t then
+				if self.zones[ k ].type == t then
 					return true
 				end
 			elseif type(t) == "table" then
 				for _,j in ipairs( t ) do
-					if ZONE.zones[ k ].type == j then
+					if self.zones[ k ].type == j then
 						return true
 					end
 				end
@@ -88,7 +94,7 @@ end
 
 function ZONE:Tick() -- cycle through zones and check for players
 	if skipcount == skip then
-		for name, z in pairs( ZONE.zones ) do
+		for name, z in pairs( self.zones ) do
 			if z.type then
 				for k, ply in ipairs(player.GetAllPlaying()) do
 					if ply:GetPos():Distance( (z.pos1 + z.pos2)/2 ) < z.pos1:Distance(z.pos2) * 0.6 then
@@ -126,13 +132,13 @@ hook.Add("Tick", "ZoneTick", function() ZONE:Tick() end)
 util.AddNetworkString("ZoneSendZones")
 function ZONE:SendZones( ply )
 	net.Start("ZoneSendZones")
-	net.WriteTable( ZONE.zones )
+	net.WriteTable( self.zones )
 	net.Send( ply )
 end
 
 function ZONE:BroadcastZones()
 	net.Start("ZoneSendZones")
-	net.WriteTable( ZONE.zones )
+	net.WriteTable( self.zones )
 	net.Broadcast()
 end
 
@@ -144,9 +150,14 @@ end)
 -- add some concommands for creating zones
 concommand.Add("zone_create", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 2 then
-		ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2])
-		ZONE:BroadcastZones()
-		DR:SafeChatPrint( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
+		if ZONE:Create(args[1], Vector(0,0,0), Vector(0,0,0), Color(255,255,255), args[2], ply.LastZoneDenied == args[1]) then
+			ZONE:BroadcastZones()
+			DR:SafeChatPrint( ply, "Created zone '"..args[1].."' of type '"..args[2].."'")
+			ply.LastZoneDenied = nil
+		else
+			DR:SafeChatPrint( ply, "There already exists a zone named '"..args[1].."'. Please delete it first!\nIf you wish to overwrite it run this command again")
+			ply.LastZoneDenied = args[1]
+		end
 	end
 end)
 DR:AddChatCommand("createzone", function(ply, args)
@@ -155,7 +166,7 @@ end)
 
 concommand.Add("zone_remove", function(ply, cmd, args) -- e.g. zone_create endmap end
 	if DR:CanAccessCommand(ply, cmd) and #args == 1 then
-		ZONE.zones[args[1]] =  {}
+		ZONE.zones[args[1]] = nil
 		ZONE:Save() 
 		ZONE:BroadcastZones()
 		DR:SafeChatPrint( ply, "Deleted zone '"..args[1].."'")
