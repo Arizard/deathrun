@@ -17,6 +17,8 @@ local hexvals = {
     ["F"] = 15,
 }
 
+
+
 function Hex( hex ) -- utility functions
 
     hex = string.upper( hex )
@@ -36,23 +38,37 @@ function Hex( hex ) -- utility functions
 
 end
 
+local hexcache = {}
+
 function HexColor(hex, alpha)
 
-    if string.sub(hex, 1, 1) ~= "#" then return Color(255,255,255,255) end
+    if not hexcache[ hex ] then
 
-    hex = string.Replace(hex, "#", "") -- remove #
+        local temphex = hex
 
-    local ct = {}
-    local len = string.len( hex )
-    if len ~= 3 and len ~= 6 then return Color(255,255,255,255) end
+        if string.sub(hex, 1, 1) ~= "#" then return Color(255,255,255,255) end
 
-    for i=1,3 do
-        local l2 = len/3
-        local m = 1
-        ct[i] = Hex( string.sub(hex, l2*i -m, l2*i) )
+        hex = string.Replace(hex, "#", "") -- remove #
+
+        local ct = {}
+        local len = string.len( hex )
+        if len ~= 3 and len ~= 6 then return Color(255,255,255,255) end
+
+        for i=1,3 do
+            local l2 = len/3
+            local m = 1
+            ct[i] = Hex( string.sub(hex, l2*i -m, l2*i) )
+        end
+        --PrintTable(ct)
+        local tempcol = Color( ct[1], ct[2], ct[3], alpha or 255)
+        hexcache[ temphex ] = tempcol
+
+        print("Created and cached hex color: "..temphex.." = "..tostring(ct[1]).." "..tostring(ct[2]).." "..tostring(ct[3]).." "..tostring(alpha or 255))
+
+        return tempcol
+    else
+        return hexcache[ hex ]
     end
-    --PrintTable(ct)
-    return Color( ct[1], ct[2], ct[3], alpha or 255)
 
 end
 
