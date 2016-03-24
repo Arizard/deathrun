@@ -120,7 +120,11 @@ end)
 CreateConVar("deathrun_death_model", "models/player/monk.mdl", defaultFlags, "The default model for the Deaths." )
 local deathModel = GetConVar( "deathrun_death_model" )
 
+local dropWeaponsOnDeath = CreateConVar("deathrun_drop_weapons_on_death", 1, defaultFlags, "Should players drop weapons on death?")
+
 hook.Add("PlayerSpawn", "DeathrunSetPlayerModels", function( ply )
+
+	--if dropWeaponsOnDeath
 
 	if ply:Team() == TEAM_DEATH then
 		local mdl = deathModel:GetString()
@@ -559,11 +563,16 @@ end
 
 local stop_the_drop = {
 	"weapon_fuckmeintheass",
+	--"weapon_crowbar",
 }
+
+function DR:CanPlayerDropWeapon( ply, class )
+	return ( not table.HasValue( stop_the_drop, class) )
+end
 
 concommand.Add("deathrun_dropweapon", function( ply, cmd, args)
 	if ply:Alive() and ply:GetActiveWeapon() ~= nil and IsValid( ply:GetActiveWeapon() ) then
-		if not table.HasValue( stop_the_drop, ply:GetActiveWeapon():GetClass() ) then
+		if DR:CanPlayerDropWeapon( ply, ply:GetActiveWeapon():GetClass() ) then
 			ply:DropWeapon( ply:GetActiveWeapon() )
 		end
 	end
@@ -790,6 +799,9 @@ function DR:RemoveSpeedMods()
 		end
 	end
 end
+
+
+
 
 hook.Add("PostCleanupMap", "RemoveSpeedMods", function()
 	DR:RemoveSpeedMods()

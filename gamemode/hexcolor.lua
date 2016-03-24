@@ -60,14 +60,18 @@ function HexColor(hex, alpha)
             ct[i] = Hex( string.sub(hex, l2*i -m, l2*i) )
         end
         --PrintTable(ct)
-        local tempcol = Color( ct[1], ct[2], ct[3], alpha or 255)
+        local tempcol = Color( ct[1], ct[2], ct[3], 255)
         hexcache[ temphex ] = tempcol
 
         print("Created and cached hex color: "..temphex.." = "..tostring(ct[1]).." "..tostring(ct[2]).." "..tostring(ct[3]).." "..tostring(alpha or 255))
 
+        tempcol.a = alpha
+
         return tempcol
     else
-        return hexcache[ hex ]
+        local col = hexcache[ hex ]
+        col.a = alpha or 255
+        return col
     end
 
 end

@@ -252,10 +252,11 @@ function DR:NewScoreboardPlayer( ply, w, h )
 	function av:PaintOver(w,h)
 		if IsValid( self.ply ) then
 			if not self.ply:Alive() then
+
 				surface.SetDrawColor(Color(255,255,255,100))
 				surface.DrawRect(0,0,w,h)
 
-				draw.SimpleText("✖", "deathrun_derma_Medium", 0,-4,DR.Colors.Alizarin )
+				draw.SimpleText("✖", "deathrun_derma_Medium", w/2, h/2-1, DR.Colors.Alizarin, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			end
 		end
 		if self.ply:IsValid() then
