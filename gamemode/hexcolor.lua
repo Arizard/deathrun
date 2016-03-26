@@ -65,7 +65,7 @@ function HexColor(hex, alpha)
 
         print("Created and cached hex color: "..temphex.." = "..tostring(ct[1]).." "..tostring(ct[2]).." "..tostring(ct[3]).." "..tostring(alpha or 255))
 
-        tempcol.a = alpha
+        tempcol.a = alpha or 255
 
         return tempcol
     else

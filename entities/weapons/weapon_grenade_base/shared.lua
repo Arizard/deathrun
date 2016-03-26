@@ -48,7 +48,7 @@ SWEP.PrimaryThrow                               = true
 Initialize
 ---------------------------------------------------------*/
 function SWEP:Initialize()
-        self:SetWeaponHoldType("grenade")
+        self:SetHoldType("grenade")
 		if(SERVER) then
 			if(self.GetPhysicsObject) then
 				local phys = self:GetPhysicsObject()
