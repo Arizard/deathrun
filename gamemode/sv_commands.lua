@@ -150,8 +150,9 @@ function DR:AddChatCommandAlias(cmd, cmd2)
 	print("Deathrun - Added chat command alias "..cmd.." -> "..cmd2)
 end
 
-local function ProcessChat( ply, text, public )
-
+local function ProcessChat( ply, textorg, public )
+	
+	local text = string.lower(textorg)
 	local args = string.Split(text, " ")
 	local prefix = string.sub(args[1],1,1)
 	local cmd = string.sub(args[1], 2,-1)
