@@ -527,6 +527,7 @@ DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/cup_add.png",					HexColo
 DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColor( "#a66bbe" ),	"MEME MASTER",		nil ) -- kaay
 DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/control_fastforward_blue.png",	HexColor( "#99ff33" ),	"Playboy Bunny",	nil ) -- gamefresh
 DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",		nil ) -- fich
+DR:SetScoreboardDisplay( "STEAM_0:0:71992617",	"icon16/tux.png",						HexColor( "#8cfaef" ),	"43% Unstable",		nil ) -- haina
 
 
 hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
