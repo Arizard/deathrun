@@ -92,6 +92,11 @@ DR.Ranks["admin"] = 3
 DR.Ranks["superadmin"] = 3
 DR.Ranks["owner"] = 3
 
+DR.PlayerAccess = {}
+
+DR.PlayerAccess["gamefresh_steamid"] = 2
+DR.PlayerAccess["bobbis_steamid"] = 3 
+
 DR.Permissions = {
 	["deathrun_respawn"] = 3, -- permission levels
 	["deathrun_cleanup"] = 3,

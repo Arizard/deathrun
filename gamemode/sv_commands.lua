@@ -57,11 +57,11 @@ concommand.Add("deathrun_respawn",function(ply, cmd, args)
 		if DR:CanAccessCommand( ply, cmd ) then
 			local players = ""
 			if #targets > 0 then
-				for k, targ in ipairs( targets ) do
-					if ( ply:Team() == TEAM_SPECTATOR ) then
-						table.remove( targets, k )
-					end
-				end
+				-- for k, targ in ipairs( targets ) do
+				-- 	--if ( ply:Team() == TEAM_SPECTATOR ) then
+				-- 		--table.remove( targets, k )
+				-- 	--end
+				-- end
 				for k,targ in ipairs( targets ) do
 					targ:KillSilent()
 					targ:Spawn()

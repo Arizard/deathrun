@@ -22,7 +22,6 @@ end
 local msgs = {}
 
 msgs = {
-	"You're playing on "..GetHostName()..", enjoy your stay!",
 	"Don't hesitate to ask the staff any questions, they are here to help.",
 	"Type !rtv to force a mapchange.",
 	"Type !crosshair to customize your crosshair settings and achieve different designs.",

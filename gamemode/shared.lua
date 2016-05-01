@@ -268,6 +268,18 @@ function DR:GetAccessLevel( ply )
 		return 100
 	end
 	local access = DR.Ranks[ ply:GetUserGroup() ] or 1
+
+	local id64 = ply:SteamID64()
+	local id = ply:SteamID()
+
+	if DR.PlayerAccess[id] then
+		access = DR.PlayerAccess[id]
+	end
+
+	if DR.PlayerAccess[id64] then
+		access = DR.PlayerAccess[id64]
+	end
+	
 	return access or 1
 end
 

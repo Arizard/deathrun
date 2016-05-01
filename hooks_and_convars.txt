@@ -197,6 +197,12 @@ CLIENT:
 	GetScoreboardIcon( PLAYER ply )
 		Return the path to an icon in this hook and it will show on the player's scoreboard row. e.g. "icon16/heart.png"
 
+	GetScoreboardTag( PLAYER ply )
+		Return the text you want displayed in the second column on the scoreboard.
+
+	GetScoreboardRank( PLAYER ply )
+		Return the staff rank of the player. By default this returns ply:GetUserGroup().
+
 	DeathrunOpenScoreboard( )
 		Return false to prevent the scoreboard from opening and replace it with your own.
 
