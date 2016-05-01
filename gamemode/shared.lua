@@ -3,6 +3,8 @@ GM.Author 	= "Arizard"
 GM.Email 	= ""
 GM.Website 	= "http://vhs7.tv"
 
+DR.TimeStamp = 1462083778
+
 function GM:Initialize()
 
 	self.BaseClass.Initialize( self )

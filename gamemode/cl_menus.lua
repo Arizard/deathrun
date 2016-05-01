@@ -218,7 +218,9 @@ local deathrun_settings = {
 	{"boolean", "deathrun_autojump","Autojump (Enabling this limits velocity depending on server settings.)"},
 	{"boolean", "deathrun_enable_announcements", "Enable help messages"},
 	{"number", "deathrun_announcement_interval", 0, 500, "Seconds between help messages."},
-	{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."}
+	{"number", "deathrun_teammate_fade_distance", 0, 512, "Teammate fade distance."},
+
+
 }
 
 DR.DeathrunSettings = deathrun_settings
@@ -226,6 +228,12 @@ DR.DeathrunSettings = deathrun_settings
 function DR:AddSetting( tbl )
 	table.insert( DR.DeathrunSettings, tbl )
 end
+
+--hook.Add("InitPostEntity", "AddTimestamp", function()
+	--timer.Simple(1, function()
+		--DR:AddSetting( {"header", "Last Significant Update: "..os.date( "%H:%M:%S - %d/%m/%Y", DR.TimeStamp or os.time() )} )
+	--end)
+--end)
 
 function DR:OpenSettings()
 	local frame = vgui.Create("deathrun_window")
@@ -348,7 +356,21 @@ function DR:OpenSettings()
 			dlist:Add(sl)	
 		end
 
-	end
+	end -- {"header", "Last Significant Update: "..os.date( "%H:%M:%S - %d/%m/%Y", DR.TimeStamp or os.time() )}
+
+	local pnl = vgui.Create("DPanel") -- spacer
+	pnl:SetWide( dlist:GetWide() )
+	pnl:SetTall( 24 )
+	function pnl:Paint() end
+	dlist:Add( pnl )
+
+	local lbl = vgui.Create("DLabel")
+	lbl:SetFont("deathrun_derma_Tiny")
+	lbl:SetTextColor(DR.Colors.Text.Turq)
+	lbl:SetText(os.date( "%H:%M:%S on %d/%m/%Y", DR.TimeStamp or os.time() ))
+	lbl:SizeToContents()
+	lbl:SetWide( dlist:GetWide() )
+	dlist:Add(lbl)
 end
 concommand.Add("deathrun_open_settings", function()
 	DR:OpenSettings()
