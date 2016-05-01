@@ -109,4 +109,5 @@ DR.Permissions = {
 	["zone_setpos2"] = 3,
 	["zone_setcolor"] = 3,
 	["zone_settype"] = 3,
+	["deathrun_force_spectate"] = 2,
 }

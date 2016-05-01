@@ -348,14 +348,16 @@ function DR:NewScoreboardPlayer( ply, w, h )
 			DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
 		end
 
-		local specop = menu:AddOption( "Force to Spectator" ) -- spectator options... SPEC OPS!
-		specop.ply = menu.ply
-		specop:SetIcon("icon16/status_offline.png")
-		function specop:DoClick()
-			if not IsValid(self.ply) then return end
-			net.Start("DeathrunForceSpectator")
-			net.WriteString( self.ply:SteamID() )
-			net.SendToServer()
+		if DR:CanAccessCommand( LocalPlayer(), "deathrun_force_spectate" ) then
+			local specop = menu:AddOption( "Force to Spectator" ) -- spectator options... SPEC OPS!
+			specop.ply = menu.ply
+			specop:SetIcon("icon16/status_offline.png")
+			function specop:DoClick()
+				if not IsValid(self.ply) then return end
+				net.Start("DeathrunForceSpectator")
+				net.WriteString( self.ply:SteamID() )
+				net.SendToServer()
+			end
 		end
 
 		-- local punop = menu:AddOption( "Force Death for 1 round" )

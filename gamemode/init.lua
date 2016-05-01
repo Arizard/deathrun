@@ -774,7 +774,7 @@ concommand.Add("deathrun_not_amused", function(ply)
 end)
 
 net.Receive("DeathrunForceSpectator", function(len, ply)
-	if ply:IsAdmin() then
+	if DR:CanAccessCommand( ply, "deathrun_force_spectate" ) then
 		local targID = net.ReadString()
 		local targ = nil
 
@@ -788,6 +788,8 @@ net.Receive("DeathrunForceSpectator", function(len, ply)
 			targ:ConCommand("deathrun_spectate_only 1")
 			ply:DeathrunChatPrint( "Forced "..targ:Nick().." to the spectator team!" )
 		end
+	else
+		ply:DeathrunChatPrint( "You don't have access to this." )
 	end
 end)
 
