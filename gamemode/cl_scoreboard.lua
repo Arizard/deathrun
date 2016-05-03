@@ -159,7 +159,7 @@ function DR:CreateScoreboard()
 			dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 		end
 	end
-	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_SPECTATOR)).." players Spectating"}, dlist:GetWide(), small and 24 or 32,  HexColor("#303030") ) )
+	dlist:Add( DR:NewScoreboardSpacer( {tostring(#team.GetPlayers(TEAM_SPECTATOR)).." players in Arizard Mode"}, dlist:GetWide(), small and 24 or 32,  HexColor("#303030") ) )
 	for k,ply in ipairs(team.GetPlayers( TEAM_SPECTATOR )) do
 		dlist:Add( DR:NewScoreboardPlayer( ply, dlist:GetWide(), small and 22 or 28 ) )
 	end
