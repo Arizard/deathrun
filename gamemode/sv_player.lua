@@ -48,7 +48,7 @@ function PLAYER:StopSpectate() -- when you want to end spectating immediately
 end
 
 function PLAYER:SetShouldStaySpectating( bool, noswitch ) -- set whether they should stay in spectator even when the round starts
-	print( bool == true and (self:Nick().." will stay as spectator.") or (self:Nick().." will not stay as spectator."))
+	print( bool == true and (self:Nick().." will stay in Arizard Mode") or (self:Nick().." will not stay in Arizard Mode."))
 	self.StaySpectating = bool
 	--print( self.StaySpectating )
 	if bool == true and noswitch ~= true then 
