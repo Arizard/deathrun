@@ -23,7 +23,8 @@ local HideElements = {
 	["CHudBattery"] = false,
 	["CHudCrosshair"] = false,
 	["CHudHealth"] = false,
-	["CHudAmmo"] = false
+	["CHudAmmo"] = false,
+	["CHudDamageIndicator"] = false
 }
 
 hook.Add("HUDPaint","FixCHudAmmo", function()
