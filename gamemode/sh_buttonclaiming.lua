@@ -91,17 +91,17 @@ if SERVER then
 
 		if ply:Team() == TEAM_RUNNER then 
 			ent.User = ply
-			return true 
+			return
 		end -- to stop secrets breaking
 
 		if not buttons[ mid ] then 
 			ent.User = ply
-			return true 
+			return
 		end -- if that shit doesnt exist then sure, just do it, don't let your dreams be dreams
 
 		if buttons[ mid ].claimedPlayer == sid or buttons[ mid ].claimed == false then -- if they own it, or if it is unclaimed (e.g. they run and press it the moment before it updates on the server, it won't disable and it wont cause them to lose the runner.)
 			ent.User = ply
-			return true
+			return
 		else
 			return false
 		end
