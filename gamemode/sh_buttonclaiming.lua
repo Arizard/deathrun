@@ -80,14 +80,14 @@ if SERVER then
 		CheckButtonClaims()
 
 	end)
-
-	local function PlayerCanButton( ply, ent )
-		function buttonActivated() 
-			if ( ent:GetSaveTable().m_toggle_state  == 1 ) then
-				hook.Call("DeathrunButtonActivated", nil, ply, ent)
-			end
+	
+	local function buttonActivated( ply, ent ) 
+		if ( ent:GetSaveTable().m_toggle_state == 1 and not ent:GetSaveTable().m_bLocked ) then
+			hook.Call("DeathrunButtonActivated", nil, ply, ent)
 		end
+	end
 		
+	local function PlayerCanButton( ply, ent )		
 		if not ply:Alive() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
 			return false 
 		end
@@ -97,7 +97,7 @@ if SERVER then
 
 		if ply:Team() == TEAM_RUNNER then 
 			ent.User = ply
-			buttonActivated()
+			buttonActivated( ply, ent )
 			return
 		end -- to stop secrets breaking
 
@@ -108,7 +108,7 @@ if SERVER then
 
 		if buttons[ mid ].claimedPlayer == sid or buttons[ mid ].claimed == false then -- if they own it, or if it is unclaimed (e.g. they run and press it the moment before it updates on the server, it won't disable and it wont cause them to lose the runner.)
 			ent.User = ply
-			buttonActivated()
+			buttonActivated( ply, ent )
 			return
 		else
 			return false
