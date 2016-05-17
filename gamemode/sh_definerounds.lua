@@ -327,14 +327,16 @@ ROUND:AddState( ROUND_ACTIVE,
 	end,
 	function()
 		if SERVER then
-			if #player.GetAllPlaying() < 2 then
+			local playing = player.GetAllPlaying()
+
+			if #playing < 2 then
 				ROUND:RoundSwitch( ROUND_WAITING )
 				return
 			end
 			local deaths = {}
 			local runners = {}
 
-			for k,v in ipairs(player.GetAllPlaying()) do
+			for k,v in ipairs( playing ) do
 				if v:Alive() then
 					if v:Team() == TEAM_RUNNER then
 						table.insert(runners, v)
@@ -416,13 +418,17 @@ if SERVER then
 		local mostkills = 0
 		local mostkillsmvp = nil
 
-		for k,v in ipairs( team.GetPlayers(winteam) ) do
-			if v:Alive() then
-				table.insert(mvps,v:Nick().." survived the round!")
-			end
-			if v.KillsThisRound > mostkills then
-				mostkills = v.KillsThisRound
-				mostkillsmvp = v
+		local players = player.GetAll()
+
+		for k,v in ipairs( players ) do
+			if v:Team() == winteam then
+				if v:Alive() then
+					table.insert(mvps,v:Nick().." survived the round!")
+				end
+				if v.KillsThisRound > mostkills then
+					mostkills = v.KillsThisRound
+					mostkillsmvp = v
+				end
 			end
 		end
 

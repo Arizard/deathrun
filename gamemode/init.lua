@@ -336,6 +336,8 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 		end
 	end
 
+	hook.Call("DeathrunPlayerDeath", self, ply, inflictor, attacker) -- support for when traps kill players
+
 	table.insert( DR.KillList, {ply, attacker} )
 	
 end

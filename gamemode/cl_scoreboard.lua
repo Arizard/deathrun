@@ -530,7 +530,7 @@ DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColo
 DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/control_fastforward_blue.png",	HexColor( "#99ff33" ),	"Playboy Bunny",	nil ) -- gamefresh
 DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",		nil ) -- fich
 DR:SetScoreboardDisplay( "STEAM_0:0:71992617",	"icon16/tux.png",						HexColor( "#8cfaef" ),	"43% Unstable",		nil ) -- haina
-DR:SetScoreboardDisplay( "STEAM_0:0:140884258",	"icon16/flag_red.png",					nil,					nil,				nil ) -- sarah
+DR:SetScoreboardDisplay( "STEAM_0:0:140884258",	"icon16/flag_red.png",					HexColor( "#b67bce" ),	nil,				nil ) -- sarah
 
 --"STEAM_0:0:140884258"
 --"STEAM_0:1:30288855"
