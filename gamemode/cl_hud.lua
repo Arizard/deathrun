@@ -23,7 +23,8 @@ local HideElements = {
 	["CHudBattery"] = false,
 	["CHudCrosshair"] = false,
 	["CHudHealth"] = false,
-	["CHudAmmo"] = false
+	["CHudAmmo"] = false,
+	["CHudDamageIndicator"] = false
 }
 
 hook.Add("HUDPaint","FixCHudAmmo", function()
@@ -745,7 +746,7 @@ function DR:DrawPlayerHUDSass( x, y )
 	surface.SetDrawColor( HexColor("#909090", alpha/2) )
 	surface.DrawRect( x + 8 + 48, y + h/2 + 8 + 2, 228-16-48-2, 6)
 
-	local maxvel = 1000 -- yeah fuck yall
+	local maxvel = 1500 -- yeah fuck yall
 	local curvel = math.Round( math.Clamp( ply:GetVelocity():Length2D(), 0, maxvel ) )
 	local velfrac = InverseLerp( curvel, 0, maxvel )
 
