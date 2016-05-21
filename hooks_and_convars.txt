@@ -170,7 +170,7 @@ SERVER:
 		Arguments are the same as above. place = which place did the player finish at, e.g. 1st, 2nd, 3rd, 4th. place will be an integer such as 1, 2, 3, or 4. secons will be how long it took for the player to finish the map (starting from the end of preptime) Use this to hand out pointshop points or other rewards for finishing maps.
 
 	DeathrunButtonActivated ( PLAYER ply, ENTITY ent )
-		Called when a player activated a button.
+		Called when a player activates a button.
 SHARED:
 
 	DeathrunBeginWaiting ()
