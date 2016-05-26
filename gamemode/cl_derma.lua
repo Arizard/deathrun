@@ -40,7 +40,7 @@ DR.DermaColors.NeutralHigh = HexColor("#ecf0f1")
 DR.DermaColors.NeutralMed = HexColor("#bdc3c7")
 DR.DermaColors.NeutralLow = HexColor("#95a5a6")
 DR.DermaColors.NeutralDark = HexColor("#7f8c8d")
-DR.DermaColors.Turq = DR.Colors.Turq
+DR.DermaColors.Turq = DR.Colors.Gayna
 DR.DermaColors.TurqDark = HexColor("#d35400")
 
 
@@ -95,7 +95,7 @@ function MAIN:Init()
 	
 	self.bgalpha = 25
 	self.bgcolor = DR.Colors.Clouds
-	self.fgcolor = DR.Colors.Turq
+	self.fgcolor = DR.Colors.Gayna
 	self.title = "deathrun Window"
    
 	self.cb = vgui.Create("DButton", self)      
@@ -585,7 +585,7 @@ function AUTOGGLE:Think()
 	end
 end
 function AUTOGGLE:Paint( w, h )
-	surface.SetDrawColor( DR.Colors.Turq )
+	surface.SetDrawColor( DR.Colors.Gayna )
 	draw.NoTexture()
 	--surface.DrawOutlinedRect(0,0,w,h)
 
@@ -595,14 +595,14 @@ function AUTOGGLE:Paint( w, h )
 	surface.SetDrawColor( DR.Colors.Clouds )
 	surface.DrawCircle( 16, h/2, 6 )
 	
-	surface.SetDrawColor( DR.Colors.Turq )
+	surface.SetDrawColor( DR.Colors.Gayna )
 	surface.DrawCircle( 16, h/2, 4*( 1- ( self.state and QuadLerp(self.t, 1, 0) or QuadLerp(1-self.t, 0, 1) ) ) )
 
 	--surface.SetDrawColor( AuColors.New.E )
 	--surface.DrawCircle( 16, h/2, 10*( self.state and QuadLerp(self.t, 0, 1) or QuadLerp(1-self.t, 1, 0) ) )
 
 
-	deathrunShadowTextSimple( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Turq, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+	deathrunShadowTextSimple( self:GetText(), self:GetFont(), 8 + 16 + 8, h/2, DR.Colors.Gayna, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 end
 function AUTOGGLE:SetConVar( s )
 	self.convar = GetConVar( s )
