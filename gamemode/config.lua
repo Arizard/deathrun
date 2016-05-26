@@ -14,6 +14,7 @@ DR.Colors = {
 	Peter = HexColor("#3498db"),
 	Turq = HexColor("#1abc9c"),
 	DarkBlue = HexColor("#1B325F"),
+	Gayna = HexColor("#3199E2"),
 	LightBlue = HexColor("#9CC4E4"),
 	Sunflower = HexColor("#f1c40f"),
 	Orange = HexColor("#f39c12"),
@@ -30,7 +31,8 @@ DR.Colors = {
 		LightBlue = HexColor("#9CC4E4"),
 		Sunflower = HexColor("#f1c40f"),
 		Orange = HexColor("#f39c12"),
-		Grey3 = HexColor("#303030")
+		Grey3 = HexColor("#303030"),
+		Gayna = HexColor("#3199E2"),
 	}
 }
 
@@ -39,11 +41,11 @@ DR.DermaColors = {}
 DR.AirAccelerate = 1000 -- does nothing
 
 function DR:SetMainColor( col )
-	DR.Colors.Turq = col
+	DR.Colors.Gayna = col
 end
 
 function DR:SetMainTextColor( col )
-	DR.Colors.Text.Turq = col
+	DR.Colors.Gayna = col
 end
 
 --[[
