@@ -23,7 +23,8 @@ local HideElements = {
 	["CHudBattery"] = false,
 	["CHudCrosshair"] = false,
 	["CHudHealth"] = false,
-	["CHudAmmo"] = false
+	["CHudAmmo"] = false,
+	["CHudDamageIndicator"] = false
 }
 
 hook.Add("HUDPaint","FixCHudAmmo", function()
@@ -299,13 +300,13 @@ end
 
 local clouds = table.Copy(DR.Colors.Clouds)
 local aliz = table.Copy(DR.Colors.Alizarin)
---local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
+--local turq = table.Copy(DR.Colors.Gayna) -- store these separately so we can edit their alpha values
 
 function DR:DrawPlayerHUD( x, y )
 	
 	
 
-	turq = table.Copy(DR.Colors.Turq)
+	turq = table.Copy(DR.Colors.Gayna)
 	local alpha = HudAlpha:GetInt()
 
 	-- 228x16 text size 12
@@ -745,7 +746,7 @@ function DR:DrawPlayerHUDSass( x, y )
 	surface.SetDrawColor( HexColor("#909090", alpha/2) )
 	surface.DrawRect( x + 8 + 48, y + h/2 + 8 + 2, 228-16-48-2, 6)
 
-	local maxvel = 1000 -- yeah fuck yall
+	local maxvel = 1500 -- yeah fuck yall
 	local curvel = math.Round( math.Clamp( ply:GetVelocity():Length2D(), 0, maxvel ) )
 	local velfrac = InverseLerp( curvel, 0, maxvel )
 
