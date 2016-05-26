@@ -392,7 +392,7 @@ if CLIENT then
 				surface.SetDrawColor( DR.Colors.Clouds )
 				surface.DrawRect(x,y,w,h)
 
-				surface.SetDrawColor( DR.Colors.Turq )
+				surface.SetDrawColor( DR.Colors.Gayna )
 				surface.DrawRect(x,y,w,80)
 
 				deathrunShadowTextSimple("STATS", "deathrun_3d2d_large", 0, y, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2)
@@ -403,7 +403,7 @@ if CLIENT then
 					deathrunShadowTextSimple(labels[i], "deathrun_3d2d_small", x+20, y + 100 + 70*(i-1), DR.Colors.Text.Grey3, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 0)
 				end
 				for i = 1, #stats3d.data do
-					deathrunShadowTextSimple(tostring(stats3d.data[i]), "deathrun_3d2d_small", x+w-20, y + 100 + 70*(i-1), DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 0)
+					deathrunShadowTextSimple(tostring(stats3d.data[i]), "deathrun_3d2d_small", x+w-20, y + 100 + 70*(i-1), DR.Colors.Gayna, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 0)
 				end
 				-- close stencil
 
@@ -437,7 +437,7 @@ if CLIENT then
 
 				cam.Start3D2D( DR.MapRecordsDrawPos, recordsAng, 0.10 )
 					
-					surface.SetDrawColor( DR.Colors.Turq )
+					surface.SetDrawColor( DR.Colors.Gayna )
 					surface.DrawRect(-700,-300, 1400, 80 )
 
 					deathrunShadowTextSimple("TOP 3 RECORDS", "deathrun_3d2d_large", 0, -300, DR.Colors.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2)
@@ -449,15 +449,15 @@ if CLIENT then
 								local v = DR.MapRecordsCache[i]
 
 								deathrunShadowTextSimple( tostring(i)..". "..string.sub( v["nickname"] or "", 1, 24 ), "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2 )
-								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(v["seconds"] or "0"), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
+								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(v["seconds"] or "0"), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Gayna, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
 
-								surface.SetDrawColor( DR.Colors.Turq )
+								surface.SetDrawColor( DR.Colors.Gayna )
 								surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
 							elseif i == #DR.MapRecordsCache + 2 and DR.MapPBCache ~= 0 then
 								deathrunShadowTextSimple( "Personal Best", "deathrun_3d2d_large", -700, -150 + 100*k, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2 )
-								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds( DR.MapPBCache or 0 ), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Text.Turq, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
+								deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds( DR.MapPBCache or 0 ), "deathrun_3d2d_large", 700, -150 + 100*k, DR.Colors.Gayna, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 2 )
 
-								surface.SetDrawColor( DR.Colors.Turq )
+								surface.SetDrawColor( DR.Colors.Gayna )
 								surface.DrawRect(-700,-150 + 100*k + 80, 1400, 2 )
 							end
 						end
