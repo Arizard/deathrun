@@ -217,7 +217,7 @@ function PLAYER:DeathrunChatPrint( msg )
 	local printmsg = "Server to "..self:Nick()..": "..msg.."\n"
 
 	if printmsg ~= lastmsg then
-		MsgC(DR.Colors.Turq, printmsg)
+		MsgC(DR.Colors.Gayna, printmsg)
 		lastmsg = printmsg
 	end
 end
@@ -227,7 +227,7 @@ function DR:ChatBroadcast( msg )
 		net.Start("DeathrunChatMessage")
 		net.WriteString( msg )
 		net.Broadcast()
-		MsgC(DR.Colors.Turq, "Server Broadcast: "..msg.."\n")
+		MsgC(DR.Colors.Gayna, "Server Broadcast: "..msg.."\n")
 	--end
 end
 
