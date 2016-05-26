@@ -40,7 +40,7 @@ local function DeathrunSafeChatPrint( ply, msg )
 	if IsValid( ply ) then
 		ply:DeathrunChatPrint( msg )
 	else
-		MsgC(DR.Colors.Turq, msg.."\n")
+		MsgC(DR.Colors.Gayna, msg.."\n")
 	end
 end
 

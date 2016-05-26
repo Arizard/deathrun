@@ -300,13 +300,13 @@ end
 
 local clouds = table.Copy(DR.Colors.Clouds)
 local aliz = table.Copy(DR.Colors.Alizarin)
---local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
+--local turq = table.Copy(DR.Colors.Gayna) -- store these separately so we can edit their alpha values
 
 function DR:DrawPlayerHUD( x, y )
 	
 	
 
-	turq = table.Copy(DR.Colors.Turq)
+	turq = table.Copy(DR.Colors.Gayna)
 	local alpha = HudAlpha:GetInt()
 
 	-- 228x16 text size 12
