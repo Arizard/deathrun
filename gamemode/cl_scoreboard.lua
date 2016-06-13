@@ -319,33 +319,37 @@ function DR:NewScoreboardPlayer( ply, w, h )
 	function but:DoClick()
 		local menu = vgui.Create("DMenu")
 		menu.ply = self:GetParent().ply
+
+		if not menu.ply:IsBot() then
 		
-		local copyID = menu:AddOption( "Copy SteamID to clipboard" )
-		copyID.ply = menu.ply
-		copyID:SetIcon("icon16/page_copy.png")
-		function copyID:DoClick()
-			if not IsValid(self.ply) then return end
-			SetClipboardText( self.ply:SteamID() )
-			DR:ChatMessage( self.ply:Nick().."'s SteamID was copied to the clipboard!" )
-		end
+			local copyID = menu:AddOption( "Copy SteamID to clipboard" )
+			copyID.ply = menu.ply
+			copyID:SetIcon("icon16/page_copy.png")
+			function copyID:DoClick()
+				if not IsValid(self.ply) then return end
+				SetClipboardText( self.ply:SteamID() )
+				DR:ChatMessage( self.ply:Nick().."'s SteamID was copied to the clipboard!" )
+			end
 
-		--http://steamcommunity.com/profiles/
+			--http://steamcommunity.com/profiles/
 
-		local openprofile = menu:AddOption( "Open Steam profile" )
-		openprofile.ply = menu.ply
-		openprofile:SetIcon("icon16/page_world.png")
-		function openprofile:DoClick()
-			if not IsValid(self.ply) then return end
-			gui.OpenURL( "http://steamcommunity.com/profiles/"..self.ply:SteamID64() )
-		end
+			local openprofile = menu:AddOption( "Open Steam profile" )
+			openprofile.ply = menu.ply
+			openprofile:SetIcon("icon16/page_world.png")
+			function openprofile:DoClick()
+				if not IsValid(self.ply) then return end
+				gui.OpenURL( "http://steamcommunity.com/profiles/"..self.ply:SteamID64() )
+			end
 
-		local mute = menu:AddOption( "Toggle voice" )
-		mute.ply = menu.ply
-		mute:SetIcon("icon16/sound.png")
-		function mute:DoClick()
-			if not IsValid(self.ply) then return end
-			RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
-			DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
+			local mute = menu:AddOption( "Toggle voice" )
+			mute.ply = menu.ply
+			mute:SetIcon("icon16/sound.png")
+			function mute:DoClick()
+				if not IsValid(self.ply) then return end
+				RunConsoleCommand("deathrun_toggle_mute",self.ply:SteamID())
+				DR:ChatMessage( "Toggled mute on "..self.ply:Nick().."!" )
+			end
+
 		end
 
 		if DR:CanAccessCommand( LocalPlayer(), "deathrun_force_spectate" ) then
