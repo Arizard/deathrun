@@ -85,7 +85,7 @@ end)
 DR.Ranks = {}
 
 DR.Ranks["user"] = 1 -- access levels
-DR.Ranks["regular"] = 1
+DR.Ranks["regular"] = 1 -- ranks are case sensitive, Admin /= admin
 DR.Ranks["moderator"] = 2
 DR.Ranks["mod"] = 2
 DR.Ranks["admin"] = 3
@@ -110,4 +110,12 @@ DR.Permissions = {
 	["zone_setcolor"] = 3,
 	["zone_settype"] = 3,
 	["deathrun_force_spectate"] = 2,
+
+	-- mapvote
+	["mapvote_list_maps"] = 1,
+	["mapvote_begin_mapvote"] = 3,
+	["mapvote_vote"] = 1,
+	["mapvote_nominate_map"] = 1,
+	["mapvote_update_mapvote"] = 3, -- debug tool
+	["mapvote_rtv"] = 1,
 }

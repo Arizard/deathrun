@@ -32,12 +32,16 @@ end)
 --commands
 concommand.Add("mapvote_list_maps", function(ply)
 
-	net.Start("MapvoteSendAllMaps")
-	net.WriteTable({
-		maps = MV:GetGoodMaps(),
-		action = "openlist"
-	})
-	net.Send( ply )
+	if DR:CanAccessCommand(ply, cmd) then
+
+		net.Start("MapvoteSendAllMaps")
+		net.WriteTable({
+			maps = MV:GetGoodMaps(),
+			action = "openlist"
+		})
+		net.Send( ply )
+
+	end
 
 end)
 
@@ -194,84 +198,75 @@ end)
 
 concommand.Add("mapvote_begin_mapvote", function(ply, cmd, args)
 
-	local cont = false
-	if IsValid( ply ) then
-		if ply:IsAdmin() then
-			cont = true
+	if DR:CanAccessCommand(ply, cmd) then
+
+		if not hook.Call("DeathrunStartMapvote", nil, ROUND:GetRoundsPlayed()) then
+			MV:BeginMapVote()
 		end
-	else
-		cont = true
-	end
 
-	if not hook.Call("DeathrunStartMapvote", nil, ROUND:GetRoundsPlayed()) then
-		MV:BeginMapVote()
 	end
-
 end)
 
 concommand.Add("mapvote_vote", function(ply, cmd, args)
-	if MV.Active == false then return end
-	if args[1] and IsValid( ply ) then
-		vot = args[1]
-		MV.Players[ ply:SteamID() ] = vot
+	if DR:CanAccessCommand(ply, cmd) then
+		if MV.Active == false then return end
+		if args[1] and IsValid( ply ) then
+			vot = args[1]
+			MV.Players[ ply:SteamID() ] = vot
 
-		for k,v in pairs( MV.MapList ) do
-			MV.MapList[k] = 0
-		end
-		for k,v in pairs( MV.Players ) do
-			MV.MapList[v] = (MV.MapList[v] or 0) + 1
-		end
+			for k,v in pairs( MV.MapList ) do
+				MV.MapList[k] = 0
+			end
+			for k,v in pairs( MV.Players ) do
+				MV.MapList[v] = (MV.MapList[v] or 0) + 1
+			end
 
-		MV:UpdateMapVote()
-	else
-		if IsValid(ply) then
-			ply:DeathrunChatPrint("Please specify a map.")
+			MV:UpdateMapVote()
+		else
+			if IsValid(ply) then
+				ply:DeathrunChatPrint("Please specify a map.")
+			end
 		end
 	end
 end)
 
 concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 
-	if args[1] then
-		nom = args[1]
+	if DR:CanAccessCommand(ply, cmd) then
+		if args[1] then
+			nom = args[1]
 
-		print(nom, game.GetMap())
+			print(nom, game.GetMap())
 
-		if nom == game.GetMap() then
-			ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
-			return
-		end
-
-		MV.PlayerNominations[ ply:SteamID() ] = nom
-
-		MV.Nominations = {}
-		for k,v in pairs( MV.PlayerNominations ) do
-			if not table.HasValue( MV.Nominations ) then
-				table.insert( MV.Nominations, v )
+			if nom == game.GetMap() then
+				ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
+				return
 			end
+
+			MV.PlayerNominations[ ply:SteamID() ] = nom
+
+			MV.Nominations = {}
+			for k,v in pairs( MV.PlayerNominations ) do
+				if not table.HasValue( MV.Nominations ) then
+					table.insert( MV.Nominations, v )
+				end
+			end
+
+			DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
+
+			net.Start("MapvoteSyncNominations")
+			net.WriteTable( MV.Nominations )
+			net.Broadcast()
 		end
-
-		DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
-
-		net.Start("MapvoteSyncNominations")
-		net.WriteTable( MV.Nominations )
-		net.Broadcast()
 	end
 
 end)
 
 concommand.Add("mapvote_update_mapvote", function(ply, cmd, args)
 
-	local cont = false
-	if IsValid( ply ) then
-		if ply:IsAdmin() then
-			cont = true
-		end
-	else
-		cont = true
+	if DR:CanAccessCommand(ply, cmd) then
+		MV:UpdateMapVote()
 	end
-
-	MV:UpdateMapVote()
 
 end)
 
@@ -318,11 +313,15 @@ end
 
 concommand.Add( "mapvote_rtv", function( ply )
 
-	local suppress = ply.WantsRTV
+	if DR:CanAccessCommand(ply, cmd) then
 
-	ply.WantsRTV = true
+		local suppress = ply.WantsRTV
 
-	MV:CheckRTV( suppress )
+		ply.WantsRTV = true
+
+		MV:CheckRTV( suppress )
+
+	end
 
 end)
 
