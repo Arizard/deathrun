@@ -236,27 +236,35 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 		if args[1] then
 			nom = args[1]
 
-			print(nom, game.GetMap())
+			ply.LastNom = ply.LastNom or CurTime()
 
-			if nom == game.GetMap() then
-				ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
-				return
-			end
+			--print(nom, game.GetMap())
 
-			MV.PlayerNominations[ ply:SteamID() ] = nom
+			if ply.LastNom + 1 < CurTime() then
 
-			MV.Nominations = {}
-			for k,v in pairs( MV.PlayerNominations ) do
-				if not table.HasValue( MV.Nominations ) then
-					table.insert( MV.Nominations, v )
+				if nom == game.GetMap() then
+					ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
+					return
 				end
+
+				MV.PlayerNominations[ ply:SteamID() ] = nom
+
+				MV.Nominations = {}
+				for k,v in pairs( MV.PlayerNominations ) do
+					if not table.HasValue( MV.Nominations ) then
+						table.insert( MV.Nominations, v )
+					end
+				end
+
+				DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
+
+				net.Start("MapvoteSyncNominations")
+				net.WriteTable( MV.Nominations )
+				net.Broadcast()
+
+			else
+				ply:DeathrunChatPrint("Please wait before nominating again.")
 			end
-
-			DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
-
-			net.Start("MapvoteSyncNominations")
-			net.WriteTable( MV.Nominations )
-			net.Broadcast()
 		end
 	end
 

@@ -347,17 +347,26 @@ DR.KillList = {}
 timer.Create("DeathrunSendKillList", 0.5,0,function()
 	if #DR.KillList > 0 then
 		local message = ""
+
+
+
+
+
+
+		-- this is a speed hole
+		-- it makes the code go faster
+
+
+
+
+
+
+
 		
-		-- remove the invalid players
-		for k,v in ipairs(DR.KillList) do
-			if not IsValid(v[1]) then
-				table.remove( DR.KillList, k )
-			end
-		end
-
-		PrintTable( DR.KillList )
-
-		if type(DR.KillList[1]) == "table" then
+		if type(DR.KillList[1]) == "string" then
+			DR:DeathNotification( DR.KillList[1] )
+			table.remove( DR.KillList, 1 )
+		elseif type(DR.KillList[1]) == "table" then
 
 			local ply = DR.KillList[1][1]
 			local att = DR.KillList[1][2]

@@ -526,18 +526,14 @@ function DR:SetScoreboardDisplay( sid, _icon, _col, _tag, _rank ) -- leave nil t
 	}
 end
 
-DR:SetScoreboardDisplay( "STEAM_0:1:30288855", 	"icon16/cup.png", 						Color(50,200,0), 		"Author", 			nil ) -- arizard
-DR:SetScoreboardDisplay( "STEAM_0:0:29351088", 	"icon16/rainbow.png", 					Color( 200, 0, 0 ), 	"Worst Player", 	nil ) -- zelpa
-DR:SetScoreboardDisplay( "STEAM_0:1:128126755", "icon16/drink.png",						Color(255,200,255), 	"Confirmed Grill",	nil ) -- krystal
-DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/cup_add.png",					HexColor( "#009600" ),	"Associate", 		nil ) -- tarkus
-DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColor( "#a66bbe" ),	"MEME MASTER",		nil ) -- kaay
-DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/control_fastforward_blue.png",	HexColor( "#99ff33" ),	"Playboy Bunny",	nil ) -- gamefresh
-DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",		nil ) -- fich
-DR:SetScoreboardDisplay( "STEAM_0:0:71992617",	"icon16/tux.png",						HexColor( "#8cfaef" ),	"43% Unstable",		nil ) -- haina
-DR:SetScoreboardDisplay( "STEAM_0:0:140884258",	"icon16/flag_red.png",					HexColor( "#b67bce" ),	nil,				nil ) -- sarah
-
---"STEAM_0:0:140884258"
---"STEAM_0:1:30288855"
+DR:SetScoreboardDisplay( "STEAM_0:1:30288855", 	"icon16/cup.png", 						Color(50,200,0), 		"Author", 										nil ) -- arizard
+DR:SetScoreboardDisplay( "STEAM_0:0:29351088", 	"icon16/rainbow.png", 					Color( 200, 0, 0 ), 	"Worst Player", 								nil ) -- zelpa
+DR:SetScoreboardDisplay( "STEAM_0:1:128126755", "icon16/drink.png",						Color(255,200,255), 	"Confirmed Grill",								nil ) -- krystal
+DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/cup_add.png",					HexColor( "#009600" ),	"Associate", 									nil ) -- tarkus
+DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColor( "#a66bbe" ),	"MEME MASTER",									nil ) -- kaay
+DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/control_fastforward_blue.png",	HexColor( "#99ff33" ),	"Playboy Bunny",								nil ) -- gamefresh
+DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",									nil ) -- fich
+DR:SetScoreboardDisplay( "STEAM_0:0:71992617",	"icon16/tux.png",						HexColor( "#8cfaef" ),	tostring( math.random(100) ).."% Unstable",		nil ) -- haina
 
 hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
 
