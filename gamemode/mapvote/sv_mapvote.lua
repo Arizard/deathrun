@@ -30,7 +30,7 @@ hook.Add("DeathrunBeginPrep", "RecordMapStats", function() -- increment stats by
 end)
 
 --commands
-concommand.Add("mapvote_list_maps", function(ply)
+concommand.Add("mapvote_list_maps", function(ply, cmd, args)
 
 	if DR:CanAccessCommand(ply, cmd) then
 
@@ -319,7 +319,7 @@ function MV:CheckRTV( suppress )
 
 end
 
-concommand.Add( "mapvote_rtv", function( ply )
+concommand.Add( "mapvote_rtv", function( ply, cmd, args )
 
 	if DR:CanAccessCommand(ply, cmd) then
 
