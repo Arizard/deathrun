@@ -367,7 +367,11 @@ ROUND:AddState( ROUND_OVER,
 		rounds_played = rounds_played + 1
 		if SERVER then
 			if not hook.Call("DeathrunShouldMapSwitch", nil, rounds_played) and ( rounds_played < GetConVarNumber("deathrun_round_limit") ) then
-				DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(GetConVarNumber("deathrun_round_limit") - rounds_played).." rounds to go!")
+				if !tostring(GetConVarNumber("deathrun_round_limit") - rounds_played == 1 then
+    					DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(GetConVarNumber("deathrun_round_limit") - rounds_played).." rounds to go!")
+				 else
+					 DR:ChatBroadcast("Round "..tostring(rounds_played).." over. "..tostring(GetConVarNumber("deathrun_round_limit") - rounds_played).." round to go!")
+				end
 				ROUND:SetTimer(GetConVarNumber("deathrun_finishtime_duration") )
 				timer.Simple(GetConVarNumber("deathrun_finishtime_duration") , function()
 					ROUND:RoundSwitch( ROUND_PREP )
