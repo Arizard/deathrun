@@ -529,7 +529,7 @@ end
 DR:SetScoreboardDisplay( "STEAM_0:1:30288855", 	"icon16/cup.png", 						Color(50,200,0), 		"Author", 										nil ) -- arizard
 DR:SetScoreboardDisplay( "STEAM_0:0:29351088", 	"icon16/rainbow.png", 					Color( 200, 0, 0 ), 	"Worst Player", 								nil ) -- zelpa
 DR:SetScoreboardDisplay( "STEAM_0:1:128126755", "icon16/drink.png",						Color(255,200,255), 	"Confirmed Grill",								nil ) -- krystal
-DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/cup_add.png",					HexColor( "#009600" ),	"Associate", 									nil ) -- tarkus
+DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/sport_shuttlecock.png",			HexColor( "#ef5682" ),	"CREEEEEEEEEED", 	nil ) -- tarkus
 DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColor( "#a66bbe" ),	"MEME MASTER",									nil ) -- kaay
 DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/control_fastforward_blue.png",	HexColor( "#99ff33" ),	"Playboy Bunny",								nil ) -- gamefresh
 DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",									nil ) -- fich
