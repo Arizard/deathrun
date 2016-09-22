@@ -236,11 +236,9 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 		if args[1] then
 			nom = args[1]
 
-			ply.LastNom = ply.LastNom or CurTime()
-
 			--print(nom, game.GetMap())
 
-			if ply.LastNom + 1 < CurTime() then
+			if not ply.LastNom or ply.LastNom + 1 < CurTime() then
 
 				if nom == game.GetMap() then
 					ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
@@ -255,6 +253,8 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 						table.insert( MV.Nominations, v )
 					end
 				end
+        
+				ply.LastNom = CurTime()
 
 				DR:ChatBroadcast(ply:Nick().." has nominated "..nom.." for the mapvote!")
 
