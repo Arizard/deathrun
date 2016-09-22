@@ -269,7 +269,18 @@ function DR:NewScoreboardPlayer( ply, w, h )
 	icon:SetSize(h,h)
 	icon:SetPos(h,0)
 
-	local path = hook.Call("GetScoreboardIcon", nil, ply)
+	local path = false
+
+	if ply:IsAdmin() or ply:IsSuperAdmin() then
+		path = "icon16/shield.png"
+	elseif IsSupporting( ply ) then
+		path = "icon16/heart.png"
+	end
+
+	local tpath = hook.Call("GetScoreboardIcon", nil, ply)
+	if tpath then
+		path = tpath
+	end
 
 	icon.Mat = path and Material( path ) or false
 
@@ -570,12 +581,6 @@ hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
 		if data.icon then
 			return data.icon
 		end
-	end
-
-	if ply:IsAdmin() or ply:IsSuperAdmin() then
-		return "icon16/shield.png"
-	elseif IsSupporting( ply ) then
-		return "icon16/heart.png"
 	end
 end)
 
