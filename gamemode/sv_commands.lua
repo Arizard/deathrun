@@ -245,7 +245,7 @@ concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 	if DR:CanAccessCommand(ply, cmd) and ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - GetConVar("deathrun_unstuck_cooldown"):GetInt() then
 		local trace = {
 			start = ply:EyePos(),
-			endpos = ply:EyePos() + ply:EyeAngles():Forward()*10,
+			endpos = ply:EyePos() + ply:GetAimVector()*20,
 			filter = ply,
 			mins = DR.Hulls.HullMin,
 			maxs = DR.Hulls.HullStand,
@@ -253,7 +253,7 @@ concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 		}
 
 		local tr = util.TraceHull( trace )
-		ply:SetPos( tr.HitPos )
+		ply:SetPos( tr.HitPos - (ply:EyePos()-ply:GetPos()) )
 
 		stuckers[ply:SteamID64()] = CurTime()
 
