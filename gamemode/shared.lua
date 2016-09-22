@@ -94,6 +94,9 @@ CreateConVar("deathrun_motd_enabled", "1", defaultFlags, "Enable the MOTD to dis
 CreateConVar("deathrun_motd_title", "Deathrun Information", defaultFlags, "The title of the MOTD (i.e. Deathrun Information, !info)")
 CreateConVar("deathrun_motd_url", "http://arizard.github.io/deathruninfo.html", defaultFlags, "Sets the MOTD url (i.e. Deathrun Information, !info)")
 
+-- unstuck convar
+CreateConVar("deathrun_unstuck_cooldown", "30", defaultFlags, "Set the cooldown timer for when a player uses !stuck or takes damage, forcing them to wait that time until their next !stuck command.")
+
 
 if SERVER then
 	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)

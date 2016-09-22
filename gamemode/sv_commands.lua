@@ -237,9 +237,12 @@ hook.Add("EntityTakeDamage", "unstuckblocker", function(ply)
 		stuckers[ply:SteamID64()] = CurTime()
 	end
 end)
+
+
+
 concommand.Add("deathrun_unstuck", function( ply, cmd, args )
 
-	if DR:CanAccessCommand(ply, cmd) and ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - 30 then
+	if DR:CanAccessCommand(ply, cmd) and ply:Alive() and ply:GetObserverMode() == OBS_MODE_NONE and ( stuckers[ply:SteamID64()] or 0 ) < CurTime() - GetConVar("deathrun_unstuck_cooldown"):GetInt() then
 		local trace = {
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward()*10,

@@ -87,6 +87,9 @@ SERVER CONVARS:
 	deathrun_motd_url <string url>
 		Changes the URL that is opened inside the MOTD
 
+	deathrun_unstuck_cooldown <0-1000>
+		Time between when a player takes damage or uses !stuck and their next use of !stuck
+
 CLIENT CONVARS:
 
 	deathrun_crosshair_thickness <0-999>
