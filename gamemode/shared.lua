@@ -89,6 +89,12 @@ CreateConVar("deathrun_autojump_velocity_cap", 0, defaultFlags, "The amount to l
 CreateConVar("deathrun_allow_autojump", 1, defaultFlags, "Allows players to use autojump.")
 CreateConVar("deathrun_help_url", "https://github.com/Arizard/deathrun/blob/master/help.md", defaultFlags, "The URL to open when the player types !help.")
 
+-- motd convars
+CreateConVar("deathrun_motd_enabled", "1", defaultFlags, "Enable the MOTD to display on all players when they join?")
+CreateConVar("deathrun_motd_title", "Deathrun Information", defaultFlags, "The title of the MOTD (i.e. Deathrun Information, !info)")
+CreateConVar("deathrun_motd_url", "http://arizard.github.io/deathruninfo.html", defaultFlags, "Sets the MOTD url (i.e. Deathrun Information, !info)")
+
+
 if SERVER then
 	concommand.Add("deathrun_internal_set_autojump", function(ply, cmd, args)
 		if args[1] then

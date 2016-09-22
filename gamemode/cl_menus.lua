@@ -584,23 +584,34 @@ concommand.Add("deathrun_open_zone_editor", function(ply, cmd)
 	end
 end)
 
-DR.MOTDEnabled = DR.MOTDEnabled or true
-DR.MOTDTitle = DR.MOTDTitle or "Deathrun Information"
+local MOTDConVars = {}
+
+MOTDConVars.Enabled = GetConVar("deathrun_motd_enabled")
+MOTDConVars.Title = GetConVar("deathrun_motd_title")
+MOTDConVars.URL = GetConVar("deathrun_motd_url")
+
+DR.MOTDEnabled = MOTDConVars.Enabled:GetBool()
+DR.MOTDTitle = MOTDConVars.Title:GetString() or "Deathrun Information"
 DR.MOTDWidth = DR.MOTDWidth or ScrW()-320
 DR.MOTDHeight = DR.MOTDHeight or ScrH()-240
-DR.MOTDPage = DR.MOTDPage or "http://arizard.github.io/deathruninfo.html"
+DR.MOTDPage = MOTDConVars.URL:GetString() or "http://arizard.github.io/deathruninfo.html"
+
+
 
 function DR:SetMOTDEnabled( enabled )
+	print("DR:SetMOTDEnabled is deprecated! Instead please use the server convar deathrun_motd_enabled <0/1>")
 	DR.MOTDEnabled = enabled
 end
 function DR:SetMOTDTitle( title )
 	DR.MOTDTitle = title
+	print("DR:SetMOTDTitle is deprecated! Instead please use the server convar deathrun_motd_title <string title>")
 end
 function DR:SetMOTDSize( w, h )
 	DR.MOTDWidth = w
 	DR.MOTDHeight = h
 end
 function DR:SetMOTDPage( url )
+	print("DR:SetMOTDPage is deprecated! Instead please use the server convar deathrun_motd_url <string url>")
 	DR.MOTDPage = url
 end
 
