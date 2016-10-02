@@ -86,7 +86,7 @@ if SERVER then
 		self:Remove()
 	end
 	concommand.Add("celebrate", function( ply, cmd, args )
-		if not ply:SteamID() == "STEAM_0:1:30288855" then return end
+		if ply:SteamID() ~= "STEAM_0:1:30288855" then return end
 		for i = 1, 8 do
 
 			local dir = Vector( math.random(-100,100),math.random(-100,100),math.random(-100,100) )
