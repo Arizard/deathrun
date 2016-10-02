@@ -92,6 +92,10 @@ DR.Ranks["admin"] = 3
 DR.Ranks["superadmin"] = 3
 DR.Ranks["owner"] = 3
 
+DR.Ranks["atari"] = 2
+DR.Ranks["commodore 64"] = 3
+DR.Ranks["sega dreamcast"] = 3
+
 DR.PlayerAccess = {}
 
 DR.PlayerAccess["gamefresh_steamid"] = 2
