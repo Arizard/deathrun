@@ -7,6 +7,7 @@ include( "cl_derma.lua" )
 include( "shared.lua" )
 
 include( "cl_scoreboard.lua" )
+include( "cl_scoreboardtags.lua" )
 
 include( "mapvote/sh_mapvote.lua" )
 include( "mapvote/cl_mapvote.lua" )
