@@ -426,6 +426,7 @@ function GM:CanPlayerSuicide( ply )
 	-- merge from Jerpy
 	if (not ply:Alive()) or (ply:GetSpectate()) then return false end -- don't let dead players or spectators suicide
 	if ply:Team() == TEAM_DEATH then return false end -- never allow suicide on death team
+	if ply:Team() == TEAM_GHOST then return false end -- never allow suicide on ghost team
 	if ROUND:GetCurrent() == ROUND_PREP then return false end -- players cannot suicide during round prep time
 
 	return self.BaseClass:CanPlayerSuicide( ply )
