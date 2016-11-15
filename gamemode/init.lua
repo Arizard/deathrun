@@ -25,7 +25,6 @@ include( "shared.lua" )
 
 -- scoreboard
 AddCSLuaFile("cl_scoreboard.lua")
-AddCSLuaFile("cl_scoreboardtags.lua")
 
 -- commands
 include("sv_commands.lua")

@@ -524,3 +524,117 @@ hook.Add("CreateMove", "DeathrunScoreboardPopup", function( cmd )
 	end
 
 end)
+
+-- hall of fame/hall of lame
+DR.ScoreboardSpecials = {}
+
+function DR:SetScoreboardDisplay( sid, _icon, _col, _tag, _rank ) -- leave nil to use defaults
+	DR.ScoreboardSpecials[ sid ] = {
+		icon = _icon or nil,
+		col = _col or nil, 
+		tag = _tag or nil,
+		rank = _rank or nil,
+	}
+end
+
+DR:SetScoreboardDisplay( "STEAM_0:1:30288855", 	"icon16/cup.png", 						Color(50,200,0), 		"Author", 										nil ) -- arizard
+DR:SetScoreboardDisplay( "STEAM_0:0:29351088", 	"icon16/rainbow.png", 					Color( 200, 0, 0 ), 	"Worst Player", 								nil ) -- zelpa
+DR:SetScoreboardDisplay( "STEAM_0:1:128126755", "icon16/drink.png",						Color(255,200,255), 	"Confirmed Grill",								nil ) -- krystal
+DR:SetScoreboardDisplay( "STEAM_0:0:90710956",	"icon16/cup_error.png",					HexColor( "#009600" ),	"Associate", 									nil ) -- tarkus
+DR:SetScoreboardDisplay( "STEAM_0:1:147138529", "icon16/anchor.png",					HexColor( "#a66bbe" ),	"MEME MASTER",									nil ) -- kaay
+DR:SetScoreboardDisplay( "STEAM_0:1:64432636",	"icon16/map_go.png",	HexColor( "#99ff33" ),	"Playboy Bunny",								nil ) -- gamefresh
+DR:SetScoreboardDisplay( "STEAM_0:1:89220979",	"icon16/joystick.png",					HexColor( "#8cfaef" ),	"Neko Nation",									nil ) -- fich
+DR:SetScoreboardDisplay( "STEAM_0:0:71992617",	"icon16/tux.png",						HexColor( "#8cfaef" ),	tostring( math.random(100) ).."% Unstable",		nil ) -- haina
+
+hook.Add("GetScoreboardNameColor","memes", function( ply ) -- do not remove or i kill u
+
+	local sid = ply:SteamID()
+	local sid64 = ply:SteamID64()
+	local data = nil
+
+	if DR.ScoreboardSpecials[ sid ] then
+		data = DR.ScoreboardSpecials[ sid ]
+	elseif DR.ScoreboardSpecials[ sid64 ] then
+		data = DR.ScoreboardSpecials[ sid64 ]
+	end
+
+		--Added colours for the usual usergroups
+	--if ply:GetUserGroup() == "moderator" then
+		--return HexColor("#0ca917")
+	--elseif ply:GetUserGroup() == "admin" then
+		--return HexColor("#e16600")
+	--elseif ply:GetUserGroup() == "superadmin" then
+		--return HexColor("#8cfaef")
+	--end
+		
+	if data then
+		if data.col then
+			return data.col
+		end
+	end
+end)
+
+hook.Add("GetScoreboardIcon","memes 2: electric dootaloo", function( ply )
+
+	local sid = ply:SteamID()
+	local sid64 = ply:SteamID64()
+	local data = nil
+
+	if DR.ScoreboardSpecials[ sid ] then
+		data = DR.ScoreboardSpecials[ sid ]
+	elseif DR.ScoreboardSpecials[ sid64 ] then
+		data = DR.ScoreboardSpecials[ sid64 ]
+	end
+
+	if data then
+		if data.icon then
+			return data.icon
+		end
+	end
+end)
+
+hook.Add("GetScoreboardTag", "memes 3: this time it's personal", function( ply )
+
+	local sid = ply:SteamID()
+	local sid64 = ply:SteamID64()
+	local data = nil
+
+	if DR.ScoreboardSpecials[ sid ] then
+		data = DR.ScoreboardSpecials[ sid ]
+	elseif DR.ScoreboardSpecials[ sid64 ] then
+		data = DR.ScoreboardSpecials[ sid64 ]
+	end
+	
+	--Added easy to customise basic tags for usual ranks
+	--if ply:GetUserGroup() == "moderator" then
+		--return "Jr. Staff"
+	--elseif ply:GetUserGroup() == "admin" then
+		--return "Staff"
+	--elseif ply:GetUserGroup() == "superadmin" then
+		--return "Sr. Staff"
+	--end	
+	
+	if data then
+		if data.tag then
+			return data.tag
+		end
+	end
+end)
+
+hook.Add("GetScoreboardRank", "memes 4: a good day to meme hard", function( ply )
+	local sid = ply:SteamID()
+	local sid64 = ply:SteamID64()
+	local data = nil
+
+	if DR.ScoreboardSpecials[ sid ] then
+		data = DR.ScoreboardSpecials[ sid ]
+	elseif DR.ScoreboardSpecials[ sid64 ] then
+		data = DR.ScoreboardSpecials[ sid64 ]
+	end
+
+	if data then
+		if data.rank then
+			return data.rank
+		end
+	end
+end)
