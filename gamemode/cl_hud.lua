@@ -652,10 +652,10 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 end
 
 function GM:HUDWeaponPickedUp( wep )
-	DR:AddNotification( "+ "..(wep.PrintName or "Weapon"), ScrW()-32, ScrH()/2, 0, -0.2, 0, 0, 5 )
+	DR:AddKillNote( "+ "..(wep.PrintName or "Weapon"), 2 )
 end
 function GM:HUDAmmoPickedUp( name, amt )
-	DR:AddNotification( "+ "..(amt or 0).." "..(name or "Ammo"), ScrW()-32, ScrH()/2 + 20, 0, -0.2, 0, 0, 5 )
+	DR:AddKillNote( "+ "..(amt or 0).." "..(name or "Ammo"), 2 )
 end
 
 -- sass hud
@@ -1056,15 +1056,18 @@ function DeathrunDrawKillfeed( x, y )
 			obj.hp = obj.hp - DeathrunGetDT()*(#killfeed/2)
 			if obj.hp > 0 then
 				local fade = 1
+				local sh = 0
 				if obj.hp <= 1 then
 					fade = obj.hp
+					sh = 0
 				end
 				if obj.hp > 5.7 then
 					fade = InverseLerp(obj.hp, 6, 5.7)
+					sh = 1-fade
 				end
-				dy = dy + 24*fade
+				dy = dy + 24*fade 
 				surface.SetAlphaMultiplier( fade*0.75 )
-				deathrunShadowTextSimple(obj.text, "deathrun_hud_Medium", x, y + dy, modecol[obj.mode] or Color(0,0,0) , TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 1)
+				deathrunShadowTextSimple(obj.text, "deathrun_hud_Medium", x, y + dy + sh*16, modecol[obj.mode] or Color(0,0,0) , TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 1)
 				surface.SetAlphaMultiplier( 1 )
 			else
 				table.remove( killfeed, j )
