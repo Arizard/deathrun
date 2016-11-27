@@ -76,6 +76,7 @@ util.AddNetworkString("DeathrunSyncMutelist")
 util.AddNetworkString("DeathrunNotification")
 util.AddNetworkString("DeathrunSpectatorNotification")
 util.AddNetworkString("DeathrunForceSpectator")
+util.AddNetworkString("DeathrunAddKillNote")
 
 -- required configz
 RunConsoleCommand("sv_friction", 8)
@@ -265,6 +266,20 @@ hook.Add("AcceptInput", "DeathrunKillers", function( ent, input, activator, call
 	ent.LastCaller = caller
 end)
 
+local causesOfDeath = {
+	"Natural causes",
+	"Inappropriate yelling",
+	"Vehicular homicide",
+	"Bio-engineered assault turtles with acid breath",
+	"Dark and mysterious forces beyond our control",
+	"Joe Biden",
+	"The cool, refreshing taste of Pepsi®",
+	"The Patriarchy",
+	"The rains down in Africa",
+	"The horses",
+	"A saxophone solo"
+}
+
 function GM:PlayerDeath( ply, inflictor, attacker )
 
 	ply:Extinguish()
@@ -338,23 +353,34 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 
 	hook.Call("DeathrunPlayerDeath", self, ply, inflictor, attacker) -- support for when traps kill players
 
-	table.insert( DR.KillList, {ply, attacker} )
+	--table.insert( DR.KillList, {ply, attacker} )
+	if IsValid(attacker) then
+		if attacker:IsPlayer() then
+			attackerName = attacker:Nick()
+		else
+			attackerName = table.Random(causesOfDeath)
+		end
+	end
+
+	local msg = attackerName.."\t"..("✕").."\t"..ply:Nick()
+	DR:DeathNotification( msg, 1 )
+	print(msg)
 	
 end
 
-DR.KillList = {}
+-- DR.KillList = {}
 
-timer.Create("DeathrunSendKillList", 0.5,0,function()
-	if #DR.KillList > 0 then
-		local message = ""
-
-
+-- timer.Create("DeathrunSendKillList", 0.5,0,function()
+-- 	if #DR.KillList > 0 then
+-- 		local message = ""
 
 
 
 
-		-- this is a speed hole
-		-- it makes the code go faster
+
+
+-- 		-- this is a speed hole
+-- 		-- it makes the code go faster
 
 
 
@@ -363,57 +389,58 @@ timer.Create("DeathrunSendKillList", 0.5,0,function()
 
 
 		
-		if type(DR.KillList[1]) == "string" then
-			DR:DeathNotification( DR.KillList[1] )
-			table.remove( DR.KillList, 1 )
-		elseif type(DR.KillList[1]) == "table" then
+-- 		if type(DR.KillList[1]) == "string" then
+-- 			DR:DeathNotification( DR.KillList[1] )
+-- 			table.remove( DR.KillList, 1 )
+-- 		elseif type(DR.KillList[1]) == "table" then
 
-			local ply = DR.KillList[1][1]
-			local att = DR.KillList[1][2]
+-- 			local ply = DR.KillList[1][1]
+-- 			local att = DR.KillList[1][2]
 
-			if not IsValid( ply ) then return end
+-- 			if not IsValid( ply ) then return end
 
-			message = ply:Nick().." was killed"
+-- 			message = ply:Nick().." was killed"
 
-			if IsValid(att) then
-				if att:IsPlayer() then
-					message = message.." by "..att:Nick().."!"
-				else
-					message = message.." by a mysterious cause!"
-				end
-			else
-				message = message.."!"
-			end
+-- 			if IsValid(att) then
+-- 				if att:IsPlayer() then
+-- 					message = message.." by "..att:Nick().."!"
+-- 				else
+-- 					message = message.." by a mysterious cause!"
+-- 				end
+-- 			else
+-- 				message = message.."!"
+-- 			end
 
-			DR:DeathNotification( message )
+-- 			DR:DeathNotification( message )
 
-			table.remove( DR.KillList, 1 )
-		end
+-- 			table.remove( DR.KillList, 1 )
+-- 		end
 
-		-- for i = 1, #DR.KillList do
-		-- 	local ply = DR.KillList[i]
-		-- 	if IsValid(ply) then
-		-- 		if i < #DR.KillList-1 then
-		-- 			message = message..(i == 1 and "" or " ")..ply:Nick()..","
-		-- 			if i%4 == 0 then
-		-- 				message = message.."%newline%"
-		-- 			end
-		-- 		elseif i == #DR.KillList - 1 then
-		-- 			message = message.." "..ply:Nick().." and"
-		-- 		else
-		-- 			message = message.." "..ply:Nick()
-		-- 		end
-		-- 	end
-		-- end
-		-- message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
-		-- DR:DeathNotification( message )
-		-- DR.KillList = {}
-	end
-end)
+-- 		-- for i = 1, #DR.KillList do
+-- 		-- 	local ply = DR.KillList[i]
+-- 		-- 	if IsValid(ply) then
+-- 		-- 		if i < #DR.KillList-1 then
+-- 		-- 			message = message..(i == 1 and "" or " ")..ply:Nick()..","
+-- 		-- 			if i%4 == 0 then
+-- 		-- 				message = message.."%newline%"
+-- 		-- 			end
+-- 		-- 		elseif i == #DR.KillList - 1 then
+-- 		-- 			message = message.." "..ply:Nick().." and"
+-- 		-- 		else
+-- 		-- 			message = message.." "..ply:Nick()
+-- 		-- 		end
+-- 		-- 	end
+-- 		-- end
+-- 		-- message = message .. (#DR.KillList == 1 and " was" or " were").." killed!"
+-- 		-- DR:DeathNotification( message )
+-- 		-- DR.KillList = {}
+-- 	end
+-- end)
 
-function DR:DeathNotification( msg )
-	net.Start("DeathrunNotification")
-	net.WriteString( msg )
+function DR:DeathNotification( msg, mod )
+	net.Start("DeathrunAddKillNote")
+	net.WriteString( msg or 'nil' )
+	net.WriteInt( mod or 1, 8 )
 	net.Broadcast( )
 end
 

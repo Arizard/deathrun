@@ -146,10 +146,17 @@ net.Receive("DeathrunSendMVPs", function()
 	hook.Call("DeathrunRoundWin", nil, RoundEndData.winteam)
 end)
 
+local deathrun_dt = 0
+local deathrun_lasttime = CurTime()
+function DeathrunGetDT()
+	return deathrun_dt
+end
+
 function GM:HUDPaint()
 	
 	-- draw the crosshair
-
+	deathrun_dt = CurTime() - deathrun_lasttime
+	deathrun_lasttime = CurTime()
 	
 
 	local hud_positions = {
@@ -201,6 +208,8 @@ function GM:HUDPaint()
 			RoundEndData.Active = false
 		end
 	end
+
+	DeathrunDrawKillfeed(ScrW()/2, ScrH()*0.666)
 
 end
 
@@ -521,6 +530,11 @@ local emptynotification = {
 	born = 0,
 }
 
+function dirac(x, a)
+	if a <= 0.001 then a = 0.001 end
+	return (1 / (a*math.sqrt(math.pi)) )*math.exp( -(x^2)/(a^2) )
+end
+
 net.Receive("DeathrunNotification", function()
 	DR:AddNotification( net.ReadString(), ScrW()-32,ScrH()/6, 0, -0.35, 0, -0.00025, 10 )
 end)
@@ -572,6 +586,7 @@ function DR:UpdateNotifications( )
 	for k,v in ipairs( notifications ) do
 		
 		local aliveFor = CurTime() - v.born
+		local shift = aliveFor - v.dur*0.75
 		local fadein = math.Clamp( Lerp( InverseLerp(aliveFor,0,0.5), 0, 255 ), 0, 255 )
 		local scalein = math.pow(fadein/255, 1/4)
 
@@ -593,6 +608,8 @@ function DR:UpdateNotifications( )
 	end
 
 end
+
+
 
 hook.Add("HUDPaint","DeathrunNotifications", function()
 	DR:UpdateNotifications()
@@ -635,10 +652,10 @@ function DR:DrawWinners( winteam, tbl_mvps, x, y, stalemate )
 end
 
 function GM:HUDWeaponPickedUp( wep )
-	DR:AddNotification( "+ "..(wep.PrintName or "Weapon"), ScrW()-32, ScrH()/2, 0, -0.2, 0, 0, 5 )
+	DR:AddKillNote( "+ "..(wep.PrintName or "Weapon"), 2 )
 end
 function GM:HUDAmmoPickedUp( name, amt )
-	DR:AddNotification( "+ "..(amt or 0).." "..(name or "Ammo"), ScrW()-32, ScrH()/2 + 20, 0, -0.2, 0, 0, 5 )
+	DR:AddKillNote( "+ "..(amt or 0).." "..(name or "Ammo"), 2 )
 end
 
 -- sass hud
@@ -963,3 +980,101 @@ hook.Add("PostDrawHUD", "Vaporwave", function()
 
 	--cam.PopModelMatrix()
 end)
+
+-- redo killfeed
+local killfeed = {}
+
+local function weaponName(wepclass)
+	local wep = weapons.Get(wepclass)
+	if wep then
+		if wep.PrintName then
+			return wep.PrintName
+		else
+			return wepclass
+		end
+	else
+		return wepclass
+	end
+end
+
+local function newKillNote(tex, mod)
+	local t = table.Copy( {
+			text = tex,
+			mode = mod or 1,
+			hp = 6,
+		} )
+
+	table.insert( killfeed, t )
+	return t
+end
+
+net.Receive("DeathrunAddKillNote",function(len)
+	DR:AddKillNote( net.ReadString(), net.ReadInt(8) )
+end)
+
+function DR:AddKillNote( msg, mod )
+
+	--newKillNote(attname.."\t"..(direct and "◎" or "➤" ).."\t"..vicname.."\t["..wepname.."]", mod)
+	newKillNote( msg, mod )
+
+end
+
+local modecol = {
+	Color(255,255,255),
+	Color(0,255,0),
+	Color(255,0,0),
+}
+
+concommand.Add("deathrun_testkillnote", function()
+	DR:AddKillNote( "Hello World", 1 )
+end)
+
+function DeathrunDrawKillfeed( x, y )
+	local dy = 0
+	local sumhp = 0
+	for i = 1, #killfeed do
+		local j = #killfeed - i + 1
+		local obj = killfeed[j]
+		if obj.hp > 0 then
+			local fade = 1
+			if obj.hp <= 1 then
+				fade = obj.hp
+			end
+			if obj.hp > 5.7 then
+				fade = InverseLerp(obj.hp, 6, 5.7)
+			end
+			dy = dy - 24*fade
+			sumhp = sumhp + obj.hp
+		end
+	end
+	for i = 1, #killfeed do
+		local j = #killfeed - i + 1
+		local obj = killfeed[j]
+
+		if obj then
+
+			obj.hp = obj.hp - DeathrunGetDT()*(#killfeed/2)
+			if obj.hp > 0 then
+				local fade = 1
+				local sh = 0
+				if obj.hp <= 1 then
+					fade = obj.hp
+					sh = 0
+				end
+				if obj.hp > 5.7 then
+					fade = InverseLerp(obj.hp, 6, 5.7)
+					sh = 1-fade
+				end
+				dy = dy + 24*fade 
+				surface.SetAlphaMultiplier( fade*0.75 )
+				deathrunShadowTextSimple(obj.text, "deathrun_hud_Medium", x, y + dy + sh*16, modecol[obj.mode] or Color(0,0,0) , TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 1)
+				surface.SetAlphaMultiplier( 1 )
+			else
+				table.remove( killfeed, j )
+			end
+		end
+	end
+end
+
+
+
