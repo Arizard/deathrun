@@ -89,6 +89,9 @@ SERVER CONVARS:
 
 	deathrun_unstuck_cooldown <0-1000>
 		Time between when a player takes damage or uses !stuck and their next use of !stuck
+		
+	deathrun_starting_weapon <string weapon name>
+		Default starting weapon
 
 CLIENT CONVARS:
 
