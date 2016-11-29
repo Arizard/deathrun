@@ -166,6 +166,7 @@ hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 
 	if GhostMode then -- GhostMode compatibility
 		if ply:Team() == TEAM_GHOST then
+			ply:ConCommand("deathrun_spectate_only 0")
 			ply:StopSpectate()
 			return
 		end
