@@ -268,7 +268,7 @@ function DR:DrawTargetID()
 
 	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - ( 1/( (TargetIDFadeTime:GetFloat()) * 100) ) * 255 * fmul, 0, 255 )
 
-	-- draw floating names if you're on the Death team
+	-- draw floating names if you're on the Death team and they are not a ghost
 	-- draw them for Runners as well, but not thru walls
 	for _, ply in ipairs(player.GetAll()) do
 
