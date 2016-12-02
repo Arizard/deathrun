@@ -19,6 +19,7 @@ DR.Colors = {
 	Sunflower = HexColor("#f1c40f"),
 	Orange = HexColor("#f39c12"),
 	Text = {
+		GhostTeam = HexColor( "#ffcc00" ),
 		DeathTeam = HexColor( "#F26C4F" ),
 		RunnerTeam = HexColor( "#3A89C9" ),
 		Clouds = HexColor("#E9F2F9"),
