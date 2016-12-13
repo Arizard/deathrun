@@ -550,6 +550,10 @@ concommand.Add("strip", function(ply)
 end)
 
 function GM:GetFallDamage( ply, speed )
+	if ply:Team() == TEAM_GHOST then
+		return false
+	end
+	
 	local dmg = hook.Call("DeathrunFallDamage", self, ply, speed)
 	if dmg ~= nil then
 		return dmg
