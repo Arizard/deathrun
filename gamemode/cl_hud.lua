@@ -244,7 +244,7 @@ function DR:DrawTargetID()
 
 	if tr.Hit then
 		if tr.Entity then
-			if tr.Entity:IsPlayer() then
+			if tr.Entity:IsPlayer() and tr.Entity:Team() ~= TEAM_GHOST then
 				
 
 				DR.TargetIDAlpha = 255
@@ -268,7 +268,7 @@ function DR:DrawTargetID()
 
 	DR.TargetIDAlpha = math.Clamp( DR.TargetIDAlpha - ( 1/( (TargetIDFadeTime:GetFloat()) * 100) ) * 255 * fmul, 0, 255 )
 
-	-- draw floating names if you're on the Death team
+	-- draw floating names if you're on the Death team and they are not a ghost
 	-- draw them for Runners as well, but not thru walls
 	for _, ply in ipairs(player.GetAll()) do
 
@@ -279,7 +279,7 @@ function DR:DrawTargetID()
 			if LocalPlayer():Team() == ply:Team() and LocalPlayer():Alive() then
 				draw = true
 			end
-			if (LocalPlayer():Team() ~= TEAM_RUNNER) or LocalPlayer():Alive() == false then
+			if (LocalPlayer():Team() ~= TEAM_RUNNER) and (ply:Team() ~= TEAM_GHOST) or (LocalPlayer():Alive() == false) then
 				if (ply ~= LocalPlayer():GetObserverTarget()) or (LocalPlayer():GetObserverMode() ~= OBS_MODE_IN_EYE) then
 					draw = true
 				end

@@ -52,7 +52,7 @@ function ENT:Initialize()
 
 		phys:ApplyForceCenter( Vector(0,0,self.lifespan) )
 
-		self:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER)
+		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 
 	end
 

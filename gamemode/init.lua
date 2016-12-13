@@ -166,6 +166,7 @@ hook.Add("PlayerSpawn", "DeathrunPlayerSpawn", function( ply )
 
 	if GhostMode then -- GhostMode compatibility
 		if ply:Team() == TEAM_GHOST then
+			ply:ConCommand("deathrun_spectate_only 0")
 			ply:StopSpectate()
 			return
 		end
@@ -549,6 +550,10 @@ concommand.Add("strip", function(ply)
 end)
 
 function GM:GetFallDamage( ply, speed )
+	if ply:Team() == TEAM_GHOST then
+		return false
+	end
+	
 	local dmg = hook.Call("DeathrunFallDamage", self, ply, speed)
 	if dmg ~= nil then
 		return dmg
