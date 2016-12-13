@@ -181,7 +181,11 @@ function GM:PreDrawPlayerHands( hands, vm, ply, wep )
 	end
 end
 
-
+function GM:PlayerFootstep( ply, pos, foot, sound, volume, filter)
+	if ply:Team() == TEAM_GHOST then
+		return true
+	end
+end
 
 concommand.Add("+menu", function()
 	RunConsoleCommand("deathrun_dropweapon")
