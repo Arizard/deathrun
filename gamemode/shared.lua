@@ -13,13 +13,16 @@ end
 
 local defaultFlags = FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE + FCVAR_CLIENTCMD_CAN_EXECUTE
 
+TEAM_GHOST = 5
 TEAM_RUNNER = 3
 TEAM_DEATH = 2
 
 function GM:CreateTeams()
+	team.SetUp(TEAM_GHOST, "Ghosts", DR.Colors.GhostTeam, false)
 	team.SetUp(TEAM_RUNNER, "Runners", DR.Colors.RunnerTeam, false)
 	team.SetUp(TEAM_DEATH, "Deaths", DR.Colors.DeathTeam, false)
 
+	team.SetSpawnPoint( TEAM_GHOST, "info_player_counterterrorist" )
 	team.SetSpawnPoint( TEAM_DEATH, "info_player_terrorist" )
 	team.SetSpawnPoint( TEAM_RUNNER, "info_player_counterterrorist" )
 

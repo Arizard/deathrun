@@ -90,6 +90,9 @@ SERVER CONVARS:
 
 	deathrun_unstuck_cooldown <0-1000>
 		Time between when a player takes damage or uses !stuck and their next use of !stuck
+		
+	deathrun_starting_weapon <string weapon name>
+		Default starting weapon
 
 CLIENT CONVARS:
 
@@ -232,15 +235,15 @@ CLIENT:
 
 If you want players to be frozen during preptime, copy the following into a serverside autorun file (e.g. garrysmod/lua/autorun/server/freezetime.lua):
 
-	hook.Add("DeathrunBeginPreptime", "FreezePlayers", function()
-		for k,v in ipairs(player.GetAll()) do
-			v:Freeze(true)
+	hook.Add("DeathrunBeginPrep", "FreezePlayers", function()
+		for k, v in ipairs( player.GetAll() ) do
+			v:Freeze( true )
 		end
 	end)
 
 	hook.Add("DeathrunBeginActive", "FreezePlayers", function()
-		for k,v in ipairs(player.GetAll()) do
-			v:Freeze(false)
+		for k, v in ipairs( player.GetAll() ) do
+			v:Freeze( false )
 		end
 	end)
 
