@@ -678,9 +678,9 @@ hook.Add("SetupMove", "DeathrunIdleCheck", function( ply, mv )
 end)
 
 function DR:CheckIdleTime( ply ) -- return how long the player has been idle for
-	-- return 0 -- hotfix to prevent autokick after 22-02-2016 update
-	ply.LastActiveTime = ply.LastActiveTime or CurTime()
-	return CurTime() - ply.LastActiveTime
+	return 0 -- hotfix to prevent autokick after 22-02-2016 update
+	-- ply.LastActiveTime = ply.LastActiveTime or CurTime()
+	-- return CurTime() - ply.LastActiveTime
 end
 local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60, defaultFlags, "How many seconds each to wait before speccing idle players.")
 timer.Create("CheckIdlePlayers", 0.95, 0, function()
@@ -689,8 +689,10 @@ timer.Create("CheckIdlePlayers", 0.95, 0, function()
 		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
 			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be moved to spec due to being idle.")
 		end
-		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" and (not ply:IsAdmin()) then
+		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" and (not ply:IsAdmin()) and (ply:GetObserverMode() == OBS_MODE_NONE) then
 			ply:ConCommand("deathrun_spectate_only 1")
+			net.Start("DeathrunSpectatorNotification")
+			net.Send( ply )
 			DR:ChatBroadcast( ply:Nick().." was specced for being idle too long." )
 		end
 	end
