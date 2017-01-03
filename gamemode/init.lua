@@ -660,7 +660,7 @@ hook.Add("PlayerCanPickupWeapon", "StopWeaponAbuseAustraliaSaysNo", function( pl
 end)
 
 -- Something to check how long it's been since the player last did something
-hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
+hook.Add("SetupMove", "DeathrunIdleCheck", function( ply, mv )
 
 	ply.LastActiveTime = ply.LastActiveTime or CurTime()
 
@@ -668,7 +668,7 @@ hook.Add("FinishMove", "DeathrunIdleCheck", function( ply, mv )
 	-- so we can check when no keys are being pressed, or when they keys haven't changed for a while
 	ply.LastButtons = ply.LastButtons or mv:GetButtons()
 
-	if (mv:GetButtons() ~= ply.LastButtons) then
+	if (mv:GetButtons() ~= ply.LastButtons) or (ply:GetObserverMode() ~= OBS_MODE_NONE) then
 		-- if there's a change in buttons, then they must not be afk.
 		-- sometimes they can type +forward, but we know they are afk because it's constant +forward and no other keys
 		ply.LastActiveTime = CurTime()
@@ -682,16 +682,18 @@ function DR:CheckIdleTime( ply ) -- return how long the player has been idle for
 	-- ply.LastActiveTime = ply.LastActiveTime or CurTime()
 	-- return CurTime() - ply.LastActiveTime
 end
-local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60*5, defaultFlags, "How many seconds each to wait before kicking idle players.")
+local IdleTimer = CreateConVar("deathrun_idle_kick_time", 60, defaultFlags, "How many seconds each to wait before speccing idle players.")
 timer.Create("CheckIdlePlayers", 0.95, 0, function()
 	for k, ply in ipairs(player.GetAllPlaying()) do -- don't kick afk spectators or bots
 		--print( ply:Nick(), DR:CheckIdleTime( ply ) )
 		if math.floor(DR:CheckIdleTime( ply )) == math.floor(IdleTimer:GetInt() -25) then
-			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be kicked from the server due to being idle.")
+			ply:DeathrunChatPrint("If you do not move in 25 seconds, you will be moved to spec due to being idle.")
 		end
-		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" and (not ply:IsAdmin()) then
-			ply:Kick("Kicked for being idle")
-			DR:ChatBroadcast( ply:Nick().." was kicked for being idle too long." )
+		if DR:CheckIdleTime( ply ) > IdleTimer:GetInt() and ply:SteamID() ~= "BOT" and (not ply:IsAdmin()) and (ply:GetObserverMode() == OBS_MODE_NONE) then
+			ply:ConCommand("deathrun_spectate_only 1")
+			net.Start("DeathrunSpectatorNotification")
+			net.Send( ply )
+			DR:ChatBroadcast( ply:Nick().." was specced for being idle too long." )
 		end
 	end
 end)
