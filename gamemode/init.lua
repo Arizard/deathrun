@@ -566,6 +566,12 @@ function GM:GetFallDamage( ply, speed )
 	return damage
 end
 
+function GM:OnPlayerHitGround( ply, inWater, onFloater, speed )
+	if ply:Team() == TEAM_GHOST then
+		return true
+	end
+end
+
 -- Function Key Binds
 hook.Add("ShowTeam", "DeathrunSettingsBind", function( ply ) ply:ConCommand("deathrun_open_settings") end)
 hook.Add("ShowHelp", "DeathrunHelpBind", function( ply ) ply:ConCommand("deathrun_open_help") end)
