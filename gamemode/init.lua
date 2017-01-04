@@ -550,20 +550,23 @@ concommand.Add("strip", function(ply)
 end)
 
 function GM:GetFallDamage( ply, speed )
-	if ply:Team() == TEAM_GHOST then
+	if ply:Team() == TEAM_GHOST or ply:Team() == TEAM_DEATH then
 		return false
 	end
-	
+
 	local dmg = hook.Call("DeathrunFallDamage", self, ply, speed)
 	if dmg ~= nil then
 		return dmg
 	end
-	if ply:Team() == TEAM_DEATH then
-		return 0 -- deaths keep killing themselves on deathrun_ramesses_revenge
-	end
 
 	local damage = math.max( 0, math.ceil( 0.2418*speed - 141.75 ) )
 	return damage
+end
+
+function GM:OnPlayerHitGround( ply, inWater, onFloater, speed )
+	if ply:Team() == TEAM_GHOST then
+		return true
+	end
 end
 
 -- Function Key Binds
