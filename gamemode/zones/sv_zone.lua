@@ -100,7 +100,6 @@ function ZONE:Tick() -- cycle through zones and check for players
 				local posmin, posmax = VectorMinMax(z.pos1, z.pos2)
 				for k, ply in ipairs(ents.FindInBox(posmin - border,posmax + border)) do
 					if ply:IsPlayer() == true then
-						print("test")
 						-- create a bunch of variables on the player
 						ply.InZones = ply.InZones or {}
 
