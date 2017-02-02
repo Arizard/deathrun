@@ -309,6 +309,13 @@ hook.Add("Move", "DeathrunPlayerBarrierZones", function( ply, cmd )
 	end
 end)
 
+hook.Add("DeathrunPlayerExitedZone", "DeathrunPlayerBarrierZones", function(ply, name, z)
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(Vector())
+		return
+	end
+end)
+
 -- hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
 -- 	if ZONE:GetPlayerInZoneType( ply, {"deny", "deny_team_death", "deny_team_runner"} ) then
 -- 		--cmd:SetMaxSpeed( 0 )
