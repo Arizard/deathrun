@@ -302,6 +302,13 @@ hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, na
 	end
 end)
 
+hook.Add("Move", "DeathrunPlayerBarrierZones", function( ply, cmd )
+	if ZONE:GetPlayerInZoneType( ply, {"barrier"} ) then
+		cmd:SetMaxSpeed( 0 )
+		cmd:SetMaxClientSpeed( 0 )
+	end
+end)
+
 -- hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
 -- 	if ZONE:GetPlayerInZoneType( ply, {"deny", "deny_team_death", "deny_team_runner"} ) then
 -- 		--cmd:SetMaxSpeed( 0 )
