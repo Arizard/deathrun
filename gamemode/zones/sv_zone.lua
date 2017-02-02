@@ -276,6 +276,13 @@ local function denyZone( ply, name, z )
 	
 end
 
+hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerBarrierZones", function(ply, name, z)
+	if z.type == "barrier" then
+		entryvel = ply:GetVelocity()
+		return
+	end
+end)
+
 hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, name, z)
 	if z.type == "deny_team_runner" and ply:Team() == TEAM_RUNNER then
 		denyZone( ply, name, z )
@@ -287,6 +294,24 @@ hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, na
 	end
 	if z.type == "deny" then
 		denyZone( ply, name, z )
+		return
+	end
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(entryvel:GetNormalized()*Vector(-500,-500,-100))
+		return
+	end
+end)
+
+hook.Add("Move", "DeathrunPlayerBarrierZones", function( ply, cmd )
+	if ZONE:GetPlayerInZoneType( ply, {"barrier"} ) then
+		cmd:SetMaxSpeed( 0 )
+		cmd:SetMaxClientSpeed( 0 )
+	end
+end)
+
+hook.Add("DeathrunPlayerExitedZone", "DeathrunPlayerBarrierZones", function(ply, name, z)
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(Vector())
 		return
 	end
 end)

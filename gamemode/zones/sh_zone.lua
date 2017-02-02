@@ -17,6 +17,7 @@ ZONE.ZoneTypes = {
 	"custom1",
 	"custom2",
 	"custom3",
+	"barrier",
 }
 
 function VectorMinMax( vec1, vec2 )
