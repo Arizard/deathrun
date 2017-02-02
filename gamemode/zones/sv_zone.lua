@@ -289,6 +289,10 @@ hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, na
 		denyZone( ply, name, z )
 		return
 	end
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(entryvel:GetNormalized()*-500)
+		return
+	end
 end)
 
 -- hook.Add("Move", "DeathrunPlayerDenyZones", function( ply, cmd )
