@@ -96,8 +96,11 @@ function ZONE:Tick() -- cycle through zones and check for players
 	if skipcount == skip then
 		for name, z in pairs( self.zones ) do
 			if z.type then
-				for k, ply in ipairs(player.GetAllPlaying()) do
-					if ply:GetPos():Distance( (z.pos1 + z.pos2)/2 ) < z.pos1:Distance(z.pos2) * 0.6 then
+				local border = Vector(20,20,20)
+				local posmin, posmax = VectorMinMax(z.pos1, z.pos2)
+				for k, ply in ipairs(ents.FindInBox(posmin - border,posmax + border)) do
+					if ply:IsPlayer() == true then
+						print("test")
 						-- create a bunch of variables on the player
 						ply.InZones = ply.InZones or {}
 
