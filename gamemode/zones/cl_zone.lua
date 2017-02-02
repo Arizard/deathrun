@@ -70,12 +70,12 @@ function ZONE:DrawCuboid( pos1, pos2, col, alt )
 
 		width = width/2 * (1+math.floor(CurTime()*4)%2)
 
-		render.DrawQuad( points[1], points[2], points[3], points[4], col)
-		render.DrawQuad( points[8], points[7], points[6], points[5], col)
-		render.DrawQuad( points[6], points[2], points[1], points[5], col)
-		render.DrawQuad( points[8], points[4], points[3], points[7], col)
-		render.DrawQuad( points[4], points[8], points[5], points[1], col)
-		render.DrawQuad( points[7], points[3], points[2], points[6], col)
+		render.DrawQuad( points[1], points[2], points[3], points[4], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- This makes so the area can be 
+		render.DrawQuad( points[8], points[7], points[6], points[5], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- completely opaque  when alpha
+		render.DrawQuad( points[6], points[2], points[1], points[5], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- is 255 but it gets an outline
+		render.DrawQuad( points[8], points[4], points[3], points[7], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- effect if you lower the alpha
+		render.DrawQuad( points[4], points[8], points[5], points[1], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- a bit
+		render.DrawQuad( points[7], points[3], points[2], points[6], Color(col.r,col.g,col.b,(col.a^3)/255^2))
 	end
 
 end
