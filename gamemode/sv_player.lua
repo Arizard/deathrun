@@ -84,9 +84,6 @@ function PLAYER:ChangeSpectate()
 	if self.ObsMode2 == 0 then 
 		self:Spectate( OBS_MODE_ROAMING )
 		--because it's nicer
-		if self:GetObserverTarget() then
-			self:SetPos( self:GetObserverTarget():EyePos() or self:GetObserverTarget():OBBCenter() + self:GetObserverTarget():GetPos() )
-		end 
 	end
 	if self.ObsMode2 == 1 then self:Spectate( OBS_MODE_CHASE ) end
 	if self.ObsMode2 == 2 then self:Spectate( OBS_MODE_IN_EYE ) end
@@ -141,7 +138,13 @@ function PLAYER:SpecModify( n )
 	if #pool > 0 then
 		if pool[self.SpecEntIdx] then
 			self:SpectateEntity( pool[self.SpecEntIdx] )
-
+			
+			local target = self:GetObserverTarget()
+			if target then
+				self:SetPos( target:EyePos() or target:OBBCenter() + target:GetPos() )
+				self:SetEyeAngles( target:EyeAngles() )
+			end
+			
 			if self:GetObserverMode() == OBS_MODE_IN_EYE then
 				self:SetupHands( pool[self.SpecEntIdx] )
 			else
