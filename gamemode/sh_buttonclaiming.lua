@@ -80,8 +80,14 @@ if SERVER then
 		CheckButtonClaims()
 
 	end)
-
-	local function PlayerCanButton( ply, ent )
+	
+	local function buttonActivated( ply, ent ) 
+		if ( ent:GetSaveTable().m_toggle_state == 1 and not ent:GetSaveTable().m_bLocked ) then
+			hook.Call("DeathrunButtonActivated", nil, ply, ent)
+		end
+	end
+		
+	local function PlayerCanButton( ply, ent )		
 		if not ply:Alive() or ply:Team() == TEAM_SPECTATOR or ply:GetObserverMode() ~= OBS_MODE_NONE then
 			return false 
 		end
@@ -95,6 +101,7 @@ if SERVER then
 			end
 
 			ent.User = ply
+			buttonActivated( ply, ent )
 			return
 		end -- to stop secrets breaking
 
@@ -113,10 +120,12 @@ if SERVER then
 			end
 
 			ent.User = ply
+			buttonActivated( ply, ent )
 			return
 		else
 			return false
 		end
+		
 	end
 	hook.Add("PlayerUse", "DeathrunButtonClaimPlayerUse", PlayerCanButton )
 
