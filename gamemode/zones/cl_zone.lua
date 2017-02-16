@@ -43,7 +43,7 @@ function ZONE:DrawCuboid( pos1, pos2, col, alt )
 	render.DrawBeam( points[3], points[7], width, 1, 1, col )
 	render.DrawBeam( points[4], points[8], width, 1, 1, col )
 
-	if alt then
+	if alt == 1 then
 
 
 		width = width/2 * (1+math.floor(CurTime()*4)%2)
@@ -66,6 +66,18 @@ function ZONE:DrawCuboid( pos1, pos2, col, alt )
 		render.DrawBeam( points[6], points[8], width, 1, 1, col)
 	end
 
+	if alt == 2 then
+
+		width = width/2 * (1+math.floor(CurTime()*4)%2)
+
+		render.DrawQuad( points[1], points[2], points[3], points[4], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- This makes so the area can be 
+		render.DrawQuad( points[8], points[7], points[6], points[5], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- completely opaque  when alpha
+		render.DrawQuad( points[6], points[2], points[1], points[5], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- is 255 but it gets an outline
+		render.DrawQuad( points[8], points[4], points[3], points[7], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- effect if you lower the alpha
+		render.DrawQuad( points[4], points[8], points[5], points[1], Color(col.r,col.g,col.b,(col.a^3)/255^2))-- a bit
+		render.DrawQuad( points[7], points[3], points[2], points[6], Color(col.r,col.g,col.b,(col.a^3)/255^2))
+	end
+
 end
 
 CreateClientConVar("deathrun_zones_visibility","1",true, false)
@@ -82,17 +94,20 @@ hook.Add("PostDrawTranslucentRenderables", "DeathrunZoneCuboidDrawing", function
 					local frac = math.Clamp( InverseLerp( dist, 1000, 400 ), 0,1)
 					tempcolor.a = frac*z.color.a
 
-					local alt = false
+					local alt = 0
 					local ply = LocalPlayer()
 
 					if z.type == "deny_team_runner" and ply:Team() == TEAM_RUNNER then
-						alt = true
+						alt = 1
 					end
 					if z.type == "deny_team_death" and ply:Team() == TEAM_DEATH then
-						alt = true
+						alt = 1
 					end
 					if z.type == "deny" then
-						alt = true
+						alt = 1
+					end
+					if z.type == "barrier" then
+						alt = 2
 					end
 
 					ZONE:DrawCuboid( z.pos1, z.pos2, tempcolor, alt )

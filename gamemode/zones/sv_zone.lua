@@ -96,8 +96,10 @@ function ZONE:Tick() -- cycle through zones and check for players
 	if skipcount == skip then
 		for name, z in pairs( self.zones ) do
 			if z.type then
-				for k, ply in ipairs(player.GetAllPlaying()) do
-					if ply:GetPos():Distance( (z.pos1 + z.pos2)/2 ) < z.pos1:Distance(z.pos2) * 0.6 then
+				local border = Vector(20,20,20)
+				local posmin, posmax = VectorMinMax(z.pos1, z.pos2)
+				for k, ply in ipairs(ents.FindInBox(posmin - border,posmax + border)) do
+					if ply:IsPlayer() == true then
 						-- create a bunch of variables on the player
 						ply.InZones = ply.InZones or {}
 
@@ -276,6 +278,13 @@ local function denyZone( ply, name, z )
 	
 end
 
+hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerBarrierZones", function(ply, name, z)
+	if z.type == "barrier" then
+		entryvel = ply:GetVelocity()
+		return
+	end
+end)
+
 hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, name, z)
 	if z.type == "deny_team_runner" and ply:Team() == TEAM_RUNNER then
 		denyZone( ply, name, z )
@@ -287,6 +296,24 @@ hook.Add("DeathrunPlayerInsideZone", "DeathrunPlayerDenyZones", function(ply, na
 	end
 	if z.type == "deny" then
 		denyZone( ply, name, z )
+		return
+	end
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(entryvel:GetNormalized()*Vector(-500,-500,-100))
+		return
+	end
+end)
+
+hook.Add("Move", "DeathrunPlayerBarrierZones", function( ply, cmd )
+	if ZONE:GetPlayerInZoneType( ply, {"barrier"} ) then
+		cmd:SetMaxSpeed( 0 )
+		cmd:SetMaxClientSpeed( 0 )
+	end
+end)
+
+hook.Add("DeathrunPlayerExitedZone", "DeathrunPlayerBarrierZones", function(ply, name, z)
+	if z.type == "barrier" then
+		ply:SetLocalVelocity(Vector())
 		return
 	end
 end)

@@ -17,6 +17,7 @@ ZONE.ZoneTypes = {
 	"custom1",
 	"custom2",
 	"custom3",
+	"barrier",
 }
 
 function VectorMinMax( vec1, vec2 )
@@ -72,30 +73,12 @@ function CuboidOverlap( min1, max1, min2, max2 )
 	local min1, max1 = VectorMinMax( min1, max1 )
 	local min2, max2 = VectorMinMax( min2, max2 )
 
-	local pass = 0
-
-	if VectorInCuboid( min1, min2, max2 ) then
-		return true
-	elseif VectorInCuboid( max1, min2, max2 ) then
-		return true
-	elseif VectorInCuboid( min2, min1, max1 ) then
-		return true
-	elseif VectorInCuboid( max2, min1, max1 ) then
-		return true
+	if (
+		((min1.x <= min2.x and min2.x <= max1.x) or (min2.x <= min1.x and min1.x <= max2.x)) and
+		((min1.y <= min2.y and min2.y <= max1.y) or (min2.y <= min1.y and min1.y <= max2.y)) and
+		((min1.z <= min2.z and min2.z <= max1.z) or (min2.z <= min1.z and min1.z <= max2.z)) 
+		) then
+		return true 
+		else return false
 	end
-
-	if (min1.x > min2.x) ~= (max1.x > max2.x) then
-		pass = pass + 1
-	end
-
-	if (min1.y > min2.y) ~= (max1.y > max2.y) then
-		pass = pass + 1
-	end
-
-	if (min1.z > min2.z) ~= (max1.z > max2.z) then
-		pass = pass + 1
-	end
-
-	if pass >= 3 then return true else return false end
-
 end
