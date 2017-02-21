@@ -73,12 +73,12 @@ function CuboidOverlap( min1, max1, min2, max2 )
 	local min2, max2 = VectorMinMax( min2, max2 )
 
 	if (
- +		((min1.x <= min2.x and min2.x <= max1.x) or (min2.x <= min1.x and min1.x <= max2.x)) and
- +		((min1.y <= min2.y and min2.y <= max1.y) or (min2.y <= min1.y and min1.y <= max2.y)) and
- +		((min1.z <= min2.z and min2.z <= max1.z) or (min2.z <= min1.z and min1.z <= max2.z)) 
- +		) then
- +		return true 
- +		else return false
+ 		((min1.x <= min2.x and min2.x <= max1.x) or (min2.x <= min1.x and min1.x <= max2.x)) and
+ 		((min1.y <= min2.y and min2.y <= max1.y) or (min2.y <= min1.y and min1.y <= max2.y)) and
+ 		((min1.z <= min2.z and min2.z <= max1.z) or (min2.z <= min1.z and min1.z <= max2.z)) 
+ 		) then
+ 		return true 
+ 		else return false
 	end
 
 end
