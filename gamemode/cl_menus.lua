@@ -188,7 +188,7 @@ end)
 local deathrun_settings = {
 	{"header","HUD Settings"},
 
-	{"number", "deathrun_hud_theme",0,12,"HUD Theme"},
+	{"number", "deathrun_hud_theme",0,4,"HUD Theme"},
 	{"number", "deathrun_hud_position",0,8,"Position of the HUD (HP, Velocity, Time)"},
 	{"number", "deathrun_hud_ammo_position",0,8,"Position of the Ammo HUD"},
 	{"number", "deathrun_hud_alpha",0,255,"Transparency of the HUD background"},

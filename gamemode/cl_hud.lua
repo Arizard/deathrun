@@ -28,7 +28,7 @@ local HideElements = {
 }
 
 hook.Add("HUDPaint","FixCHudAmmo", function()
-	if HudTheme:GetInt() == 2 then
+	if HudTheme:GetInt() == 3 then
 		HideElements["CHudAmmo"] = true
 	else
 		HideElements["CHudAmmo"] = false
@@ -89,17 +89,20 @@ surface.CreateFont("deathrun_hud_Small", {
 
 
 DR.HUDDrawFunctions = {}
-DR.HUDDrawFunctions[0] = { function(x,y) DR:DrawPlayerHUD( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmo( x, y ) end }
 
 -- make it easy to add new HUDs
 function DR:AddCustomHUD( index, leftfunc, rightfunc ) -- leftfunc e.g. health and velocity, rightfunc e.g. ammo, points
 	DR.HUDDrawFunctions[ index ] = { leftfunc, rightfunc }
 end
 
+--defaulthud
+DR:AddCustomHUD( 0, function(x,y) DR:DrawPlayerHUD( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmo( x, y ) end )
+--defaulthud with time
+DR:AddCustomHUD( 1, DR.HUDDrawFunctions[0][1], DR.HUDDrawFunctions[0][2] )
 --sasshud
-DR:AddCustomHUD( 1, function(x,y) DR:DrawPlayerHUDSass( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoSass( x, y ) end )
+DR:AddCustomHUD( 2, function(x,y) DR:DrawPlayerHUDSass( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoSass( x, y ) end )
 --classichud
-DR:AddCustomHUD( 2, function(x,y) DR:DrawPlayerHUDClassic( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoClassic( x, y ) end )
+DR:AddCustomHUD( 3, function(x,y) DR:DrawPlayerHUDClassic( x, y ) end, function(x,y) DR:DrawPlayerHUDAmmoClassic( x, y ) end )
 
 -- NOTE:
 -- For those who want to add custom HUDs to the gamemode: 
@@ -312,14 +315,11 @@ local aliz = table.Copy(DR.Colors.Alizarin)
 --local turq = table.Copy(DR.Colors.Turq) -- store these separately so we can edit their alpha values
 
 function DR:DrawPlayerHUD( x, y )
-	
-	
-
 	turq = table.Copy(DR.Colors.Turq)
 	local alpha = HudAlpha:GetInt()
 
 	-- 228x16 text size 12
-	-- 228x16 text size 12
+	-- 228x16 text size 12'
 
 	-- 32x32 text 18, 192x32 text 30
 	-- 32x32 text 18, 192x32 text 30
@@ -333,10 +333,13 @@ function DR:DrawPlayerHUD( x, y )
 		end
 	end
 
+	local shouldDrawTime = ROUND:GetCurrent() == 5 and ply == LocalPlayer() and ply:Team() == TEAM_RUNNER and HudTheme:GetInt() == 1
+
 	local tcol = team.GetColor( ply:Team() )
 	otcol = table.Copy( tcol )
 	tcol.a = alpha
 	local dx, dy = x, y
+	if shouldDrawTime then dy = dy - 32 - 4 end
 
 	
 	clouds.a = alpha
@@ -415,7 +418,23 @@ function DR:DrawPlayerHUD( x, y )
 	deathrunShadowTextSimple( "VL", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
 	deathrunShadowTextSimple( tostring( curvel )..((ply.AutoJumpEnabled == true and GetConVar("deathrun_allow_autojump"):GetBool() == true) and " AUTO" or ""), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
 
+	if shouldDrawTime then
+		dy = dy + 32 + 4
 
+		surface.SetDrawColor( Color(255, 182, 0, alpha) )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.SetDrawColor( Color(255, 182, 0, alpha) )
+		surface.DrawRect( dx, dy, 32, 32 )
+		surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
+
+		surface.SetDrawColor( 255,255,255,(alpha/255)*50 )
+		surface.DrawRect( dx + 32 + 4, dy, 192, 32 )
+
+		deathrunShadowTextSimple( "TM", "deathrun_hud_Medium", dx + 32/2, dy + 32/2, DR.Colors.Text.Clouds, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+		deathrunShadowTextSimple( string.ToMinutesSecondsMilliseconds(CurTime() - (ply.StartTime or 0)), "deathrun_hud_Large", dx + 32 + 4 + 4, dy + 32/2 -1, DR.Colors.Text.Clouds, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1 )
+	end
 end
 local orange = table.Copy(DR.Colors.Orange) 
 local clouds2 = table.Copy(DR.Colors.Clouds)
@@ -715,11 +734,10 @@ function avatar:Think()
 		self:SetPlayer( ply, 64 )
 	end
 
-	if HudTheme:GetInt() == 1 and self.visible == false then
+	if HudTheme:GetInt() == 2 and self.visible == false then
 		self:SetPos( self.desiredpos[1] or 0, self.desiredpos[2] or 0 )
 		self.visible = true
-	end
-	if HudTheme:GetInt() ~= 1 and self.visible == true then
+	elseif HudTheme:GetInt() ~= 2 and self.visible == true then
 		self:SetPos( -128, self.desiredpos[2] or 0 )
 		self.visible = false
 	end
@@ -949,6 +967,10 @@ hook.Add("RenderScreenspaceEffects", "DeathrunTVBorder", function()
 		DrawSharpen( 1.1, 1.7 )
 		DrawMotionBlur( 0.4, 0.8, 0.005 )
 	end
+end)
+
+hook.Add("DeathrunBeginActive", "ResetStartTime", function()
+	LocalPlayer().StartTime = CurTime()
 end)
 
 cvars.AddChangeCallback("deathrun_vhs7", function( name, old, new )
