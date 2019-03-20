@@ -188,6 +188,8 @@ SERVER:
 	DeathrunPlayerDeath ( PLAYER victim, ENTITY inflictor, PLAYER attacker )
 		Same as PlayerDeath, although this attempts to find the player responsible for activating traps that kill the victim.
 
+	DeathrunButtonActivated ( PLAYER ply, ENTITY ent )
+		Called when a player activates a button.
 SHARED:
 
 	DeathrunBeginWaiting ()
