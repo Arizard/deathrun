@@ -256,8 +256,13 @@ function GM:PlayerLoadout( ply )
 	ply:DrawViewModel( true )
 
 	ply:SetupHands( ply )
-
+	
 	hook.Call("DeathrunPlayerLoadout", self, ply)
+	
+	-- Fixes pointshop perma weapons not being requiiped
+	if PS then
+		ply:PS_PlayerSpawn()
+	end
 
 	return self.BaseClass:PlayerLoadout( ply )
 	
