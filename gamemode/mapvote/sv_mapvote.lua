@@ -239,6 +239,11 @@ concommand.Add("mapvote_nominate_map", function(ply, cmd, args)
 			--print(nom, game.GetMap())
 
 			if not ply.LastNom or ply.LastNom + 1 < CurTime() then
+					
+				if not table.HasValue( MV:GetGoodMaps(), nom ) then
+					ply:DeathrunChatPrint("You can't nominate a map that isn't in the nominate list.")
+					return
+				end
 
 				if nom == game.GetMap() then
 					ply:DeathrunChatPrint("You can't nominate the map you are currently playing.")
