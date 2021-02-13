@@ -330,19 +330,18 @@ hook.Add("DeathrunPlayerEnteredZone", "DeathrunPlayerFinishMap", function(ply, n
 		else
 			placetext = placestring.."th"
 		end
-
 		
-		for k,v in ipairs( team.GetPlayers( TEAM_DEATH ) ) do
-			v:SetRunSpeed( 250 )
-		end
-
-		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place with a time of "..string.ToMinutesSecondsMilliseconds(CurTime() - ZONE.StartTime).."!")
+		local finishtime = CurTime() - ZONE.StartTime
+			
+		DR:ChatBroadcast(ply:Nick().." has finished the map in "..placetext.." place with a time of "..string.ToMinutesSecondsMilliseconds(finishtime).."!")
 		ply.HasFinishedMap = true
 
-		for k,v in ipairs(team.GetPlayers( TEAM_DEATH )) do
-			v:SetRunSpeed( v:GetWalkSpeed() ) -- deaths lose sprint when the runner finishes
+		if place == 1 then
+			for k,v in ipairs(team.GetPlayers( TEAM_DEATH )) do
+				v:SetRunSpeed( v:GetWalkSpeed() ) -- deaths lose sprint when the runner finishes
+			end
 		end
 
-		hook.Call("DeathrunPlayerFinishMap", nil, ply, name, z, place, CurTime() - ZONE.StartTime)
+		hook.Call("DeathrunPlayerFinishMap", nil, ply, name, z, place, finishtime)
 	end
 end)
