@@ -3,6 +3,7 @@
 	"base"		"base"
 	"title"		"Deathrun"
 	"maps"		"^deathrun"
+	"category"	"pvp"
 	"menusystem"	"1"
 	"workshopid"	""
 	
